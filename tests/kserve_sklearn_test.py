@@ -253,6 +253,10 @@ def test_sklearn_kserve():
         )
 
         response = predict(SERVICE_NAME, IRIS_INPUT)
+        logging.info(
+            "Prediction result: %s (expected [1, 1])",
+            response.get("predictions"),
+        )
         assert response["predictions"] == [1, 1]
         logging.info(
             "Python SDK prediction passed for %s in %s",

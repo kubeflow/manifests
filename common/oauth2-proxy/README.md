@@ -275,11 +275,19 @@ for listing notebooks:
 
 ## KServe Authentication
 
+> **CI:** [`.github/workflows/kserve_test.yaml`](../../.github/workflows/kserve_test.yaml) · [`tests/kserve_test.sh`](../../tests/kserve_test.sh)
+
 KServe inference endpoints are secured through a layered approach using
 Istio `RequestAuthentication` and `AuthorizationPolicy` resources.
 The examples below focus on machine-to-machine (M2M) access using service
 account tokens. Browser-based user access follows the general Kubeflow
 `oauth2-proxy` flow described above.
+
+KServe supports both **host-based** and **path-based** routing for inference
+endpoints. Host-based routing is the default; path-based routing requires
+configuring `ingressPathTemplate` in the KServe `inferenceservice-config`
+ConfigMap (see [kserve/kserve#5090](https://github.com/kserve/kserve/pull/5090)
+for raw deployment support).
 
 ### Traffic Flow and Security Layers
 
@@ -339,36 +347,6 @@ In CI environments where the JWT principal is not propagated, the tests use
 ingress gateway. In production with proper mTLS, prefer
 `requestPrincipals: ["*"]` for defense in depth.
 
-### Architecture Analysis (Future Improvements)
-
-The analysis of KServe auth capabilities suggests that while it's possible to limit access to only authenticated agents,
-there might be some improvements required to enable access only to authorized agents.
-
-This is based on the following:
-
-1. KServe Controller Manager patch integrating kube-rbac-proxy[^6].
-
-   This suggests the kserve **might** use the same mechanism based on
-   `SubjectAccessReviews`. Having a look at the kubeflow/manifests I see it's
-   not enabled.
-2. Search through the docs and code:
-
-   * https://github.com/kserve/kserve/tree/v0.12.0/docs/samples/istio-dex
-   * https://github.com/kserve/kserve/tree/v0.12.0/docs/samples/gcp-iap
-
-   The docs above mention that while it's possible to enable authentication,
-   authorization is more complicated and probably we need to add
-   `AuthorizationPolicy`
-
-   > create an [Istio AuthorizationPolicy](https://istio.io/latest/docs/reference/config/security/authorization-policy/) to grant access to the pods or disable it
-
-   Most probably some work is needed to enable authorized access to kserve models.
-3. Potential improvement: adding `source.namespaces` to the `AuthorizationPolicy`
-   to restrict access to traffic originating from specific namespaces (e.g.,
-   `istio-system`). This would provide an additional layer of security but
-   requires proper mTLS/PeerAuthentication configuration to propagate SPIFFE
-   identities correctly.
-
 ## Links
 
 [^1]: [Envoy Filter](https://istio.io/latest/docs/reference/config/networking/envoy-filter/)
@@ -376,4 +354,3 @@ This is based on the following:
 [^3]: [oauth2-proxy](https://github.com/oauth2-proxy/oauth2-proxy)
 [^4]: [Kubernetes TokenReview](https://kubernetes.io/docs/reference/kubernetes-api/authentication-resources/token-review-v1/)
 [^5]: [Kubernetes SubjectAccessReview](https://kubernetes.io/docs/reference/kubernetes-api/authorization-resources/subject-access-review-v3/)
-[^6]: [Kube RBAC Proxy](https://github.com/brancz/kube-rbac-proxy)
