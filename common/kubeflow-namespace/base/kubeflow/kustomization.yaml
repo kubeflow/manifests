@@ -15,7 +15,6 @@ resources:
 - kserve.yaml
 - metadata-envoy.yaml
 - metadata-grpc-server.yaml
-- minio.yaml
 - ml-pipeline-ui.yaml
 - ml-pipeline.yaml
 - model-catalog.yaml
