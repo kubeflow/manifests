@@ -7,8 +7,8 @@ metadata:
     app.kubernetes.io/instance: istio
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: base-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: base-1.29.0
   name: authorizationpolicies.security.istio.io
 spec:
   group: security.istio.io
@@ -797,8 +797,8 @@ metadata:
     app.kubernetes.io/instance: istio
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: base-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: base-1.29.0
   name: destinationrules.networking.istio.io
 spec:
   group: networking.istio.io
@@ -1169,7 +1169,7 @@ spec:
                                     of traffic increase over the warmup 
                                     duration.
                                   format: double
-                                  minimum: 1
+                                  minimum: 0
                                   nullable: true
                                   type: number
                                 duration:
@@ -1580,7 +1580,7 @@ spec:
                                           speed of traffic increase over the 
                                           warmup duration.
                                         format: double
-                                        minimum: 1
+                                        minimum: 0
                                         nullable: true
                                         type: number
                                       duration:
@@ -2149,7 +2149,7 @@ spec:
                             description: This parameter controls the speed of 
                               traffic increase over the warmup duration.
                             format: double
-                            minimum: 1
+                            minimum: 0
                             nullable: true
                             type: number
                           duration:
@@ -2538,7 +2538,7 @@ spec:
                                     of traffic increase over the warmup 
                                     duration.
                                   format: double
-                                  minimum: 1
+                                  minimum: 0
                                   nullable: true
                                   type: number
                                 duration:
@@ -3263,7 +3263,7 @@ spec:
                                     of traffic increase over the warmup 
                                     duration.
                                   format: double
-                                  minimum: 1
+                                  minimum: 0
                                   nullable: true
                                   type: number
                                 duration:
@@ -3674,7 +3674,7 @@ spec:
                                           speed of traffic increase over the 
                                           warmup duration.
                                         format: double
-                                        minimum: 1
+                                        minimum: 0
                                         nullable: true
                                         type: number
                                       duration:
@@ -4243,7 +4243,7 @@ spec:
                             description: This parameter controls the speed of 
                               traffic increase over the warmup duration.
                             format: double
-                            minimum: 1
+                            minimum: 0
                             nullable: true
                             type: number
                           duration:
@@ -4632,7 +4632,7 @@ spec:
                                     of traffic increase over the warmup 
                                     duration.
                                   format: double
-                                  minimum: 1
+                                  minimum: 0
                                   nullable: true
                                   type: number
                                 duration:
@@ -5357,7 +5357,7 @@ spec:
                                     of traffic increase over the warmup 
                                     duration.
                                   format: double
-                                  minimum: 1
+                                  minimum: 0
                                   nullable: true
                                   type: number
                                 duration:
@@ -5768,7 +5768,7 @@ spec:
                                           speed of traffic increase over the 
                                           warmup duration.
                                         format: double
-                                        minimum: 1
+                                        minimum: 0
                                         nullable: true
                                         type: number
                                       duration:
@@ -6337,7 +6337,7 @@ spec:
                             description: This parameter controls the speed of 
                               traffic increase over the warmup duration.
                             format: double
-                            minimum: 1
+                            minimum: 0
                             nullable: true
                             type: number
                           duration:
@@ -6726,7 +6726,7 @@ spec:
                                     of traffic increase over the warmup 
                                     duration.
                                   format: double
-                                  minimum: 1
+                                  minimum: 0
                                   nullable: true
                                   type: number
                                 duration:
@@ -7107,8 +7107,8 @@ metadata:
     app.kubernetes.io/instance: istio
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: base-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: base-1.29.0
   name: envoyfilters.networking.istio.io
 spec:
   group: networking.istio.io
@@ -7165,12 +7165,16 @@ spec:
                             - routeConfiguration
                           - required:
                             - cluster
+                          - required:
+                            - waypoint
                       - required:
                         - listener
                       - required:
                         - routeConfiguration
                       - required:
                         - cluster
+                      - required:
+                        - waypoint
                       properties:
                         cluster:
                           description: Match on envoy cluster attributes.
@@ -7198,12 +7202,13 @@ spec:
                           description: |-
                             The specific config generation context to match on.
 
-                            Valid Options: ANY, SIDECAR_INBOUND, SIDECAR_OUTBOUND, GATEWAY
+                            Valid Options: ANY, SIDECAR_INBOUND, SIDECAR_OUTBOUND, GATEWAY, WAYPOINT
                           enum:
                           - ANY
                           - SIDECAR_INBOUND
                           - SIDECAR_OUTBOUND
                           - GATEWAY
+                          - WAYPOINT
                           type: string
                         listener:
                           description: Match on envoy listener attributes.
@@ -7343,7 +7348,47 @@ spec:
                                   type: object
                               type: object
                           type: object
+                        waypoint:
+                          properties:
+                            filter:
+                              description: The name of a specific filter to 
+                                apply the patch to.
+                              properties:
+                                name:
+                                  description: The filter name to match on.
+                                  type: string
+                                subFilter:
+                                  description: The next level filter within this
+                                    filter to match on.
+                                  properties:
+                                    name:
+                                      description: The filter name to match on.
+                                      type: string
+                                  type: object
+                              type: object
+                            portNumber:
+                              description: The service port to match on.
+                              maximum: 4294967295
+                              minimum: 0
+                              type: integer
+                              x-kubernetes-validations:
+                              - message: port must be between 1-65535
+                                rule: 0 < self && self <= 6553
+                            route:
+                              description: Match a specific route.
+                              properties:
+                                name:
+                                  description: The Route objects generated by 
+                                    default are named as default.
+                                  type: string
+                              type: object
+                          type: object
                       type: object
+                      x-kubernetes-validations:
+                      - message: only support waypointMatch when context is 
+                          WAYPOINT
+                        rule: 'has(self.context) ? ((self.context == "WAYPOINT") ?
+                          has(self.waypoint) : !has(self.waypoint)) : !has(self.waypoint)'
                     patch:
                       description: The patch to apply along with the operation.
                       properties:
@@ -7536,8 +7581,8 @@ metadata:
     app.kubernetes.io/instance: istio
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: base-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: base-1.29.0
   name: gateways.networking.istio.io
 spec:
   group: networking.istio.io
@@ -8425,8 +8470,8 @@ metadata:
     app.kubernetes.io/instance: istio
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: base-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: base-1.29.0
   name: peerauthentications.security.istio.io
 spec:
   group: security.istio.io
@@ -8787,8 +8832,8 @@ metadata:
     app.kubernetes.io/instance: istio
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: base-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: base-1.29.0
   name: proxyconfigs.networking.istio.io
 spec:
   group: networking.istio.io
@@ -8945,8 +8990,8 @@ metadata:
     app.kubernetes.io/instance: istio
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: base-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: base-1.29.0
   name: requestauthentications.security.istio.io
 spec:
   group: security.istio.io
@@ -9583,8 +9628,8 @@ metadata:
     app.kubernetes.io/instance: istio
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: base-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: base-1.29.0
   name: serviceentries.networking.istio.io
 spec:
   group: networking.istio.io
@@ -10541,8 +10586,8 @@ metadata:
     app.kubernetes.io/instance: istio
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: base-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: base-1.29.0
   name: sidecars.networking.istio.io
 spec:
   group: networking.istio.io
@@ -12379,8 +12424,8 @@ metadata:
     app.kubernetes.io/instance: istio
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: base-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: base-1.29.0
   name: telemetries.telemetry.istio.io
 spec:
   group: telemetry.istio.io
@@ -12668,12 +12713,16 @@ spec:
                               - environment
                             - required:
                               - header
+                            - required:
+                              - formatter
                         - required:
                           - literal
                         - required:
                           - environment
                         - required:
                           - header
+                        - required:
+                          - formatter
                         properties:
                           environment:
                             description: Environment adds the value of an 
@@ -12689,6 +12738,18 @@ spec:
                                 type: string
                             required:
                             - name
+                            type: object
+                          formatter:
+                            description: Formatter adds the value of access 
+                              logging substitution formatter.
+                            properties:
+                              value:
+                                description: The formatter tag value to use, 
+                                  same formatter as HTTP access logging (e.g.
+                                minLength: 1
+                                type: string
+                            required:
+                            - value
                             type: object
                           header:
                             description: RequestHeader adds the value of an 
@@ -13130,12 +13191,16 @@ spec:
                               - environment
                             - required:
                               - header
+                            - required:
+                              - formatter
                         - required:
                           - literal
                         - required:
                           - environment
                         - required:
                           - header
+                        - required:
+                          - formatter
                         properties:
                           environment:
                             description: Environment adds the value of an 
@@ -13151,6 +13216,18 @@ spec:
                                 type: string
                             required:
                             - name
+                            type: object
+                          formatter:
+                            description: Formatter adds the value of access 
+                              logging substitution formatter.
+                            properties:
+                              value:
+                                description: The formatter tag value to use, 
+                                  same formatter as HTTP access logging (e.g.
+                                minLength: 1
+                                type: string
+                            required:
+                            - value
                             type: object
                           header:
                             description: RequestHeader adds the value of an 
@@ -13331,8 +13408,8 @@ metadata:
     app.kubernetes.io/instance: istio
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: base-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: base-1.29.0
   name: virtualservices.networking.istio.io
 spec:
   group: networking.istio.io
@@ -13510,7 +13587,7 @@ spec:
                             bytes:
                               description: response body as base64 encoded 
                                 bytes.
-                              format: binary
+                              format: byte
                               type: string
                             string:
                               type: string
@@ -14596,7 +14673,7 @@ spec:
                             bytes:
                               description: response body as base64 encoded 
                                 bytes.
-                              format: binary
+                              format: byte
                               type: string
                             string:
                               type: string
@@ -15682,7 +15759,7 @@ spec:
                             bytes:
                               description: response body as base64 encoded 
                                 bytes.
-                              format: binary
+                              format: byte
                               type: string
                             string:
                               type: string
@@ -16617,8 +16694,8 @@ metadata:
     app.kubernetes.io/instance: istio
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: base-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: base-1.29.0
   name: wasmplugins.extensions.istio.io
 spec:
   group: extensions.istio.io
@@ -16990,8 +17067,8 @@ metadata:
     app.kubernetes.io/instance: istio
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: base-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: base-1.29.0
   name: workloadentries.networking.istio.io
 spec:
   group: networking.istio.io
@@ -17510,12 +17587,14 @@ spec:
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
+  annotations:
+    helm.sh/resource-policy: keep
   labels:
     app.kubernetes.io/instance: istio
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: base-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: base-1.29.0
   name: workloadgroups.networking.istio.io
 spec:
   group: networking.istio.io

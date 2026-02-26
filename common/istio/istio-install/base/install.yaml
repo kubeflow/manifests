@@ -7,8 +7,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istio-cni
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: cni-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: cni-1.29.0
     install.operator.istio.io/owning-resource: unknown
     istio.io/rev: default
     operator.istio.io/component: Cni
@@ -25,8 +25,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istio-ingressgateway
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: istio-ingress-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: istio-ingress-1.29.0
     install.operator.istio.io/owning-resource: unknown
     istio: ingressgateway
     istio.io/rev: default
@@ -44,8 +44,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istio-reader
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: base-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: base-1.29.0
     release: istio
   name: istio-reader-service-account
   namespace: istio-system
@@ -59,8 +59,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istiod
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: istiod-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: istiod-1.29.0
     release: istio
   name: istiod
   namespace: istio-system
@@ -74,8 +74,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istio-cni
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: cni-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: cni-1.29.0
     install.operator.istio.io/owning-resource: unknown
     istio.io/rev: default
     operator.istio.io/component: Cni
@@ -102,8 +102,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istio-cni
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: cni-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: cni-1.29.0
     install.operator.istio.io/owning-resource: unknown
     istio.io/rev: default
     operator.istio.io/component: Cni
@@ -135,8 +135,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istio-reader
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: istiod-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: istiod-1.29.0
     release: istio
   name: istio-reader-clusterrole-istio-system
 rules:
@@ -164,6 +164,7 @@ rules:
   - replicationcontrollers
   - namespaces
   - secrets
+  - configmaps
   verbs:
   - get
   - list
@@ -249,8 +250,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istiod
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: istiod-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: istiod-1.29.0
     release: istio
   name: istiod-clusterrole-istio-system
 rules:
@@ -493,8 +494,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istiod
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: istiod-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: istiod-1.29.0
     release: istio
   name: istiod-gateway-controller-istio-system
 rules:
@@ -568,8 +569,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istio-cni
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: cni-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: cni-1.29.0
     install.operator.istio.io/owning-resource: unknown
     istio.io/rev: default
     operator.istio.io/component: Cni
@@ -592,8 +593,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istio-cni
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: cni-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: cni-1.29.0
     install.operator.istio.io/owning-resource: unknown
     istio.io/rev: default
     k8s-app: istio-cni-repair
@@ -618,8 +619,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istio-reader
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: istiod-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: istiod-1.29.0
     release: istio
   name: istio-reader-clusterrole-istio-system
 roleRef:
@@ -640,8 +641,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istiod
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: istiod-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: istiod-1.29.0
     release: istio
   name: istiod-clusterrole-istio-system
 roleRef:
@@ -662,8 +663,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istiod
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: istiod-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: istiod-1.29.0
     release: istio
   name: istiod-gateway-controller-istio-system
 roleRef:
@@ -684,8 +685,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istiod
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: istiod-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: istiod-1.29.0
     istio: istiod
     istio.io/rev: default
     release: istio
@@ -744,8 +745,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istiod
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: istiod-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: istiod-1.29.0
     install.operator.istio.io/owning-resource: unknown
     istio.io/rev: default
     operator.istio.io/component: Pilot
@@ -771,9 +772,10 @@ data:
           values:
           - none
   AMBIENT_IPV6: 'true'
-  AMBIENT_RECONCILE_POD_RULES_ON_STARTUP: 'false'
+  AMBIENT_RECONCILE_POD_RULES_ON_STARTUP: 'true'
   CHAINED_CNI_PLUGIN: 'true'
   CURRENT_AGENT_VERSION: 1.28.0
+  ENABLE_AMBIENT_DETECTION_RETRY: 'false'
   EXCLUDE_NAMESPACES: kube-system
   ISTIO_OWNED_CNI_CONFIG: 'false'
   NATIVE_NFTABLES: 'false'
@@ -792,8 +794,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istio-cni
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: cni-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: cni-1.29.0
     install.operator.istio.io/owning-resource: unknown
     istio.io/rev: default
     operator.istio.io/component: Cni
@@ -820,19 +822,19 @@ data:
             {{- if or (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyCPU`) (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyMemory`) }}
               requests:
                 {{ if (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyCPU`) -}}
-                cpu: "{{ index .ObjectMeta.Annotations `sidecar.istio.io/proxyCPU` }}"
+                cpu: {{ index .ObjectMeta.Annotations `sidecar.istio.io/proxyCPU` | quote }}
                 {{ end }}
                 {{ if (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyMemory`) -}}
-                memory: "{{ index .ObjectMeta.Annotations `sidecar.istio.io/proxyMemory` }}"
+                memory: {{ index .ObjectMeta.Annotations `sidecar.istio.io/proxyMemory` | quote }}
                 {{ end }}
             {{- end }}
             {{- if or (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyCPULimit`) (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyMemoryLimit`) }}
               limits:
                 {{ if (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyCPULimit`) -}}
-                cpu: "{{ index .ObjectMeta.Annotations `sidecar.istio.io/proxyCPULimit` }}"
+                cpu: {{ index .ObjectMeta.Annotations `sidecar.istio.io/proxyCPULimit` | quote }}
                 {{ end }}
                 {{ if (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyMemoryLimit`) -}}
-                memory: "{{ index .ObjectMeta.Annotations `sidecar.istio.io/proxyMemoryLimit` }}"
+                memory: {{ index .ObjectMeta.Annotations `sidecar.istio.io/proxyMemoryLimit` | quote }}
                 {{ end }}
             {{- end }}
           {{- else }}
@@ -1088,6 +1090,7 @@ data:
               valueFrom:
                 resourceFieldRef:
                   resource: limits.cpu
+                  divisor: "1"
             - name: PROXY_CONFIG
               value: |
                      {{ protoToJSON .ProxyConfig }}
@@ -1110,10 +1113,12 @@ data:
               valueFrom:
                 resourceFieldRef:
                   resource: limits.memory
+                  divisor: "1"
             - name: GOMAXPROCS
               valueFrom:
                 resourceFieldRef:
                   resource: limits.cpu
+                  divisor: "1"
             {{- if .CompliancePolicy }}
             - name: COMPLIANCE_POLICY
               value: "{{ .CompliancePolicy }}"
@@ -1333,7 +1338,7 @@ data:
           {{- end }}
           - name: istio-ca-crl
             configMap:
-              name: istio-ca-crl
+              name: {{ .Values.pilot.crlConfigMapName | default "istio-ca-crl" }}
               optional: true
           {{- if .Values.global.mountMtlsCerts }}
           # Use the key and cert mounted to /etc/certs/ for the in-cluster mTLS communications.
@@ -1455,6 +1460,7 @@ data:
               valueFrom:
                 resourceFieldRef:
                   resource: limits.cpu
+                  divisor: "1"
             - name: PROXY_CONFIG
               value: |
                      {{ protoToJSON .ProxyConfig }}
@@ -1475,10 +1481,12 @@ data:
               valueFrom:
                 resourceFieldRef:
                   resource: limits.memory
+                  divisor: "1"
             - name: GOMAXPROCS
               valueFrom:
                 resourceFieldRef:
                   resource: limits.cpu
+                  divisor: "1"
             {{- if .CompliancePolicy }}
             - name: COMPLIANCE_POLICY
               value: "{{ .CompliancePolicy }}"
@@ -1711,19 +1719,19 @@ data:
             {{- if or (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyCPU`) (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyMemory`) }}
               requests:
                 {{ if (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyCPU`) -}}
-                cpu: "{{ index .ObjectMeta.Annotations `sidecar.istio.io/proxyCPU` }}"
+                cpu: {{ index .ObjectMeta.Annotations `sidecar.istio.io/proxyCPU` | quote }}
                 {{ end }}
                 {{ if (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyMemory`) -}}
-                memory: "{{ index .ObjectMeta.Annotations `sidecar.istio.io/proxyMemory` }}"
+                memory: {{ index .ObjectMeta.Annotations `sidecar.istio.io/proxyMemory` | quote }}
                 {{ end }}
             {{- end }}
             {{- if or (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyCPULimit`) (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyMemoryLimit`) }}
               limits:
                 {{ if (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyCPULimit`) -}}
-                cpu: "{{ index .ObjectMeta.Annotations `sidecar.istio.io/proxyCPULimit` }}"
+                cpu: {{ index .ObjectMeta.Annotations `sidecar.istio.io/proxyCPULimit` | quote }}
                 {{ end }}
                 {{ if (isset .ObjectMeta.Annotations `sidecar.istio.io/proxyMemoryLimit`) -}}
-                memory: "{{ index .ObjectMeta.Annotations `sidecar.istio.io/proxyMemoryLimit` }}"
+                memory: {{ index .ObjectMeta.Annotations `sidecar.istio.io/proxyMemoryLimit` | quote }}
                 {{ end }}
             {{- end }}
           {{- else }}
@@ -2042,7 +2050,7 @@ data:
           {{- if ge .KubeVersion 128 }}
           # Safe since 1.28: https://github.com/kubernetes/kubernetes/pull/117412
           ownerReferences:
-          - apiVersion: gateway.networking.k8s.io/v1beta1
+          - apiVersion: gateway.networking.k8s.io/v1
             kind: Gateway
             name: "{{.Name}}"
             uid: "{{.UID}}"
@@ -2064,7 +2072,7 @@ data:
                 "gateway.istio.io/managed" .ControllerLabel
               ) | nindent 4 }}
           ownerReferences:
-          - apiVersion: gateway.networking.k8s.io/v1beta1
+          - apiVersion: gateway.networking.k8s.io/v1
             kind: Gateway
             name: "{{.Name}}"
             uid: "{{.UID}}"
@@ -2193,6 +2201,7 @@ data:
                   valueFrom:
                     resourceFieldRef:
                       resource: limits.cpu
+                      divisor: "1"
                 - name: PROXY_CONFIG
                   value: |
                          {{ protoToJSON .ProxyConfig }}
@@ -2206,16 +2215,22 @@ data:
                   valueFrom:
                     resourceFieldRef:
                       resource: limits.memory
+                      divisor: "1"
                 - name: GOMAXPROCS
                   valueFrom:
                     resourceFieldRef:
                       resource: limits.cpu
+                      divisor: "1"
                 - name: ISTIO_META_CLUSTER_ID
                   value: "{{ valueOrDefault .Values.global.multiCluster.clusterName `Kubernetes` }}"
                 {{- $network := valueOrDefault (index .InfrastructureLabels `topology.istio.io/network`) .Values.global.network }}
                 {{- if $network }}
                 - name: ISTIO_META_NETWORK
                   value: "{{ $network }}"
+                {{- if eq .ControllerLabel "istio.io-eastwest-controller" }}
+                - name: ISTIO_META_REQUESTED_NETWORK_VIEW
+                  value: "{{ $network }}"
+                {{- end }}
                 {{- end }}
                 - name: ISTIO_META_INTERCEPTION_MODE
                   value: REDIRECT
@@ -2356,7 +2371,7 @@ data:
           name: {{.DeploymentName | quote}}
           namespace: {{.Namespace | quote}}
           ownerReferences:
-          - apiVersion: gateway.networking.k8s.io/v1beta1
+          - apiVersion: gateway.networking.k8s.io/v1
             kind: Gateway
             name: "{{.Name}}"
             uid: "{{.UID}}"
@@ -2391,7 +2406,7 @@ data:
                   "gateway.networking.k8s.io/gateway-class-name" .GatewayClass
                   ) | nindent 4 }}
           ownerReferences:
-            - apiVersion: gateway.networking.k8s.io/v1beta1
+            - apiVersion: gateway.networking.k8s.io/v1
               kind: Gateway
               name: {{.Name}}
               uid: "{{.UID}}"
@@ -2417,7 +2432,7 @@ data:
                   "gateway.networking.k8s.io/gateway-class-name" .GatewayClass
                   ) | nindent 4 }}
           ownerReferences:
-            - apiVersion: gateway.networking.k8s.io/v1beta1
+            - apiVersion: gateway.networking.k8s.io/v1
               kind: Gateway
               name: {{.Name}}
               uid: "{{.UID}}"
@@ -2443,7 +2458,7 @@ data:
           {{- if ge .KubeVersion 128 }}
           # Safe since 1.28: https://github.com/kubernetes/kubernetes/pull/117412
           ownerReferences:
-          - apiVersion: gateway.networking.k8s.io/v1beta1
+          - apiVersion: gateway.networking.k8s.io/v1
             kind: Gateway
             name: "{{.Name}}"
             uid: "{{.UID}}"
@@ -2465,7 +2480,7 @@ data:
                 "gateway.istio.io/managed" "istio.io-gateway-controller"
               ) | nindent 4 }}
           ownerReferences:
-          - apiVersion: gateway.networking.k8s.io/v1beta1
+          - apiVersion: gateway.networking.k8s.io/v1
             kind: Gateway
             name: {{.Name}}
             uid: "{{.UID}}"
@@ -2597,6 +2612,7 @@ data:
                   valueFrom:
                     resourceFieldRef:
                       resource: limits.cpu
+                      divisor: "1"
                 - name: PROXY_CONFIG
                   value: |
                          {{ protoToJSON .ProxyConfig }}
@@ -2608,10 +2624,12 @@ data:
                   valueFrom:
                     resourceFieldRef:
                       resource: limits.memory
+                      divisor: "1"
                 - name: GOMAXPROCS
                   valueFrom:
                     resourceFieldRef:
                       resource: limits.cpu
+                      divisor: "1"
                 - name: ISTIO_META_CLUSTER_ID
                   value: "{{ valueOrDefault .Values.global.multiCluster.clusterName .ClusterID }}"
                 - name: ISTIO_META_NODE_NAME
@@ -2763,7 +2781,7 @@ data:
           name: {{.DeploymentName | quote}}
           namespace: {{.Namespace | quote}}
           ownerReferences:
-          - apiVersion: gateway.networking.k8s.io/v1beta1
+          - apiVersion: gateway.networking.k8s.io/v1
             kind: Gateway
             name: {{.Name}}
             uid: {{.UID}}
@@ -2798,7 +2816,7 @@ data:
                   "gateway.networking.k8s.io/gateway-class-name" .GatewayClass
                   ) | nindent 4 }}
           ownerReferences:
-            - apiVersion: gateway.networking.k8s.io/v1beta1
+            - apiVersion: gateway.networking.k8s.io/v1
               kind: Gateway
               name: {{.Name}}
               uid: "{{.UID}}"
@@ -2824,7 +2842,313 @@ data:
                   "gateway.networking.k8s.io/gateway-class-name" .GatewayClass
                   ) | nindent 4 }}
           ownerReferences:
-            - apiVersion: gateway.networking.k8s.io/v1beta1
+            - apiVersion: gateway.networking.k8s.io/v1
+              kind: Gateway
+              name: {{.Name}}
+              uid: "{{.UID}}"
+        spec:
+          selector:
+            matchLabels:
+              gateway.networking.k8s.io/gateway-name: {{.Name|quote}}
+      agentgateway: |
+        apiVersion: v1
+        kind: ServiceAccount
+        metadata:
+          name: {{.ServiceAccount | quote}}
+          namespace: {{.Namespace | quote}}
+          annotations:
+            {{- toJsonMap (omit .InfrastructureAnnotations "kubectl.kubernetes.io/last-applied-configuration" "gateway.istio.io/name-override" "gateway.istio.io/service-account" "gateway.istio.io/controller-version") | nindent 4 }}
+          labels:
+            {{- toJsonMap
+              .InfrastructureLabels
+              (strdict
+                "gateway.networking.k8s.io/gateway-name" .Name
+                "gateway.networking.k8s.io/gateway-class-name" .GatewayClass
+              ) | nindent 4 }}
+          ownerReferences:
+          - apiVersion: gateway.networking.k8s.io/v1
+            kind: Gateway
+            name: "{{.Name}}"
+            uid: "{{.UID}}"
+        ---
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: {{.DeploymentName | quote}}
+          namespace: {{.Namespace | quote}}
+          annotations:
+            {{- toJsonMap (omit .InfrastructureAnnotations "kubectl.kubernetes.io/last-applied-configuration" "gateway.istio.io/name-override" "gateway.istio.io/service-account" "gateway.istio.io/controller-version") | nindent 4 }}
+          labels:
+            {{- toJsonMap
+              .InfrastructureLabels
+              (strdict
+                "gateway.networking.k8s.io/gateway-name" .Name
+                "gateway.networking.k8s.io/gateway-class-name" .GatewayClass
+                "gateway.istio.io/managed" "istio.io-agentgateway-controller"
+              ) | nindent 4 }}
+          ownerReferences:
+          - apiVersion: gateway.networking.k8s.io/v1
+            kind: Gateway
+            name: {{.Name}}
+            uid: "{{.UID}}"
+        spec:
+          selector:
+            matchLabels:
+              "{{.GatewayNameLabel}}": {{.Name}}
+          template:
+            metadata:
+              annotations:
+                {{- toJsonMap
+                  (omit .InfrastructureAnnotations "kubectl.kubernetes.io/last-applied-configuration" "gateway.istio.io/name-override" "gateway.istio.io/service-account" "gateway.istio.io/controller-version")
+                  (strdict "istio.io/rev" (.Revision | default "default"))
+                  (strdict
+                    "prometheus.io/path" "/stats/prometheus"
+                    "prometheus.io/port" "15020"
+                    "prometheus.io/scrape" "true"
+                  ) | nindent 8 }}
+              labels:
+                {{- toJsonMap
+                  (strdict
+                    "sidecar.istio.io/inject" "false"
+                    "service.istio.io/canonical-name" .DeploymentName
+                    "service.istio.io/canonical-revision" "latest"
+                   )
+                  .InfrastructureLabels
+                  (strdict
+                    "gateway.networking.k8s.io/gateway-name" .Name
+                    "gateway.networking.k8s.io/gateway-class-name" .GatewayClass
+                    "gateway.istio.io/managed" "istio.io-agentgateway-controller"
+                  ) | nindent 8 }}
+            spec:
+              securityContext:
+              {{- if .Values.gateways.securityContext }}
+                {{- toYaml .Values.gateways.securityContext | nindent 8 }}
+              {{- else }}
+                sysctls:
+                - name: net.ipv4.ip_unprivileged_port_start # allows binding to 80 and 443 without root
+                  value: "0"
+              {{- if .Values.gateways.seccompProfile }}
+                seccompProfile:
+              {{- toYaml .Values.gateways.seccompProfile | nindent 10 }}
+              {{- end }}
+              {{- end }}
+              serviceAccountName: {{.ServiceAccount | quote}}
+              containers:
+              - name: agentgateway
+              {{- if contains "/" (annotation .ObjectMeta `gateway.istio.io/agentgatewayImage` .Values.global.agentgateway.image) }}
+                image: "{{ annotation .ObjectMeta `gateway.istio.io/agentgatewayImage` .Values.global.agentgateway.image }}"
+              {{- else }}
+                image: "{{ .AgentgatewayImage }}"
+              {{- end }}
+                {{- if .Values.global.proxy.resources }}
+                resources:
+                  {{- toYaml .Values.global.proxy.resources | nindent 10 }}
+                {{- end }}
+                {{with .Values.global.imagePullPolicy }}imagePullPolicy: "{{.}}"{{end}}
+                securityContext:
+                  capabilities:
+                    drop:
+                    - ALL
+                  allowPrivilegeEscalation: false
+                  privileged: false
+                  readOnlyRootFilesystem: true
+                  runAsUser: {{ .ProxyUID | default "10101" }}
+                  runAsGroup: {{ .ProxyGID | default "10101" }}
+                  runAsNonRoot: true
+                ports:
+                - containerPort: 15020
+                  name: metrics
+                  protocol: TCP
+                - containerPort: 15021
+                  name: status-port
+                  protocol: TCP
+                args:
+                - --config
+                - '{}'
+              {{- if .Values.global.proxy.lifecycle }}
+                lifecycle:
+                  {{- toYaml .Values.global.proxy.lifecycle | nindent 10 }}
+              {{- end }}
+                env:
+                - name: POD_NAME
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.name
+                - name: POD_NAMESPACE
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.namespace
+                - name: NAMESPACE
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: metadata.namespace
+                - name: INSTANCE_IP
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: status.podIP
+                - name: SERVICE_ACCOUNT
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: spec.serviceAccountName
+                - name: CPU_LIMIT
+                  valueFrom:
+                    resourceFieldRef:
+                      resource: limits.cpu
+                      divisor: "1"
+                - name: GATEWAY
+                  value: {{.Name|quote}}
+                - name: RUST_BACKTRACE
+                  value: "1"
+                - name: CLUSTER_ID
+                  value: "{{ valueOrDefault .Values.global.multiCluster.clusterName .ClusterID }}"
+                {{- with (valueOrDefault  (index .InfrastructureLabels "topology.istio.io/network") .Values.global.network) }}
+                - name: NETWORK
+                  value: {{.|quote}}
+                {{- end }}
+                {{- with (valueOrDefault .MeshConfig.TrustDomain .Values.global.trustDomain)  }}
+                - name: TRUST_DOMAIN
+                  value: "{{ . }}"
+                {{- end }}
+                {{- range $key, $value := .ProxyConfig.ProxyMetadata }}
+                - name: {{ $key }}
+                  value: "{{ $value }}"
+                {{- end }}
+                - name: XDS_ADDRESS
+                  value: {{ .ProxyConfig.DiscoveryAddress | quote }}
+                startupProbe:
+                  failureThreshold: 30
+                  httpGet:
+                    path: /healthz/ready
+                    port: 15021
+                    scheme: HTTP
+                  initialDelaySeconds: 1
+                  periodSeconds: 1
+                  successThreshold: 1
+                  timeoutSeconds: 1
+                readinessProbe:
+                  failureThreshold: 4
+                  httpGet:
+                    path: /healthz/ready
+                    port: 15021
+                    scheme: HTTP
+                  initialDelaySeconds: 0
+                  periodSeconds: 15
+                  successThreshold: 1
+                  timeoutSeconds: 1
+                volumeMounts:
+                - mountPath: /var/run/secrets/xds
+                  name: istiod-ca-cert
+                - mountPath: /var/run/secrets/xds-tokens
+                  name: istio-token
+                - mountPath: /tmp
+                  name: tmp
+              volumes:
+              - emptyDir: {}
+                name: tmp
+              - name: istio-token
+                projected:
+                  sources:
+                  - serviceAccountToken:
+                      path: xds-token
+                      expirationSeconds: 43200
+                      audience: {{ .Values.global.sds.token.aud }}
+              {{- if eq .Values.global.pilotCertProvider "istiod" }}
+              - name: istiod-ca-cert
+              {{- if eq ((.Values.pilot).env).ENABLE_CLUSTER_TRUST_BUNDLE_API true }}
+                projected:
+                  sources:
+                  - clusterTrustBundle:
+                      name: istio.io:istiod-ca:{{ .Values.global.trustBundleName | default "root-cert" }}
+                      path: root-cert.pem
+              {{- else }}
+                configMap:
+                  name: {{ .Values.global.trustBundleName | default "istio-ca-root-cert" }}
+              {{- end }}
+              {{- end }}
+              {{- if .Values.global.imagePullSecrets }}
+              imagePullSecrets:
+                {{- range .Values.global.imagePullSecrets }}
+                - name: {{ . }}
+                {{- end }}
+              {{- end }}
+        ---
+        apiVersion: v1
+        kind: Service
+        metadata:
+          annotations:
+            {{ toJsonMap (omit .InfrastructureAnnotations "kubectl.kubernetes.io/last-applied-configuration" "gateway.istio.io/name-override" "gateway.istio.io/service-account" "gateway.istio.io/controller-version") | nindent 4 }}
+          labels:
+            {{- toJsonMap
+              .InfrastructureLabels
+              (strdict
+                "gateway.networking.k8s.io/gateway-name" .Name
+                "gateway.networking.k8s.io/gateway-class-name" .GatewayClass
+              ) | nindent 4 }}
+          name: {{.DeploymentName | quote}}
+          namespace: {{.Namespace | quote}}
+          ownerReferences:
+          - apiVersion: gateway.networking.k8s.io/v1
+            kind: Gateway
+            name: {{.Name}}
+            uid: {{.UID}}
+        spec:
+          ipFamilyPolicy: PreferDualStack
+          ports:
+          {{- range $key, $val := .Ports }}
+          - name: {{ $val.Name | quote }}
+            port: {{ $val.Port }}
+            protocol: TCP
+            appProtocol: {{ $val.AppProtocol }}
+          {{- end }}
+          selector:
+            "{{.GatewayNameLabel}}": {{.Name}}
+          {{- if and (.Spec.Addresses) (eq .ServiceType "LoadBalancer") }}
+          loadBalancerIP: {{ (index .Spec.Addresses 0).Value | quote}}
+          {{- end }}
+          type: {{ .ServiceType | quote }}
+        ---
+        apiVersion: autoscaling/v2
+        kind: HorizontalPodAutoscaler
+        metadata:
+          name: {{.DeploymentName | quote}}
+          namespace: {{.Namespace | quote}}
+          annotations:
+            {{- toJsonMap (omit .InfrastructureAnnotations "kubectl.kubernetes.io/last-applied-configuration" "gateway.istio.io/name-override" "gateway.istio.io/service-account" "gateway.istio.io/controller-version") | nindent 4 }}
+          labels:
+            {{- toJsonMap
+                  .InfrastructureLabels
+                  (strdict
+                  "gateway.networking.k8s.io/gateway-name" .Name
+                  "gateway.networking.k8s.io/gateway-class-name" .GatewayClass
+                  ) | nindent 4 }}
+          ownerReferences:
+            - apiVersion: gateway.networking.k8s.io/v1
+              kind: Gateway
+              name: {{.Name}}
+              uid: "{{.UID}}"
+        spec:
+          scaleTargetRef:
+            apiVersion: apps/v1
+            kind: Deployment
+            name:  {{.DeploymentName | quote}}
+          maxReplicas: 1
+        ---
+        apiVersion: policy/v1
+        kind: PodDisruptionBudget
+        metadata:
+          name: {{.DeploymentName | quote}}
+          namespace: {{.Namespace | quote}}
+          annotations:
+            {{- toJsonMap (omit .InfrastructureAnnotations "kubectl.kubernetes.io/last-applied-configuration" "gateway.istio.io/name-override" "gateway.istio.io/service-account" "gateway.istio.io/controller-version") | nindent 4 }}
+          labels:
+            {{- toJsonMap
+                  .InfrastructureLabels
+                  (strdict
+                  "gateway.networking.k8s.io/gateway-name" .Name
+                  "gateway.networking.k8s.io/gateway-class-name" .GatewayClass
+                  ) | nindent 4 }}
+          ownerReferences:
+            - apiVersion: gateway.networking.k8s.io/v1
               kind: Gateway
               name: {{.Name}}
               uid: "{{.UID}}"
@@ -2904,13 +3228,11 @@ data:
               "memory": "1024Mi"
             },
             "requests": {
-              "cpu": "10m",
-              "memory": "40Mi"
+              "cpu": "100m",
+              "memory": "128Mi"
             }
           },
-          "seccompProfile": {
-            "type": "RuntimeDefault"
-          },
+          "seccompProfile": {},
           "startupProbe": {
             "enabled": true,
             "failureThreshold": 600
@@ -2919,17 +3241,8 @@ data:
           "tracer": "none"
         },
         "proxy_init": {
-          "image": "proxyv2",
-          "resources": {
-            "limits": {
-              "cpu": "2000m",
-              "memory": "1024Mi"
-            },
-            "requests": {
-              "cpu": "10m",
-              "memory": "10Mi"
-            }
-          }
+          "forceApplyIptables": false,
+          "image": "proxyv2"
         },
         "remotePilotAddress": "",
         "resourceScope": "all",
@@ -2952,7 +3265,7 @@ data:
               "memory": "1Gi"
             },
             "requests": {
-              "cpu": "10m",
+              "cpu": "100m",
               "memory": "128Mi"
             }
           },
@@ -2986,8 +3299,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istiod
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: istiod-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: istiod-1.29.0
     install.operator.istio.io/owning-resource: unknown
     istio.io/rev: default
     operator.istio.io/component: Pilot
@@ -3278,8 +3591,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istiod
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: istiod-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: istiod-1.29.0
     install.operator.istio.io/owning-resource: unknown
     istio.io/rev: default
     operator.istio.io/component: Pilot
@@ -3296,8 +3609,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istiod
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: istiod-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: istiod-1.29.0
     install.operator.istio.io/owning-resource: unknown
     istio.io/rev: default
     operator.istio.io/component: Pilot
@@ -3453,8 +3766,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istio-cni
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: cni-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: cni-1.29.0
     install.operator.istio.io/owning-resource: unknown
     istio.io/rev: default
     k8s-app: istio-cni-node
@@ -3479,8 +3792,8 @@ spec:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: istio-cni
         app.kubernetes.io/part-of: istio
-        app.kubernetes.io/version: 1.28.0
-        helm.sh/chart: cni-1.28.0
+        app.kubernetes.io/version: 1.29.0
+        helm.sh/chart: cni-1.29.0
         istio.io/dataplane-mode: none
         k8s-app: istio-cni-node
         sidecar.istio.io/inject: 'false'
@@ -3569,7 +3882,7 @@ spec:
         kubernetes.io/os: linux
       priorityClassName: system-node-critical
       serviceAccountName: istio-cni
-      terminationGracePeriodSeconds: 5
+      terminationGracePeriodSeconds: 30
       tolerations:
       - effect: NoSchedule
         operator: Exists
@@ -3609,8 +3922,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istio-ingressgateway
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: istio-ingress-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: istio-ingress-1.29.0
     install.operator.istio.io/owning-resource: unknown
     istio: ingressgateway
     istio.io/dataplane-mode: none
@@ -3642,9 +3955,9 @@ spec:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: istio-ingressgateway
         app.kubernetes.io/part-of: istio
-        app.kubernetes.io/version: 1.28.0
+        app.kubernetes.io/version: 1.29.0
         chart: gateways
-        helm.sh/chart: istio-ingress-1.28.0
+        helm.sh/chart: istio-ingress-1.29.0
         heritage: Tiller
         install.operator.istio.io/owning-resource: unknown
         istio: ingressgateway
@@ -3702,6 +4015,7 @@ spec:
         - name: ISTIO_CPU_LIMIT
           valueFrom:
             resourceFieldRef:
+              divisor: '1'
               resource: limits.cpu
         - name: SERVICE_ACCOUNT
           valueFrom:
@@ -3843,8 +4157,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istiod
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: istiod-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: istiod-1.29.0
     install.operator.istio.io/owning-resource: unknown
     istio: pilot
     istio.io/rev: default
@@ -3872,8 +4186,8 @@ spec:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: istiod
         app.kubernetes.io/part-of: istio
-        app.kubernetes.io/version: 1.28.0
-        helm.sh/chart: istiod-1.28.0
+        app.kubernetes.io/version: 1.29.0
+        helm.sh/chart: istiod-1.29.0
         install.operator.istio.io/owning-resource: unknown
         istio: pilot
         istio.io/dataplane-mode: none
@@ -3922,11 +4236,6 @@ spec:
           value: 'false'
         - name: CLUSTER_ID
           value: Kubernetes
-        - name: GOMEMLIMIT
-          valueFrom:
-            resourceFieldRef:
-              divisor: '1'
-              resource: limits.memory
         - name: GOMAXPROCS
           valueFrom:
             resourceFieldRef:
@@ -4029,8 +4338,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istio-ingressgateway
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: istio-ingress-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: istio-ingress-1.29.0
     install.operator.istio.io/owning-resource: unknown
     istio.io/rev: default
     operator.istio.io/component: IngressGateways
@@ -4056,8 +4365,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istiod
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: istiod-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: istiod-1.29.0
     release: istio
   name: istiod
   namespace: istio-system
@@ -4103,8 +4412,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istio-ingressgateway
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: istio-ingress-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: istio-ingress-1.29.0
     install.operator.istio.io/owning-resource: unknown
     istio.io/rev: default
     operator.istio.io/component: IngressGateways
@@ -4128,8 +4437,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istiod
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: istiod-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: istiod-1.29.0
     release: istio
   name: istiod
   namespace: istio-system
@@ -4151,8 +4460,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istio-ingressgateway
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: istio-ingress-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: istio-ingress-1.29.0
     install.operator.istio.io/owning-resource: unknown
     istio: ingressgateway
     istio.io/rev: default
@@ -4184,8 +4493,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istiod
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: istiod-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: istiod-1.29.0
     install.operator.istio.io/owning-resource: unknown
     istio.io/rev: default
     operator.istio.io/component: Pilot
@@ -4217,8 +4526,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istio-ingressgateway
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: istio-ingress-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: istio-ingress-1.29.0
     install.operator.istio.io/owning-resource: unknown
     istio: ingressgateway
     istio.io/rev: default
@@ -4254,8 +4563,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: istiod
     app.kubernetes.io/part-of: istio
-    app.kubernetes.io/version: 1.28.0
-    helm.sh/chart: istiod-1.28.0
+    app.kubernetes.io/version: 1.29.0
+    helm.sh/chart: istiod-1.29.0
     install.operator.istio.io/owning-resource: unknown
     istio: pilot
     istio.io/rev: default
