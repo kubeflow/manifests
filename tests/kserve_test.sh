@@ -15,7 +15,7 @@ export KSERVE_TEST_NAMESPACE=${NAMESPACE}
 # InferenceService, predicts via host-based routing, asserts the
 # output, and deletes the InferenceService.
 pip install -q pytest
-python -m pytest "${SCRIPT_DIRECTORY}/kserve_sklearn_test.py" -vs --log-level info
+python -m pytest "${SCRIPT_DIRECTORY}/kserve_sklearn_test.py" -vs --log-cli-level=INFO
 
 # ============================================================
 # Test 2: Ingress Gateway -- Path-based & Host-based Routing (curl)
@@ -235,7 +235,7 @@ RESPONSE=$(curl -s -w "\n%{http_code}" \
     "http://${KSERVE_INGRESS_HOST_PORT}/")
 BODY=$(echo "$RESPONSE" | head -n -1)
 HTTP_CODE=$(echo "$RESPONSE" | tail -1)
-echo "Test 4 ksvc (no token): HTTP $HTTP_CODE | ${BODY:0:200}"
+echo "Test 4 Knative Service (no token): HTTP $HTTP_CODE | ${BODY:0:200}"
 
 if [ "$HTTP_CODE" != "403" ]; then
     echo "FAIL: Unauthenticated access should return 403, got $HTTP_CODE"
@@ -249,7 +249,7 @@ RESPONSE=$(curl -s -w "\n%{http_code}" \
     "http://${KSERVE_INGRESS_HOST_PORT}/")
 BODY=$(echo "$RESPONSE" | head -n -1)
 HTTP_CODE=$(echo "$RESPONSE" | tail -1)
-echo "Test 4 ksvc (invalid token): HTTP $HTTP_CODE | ${BODY:0:200}"
+echo "Test 4 Knative Service (invalid token): HTTP $HTTP_CODE | ${BODY:0:200}"
 
 if [ "$HTTP_CODE" != "401" ] && [ "$HTTP_CODE" != "403" ]; then
     echo "FAIL: Invalid token should return 401/403, got $HTTP_CODE"
