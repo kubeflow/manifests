@@ -1,4 +1,4 @@
-### Clean Coding standard
+### Clean Coding standards
 
 Code, documentation and feedback shall be in line with principal level scientific elegance, minimalism, conciseness and precision.
 That means explicitly long, expressive, pronounceable well chosen names instead of short abbreviating names.
