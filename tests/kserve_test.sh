@@ -18,7 +18,7 @@ pip install -q pytest
 python -m pytest "${SCRIPT_DIRECTORY}/kserve_sklearn_test.py" -vs --log-level info
 
 # ============================================================
-# Test 2: Ingress Gateway — Path-based & Host-based Routing (curl)
+# Test 2: Ingress Gateway -- Path-based & Host-based Routing (curl)
 # ============================================================
 # Re-deploy the InferenceService for bash/curl tests (pytest deleted it).
 cat <<EOF | kubectl apply -f -
@@ -42,7 +42,7 @@ EOF
 
 kubectl wait --for=condition=Ready inferenceservice/isvc-sklearn -n ${NAMESPACE} --timeout=300s
 
-# WARNING: allow-all rule — the predictor sidecar has no RequestAuthentication,
+# WARNING: allow-all rule -- the predictor sidecar has no RequestAuthentication,
 # so requestPrincipals: ["*"] cannot work here. Security is enforced at the
 # ingress gateway, which validates the JWT before forwarding traffic.
 cat <<EOF | kubectl apply -f -
@@ -77,7 +77,7 @@ RESPONSE=$(curl -s -w "\n%{http_code}" \
  -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}')
 BODY=$(echo "$RESPONSE" | head -n -1)
 HTTP_CODE=$(echo "$RESPONSE" | tail -1)
-echo "Test 2a path-based (no token): HTTP $HTTP_CODE | $BODY"
+echo "Test 2a path-based (no token): HTTP $HTTP_CODE | ${BODY:0:200}"
 
 if [ "$HTTP_CODE" != "403" ] && [ "$HTTP_CODE" != "302" ]; then
   echo "FAIL: Path-based: Expected 403/302 without token, got $HTTP_CODE"
@@ -92,7 +92,7 @@ RESPONSE=$(curl -s -w "\n%{http_code}" \
  -d '{"instances": [[6.8, 2.8, 4.8, 1.4], [6.0, 3.4, 4.5, 1.6]]}')
 BODY=$(echo "$RESPONSE" | head -n -1)
 HTTP_CODE=$(echo "$RESPONSE" | tail -1)
-echo "Test 2a path-based (with token): HTTP $HTTP_CODE | $BODY"
+echo "Test 2a path-based (with token): HTTP $HTTP_CODE | ${BODY:0:200}"
 
 if [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "404" ] && [ "$HTTP_CODE" != "503" ]; then
   echo "FAIL: Path-based: Expected 200/404/503 with token, got $HTTP_CODE"
@@ -110,7 +110,7 @@ RESPONSE=$(curl -s -w "\n%{http_code}" \
  -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}')
 BODY=$(echo "$RESPONSE" | head -n -1)
 HTTP_CODE=$(echo "$RESPONSE" | tail -1)
-echo "Test 2b host-based (no token): HTTP $HTTP_CODE | $BODY"
+echo "Test 2b host-based (no token): HTTP $HTTP_CODE | ${BODY:0:200}"
 
 if [ "$HTTP_CODE" != "403" ] && [ "$HTTP_CODE" != "302" ]; then
   echo "FAIL: Host-based: Expected 403/302 without token, got $HTTP_CODE"
@@ -127,7 +127,7 @@ RESPONSE=$(curl -s -w "\n%{http_code}" \
  -d '{"instances": [[6.8, 2.8, 4.8, 1.4], [6.0, 3.4, 4.5, 1.6]]}')
 BODY=$(echo "$RESPONSE" | head -n -1)
 HTTP_CODE=$(echo "$RESPONSE" | tail -1)
-echo "Test 2b host-based (with token): HTTP $HTTP_CODE | $BODY"
+echo "Test 2b host-based (with token): HTTP $HTTP_CODE | ${BODY:0:200}"
 
 if [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "404" ] && [ "$HTTP_CODE" != "503" ]; then
   echo "FAIL: Host-based: Expected 200/404/503 with token, got $HTTP_CODE"
@@ -191,7 +191,7 @@ UNAUTH_TOKEN="$(kubectl -n default create token default)"
 RESPONSE=$(curl -s -w "\n%{http_code}" "${BASE_URL}/api/namespaces/${NAMESPACE}/inferenceservices" -H "Authorization: Bearer ${UNAUTH_TOKEN}")
 BODY=$(echo "$RESPONSE" | head -n -1)
 HTTP_CODE=$(echo "$RESPONSE" | tail -1)
-echo "Test 3 models web application (unauth): HTTP $HTTP_CODE | $BODY"
+echo "Test 3 models web application (unauth): HTTP $HTTP_CODE | ${BODY:0:200}"
 [[ "$HTTP_CODE" == "403" || "$HTTP_CODE" == "401" ]] || { echo "FAILURE: Expected 401/403, got $HTTP_CODE"; exit 1; }
 echo "Models Web Application: Token from unauthorized ServiceAccount cannot list InferenceServices in $NAMESPACE namespace."
 
@@ -217,6 +217,13 @@ spec:
         env:
         - name: TARGET
           value: "Secure KServe Model"
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop: ["ALL"]
 EOF
 
 kubectl wait --for=condition=Ready ksvc/secure-model-predictor -n ${NAMESPACE} --timeout=120s
@@ -227,7 +234,7 @@ RESPONSE=$(curl -s -w "\n%{http_code}" \
     "http://${KSERVE_INGRESS_HOST_PORT}/")
 BODY=$(echo "$RESPONSE" | head -n -1)
 HTTP_CODE=$(echo "$RESPONSE" | tail -1)
-echo "Test 4 ksvc (no token): HTTP $HTTP_CODE | $BODY"
+echo "Test 4 ksvc (no token): HTTP $HTTP_CODE | ${BODY:0:200}"
 
 if [ "$HTTP_CODE" != "403" ]; then
     echo "FAIL: Unauthenticated access should return 403, got $HTTP_CODE"
@@ -241,7 +248,7 @@ RESPONSE=$(curl -s -w "\n%{http_code}" \
     "http://${KSERVE_INGRESS_HOST_PORT}/")
 BODY=$(echo "$RESPONSE" | head -n -1)
 HTTP_CODE=$(echo "$RESPONSE" | tail -1)
-echo "Test 4 ksvc (invalid token): HTTP $HTTP_CODE | $BODY"
+echo "Test 4 ksvc (invalid token): HTTP $HTTP_CODE | ${BODY:0:200}"
 
 if [ "$HTTP_CODE" != "401" ] && [ "$HTTP_CODE" != "403" ]; then
     echo "FAIL: Invalid token should return 401/403, got $HTTP_CODE"
@@ -261,14 +268,14 @@ RESPONSE=$(curl -s -w "\n%{http_code}" \
     "http://localhost:8081/")
 BODY=$(echo "$RESPONSE" | head -n -1)
 HTTP_CODE=$(echo "$RESPONSE" | tail -1)
-echo "Test 5 cluster-local (with token): HTTP $HTTP_CODE | $BODY"
+echo "Test 5 cluster-local (with token): HTTP $HTTP_CODE | ${BODY:0:200}"
 
 RESPONSE=$(curl -s -w "\n%{http_code}" \
     -H "Host: secure-model-predictor.${NAMESPACE}.svc.cluster.local" \
     "http://localhost:8081/")
 BODY=$(echo "$RESPONSE" | head -n -1)
 HTTP_CODE=$(echo "$RESPONSE" | tail -1)
-echo "Test 5 cluster-local (no token): HTTP $HTTP_CODE | $BODY"
+echo "Test 5 cluster-local (no token): HTTP $HTTP_CODE | ${BODY:0:200}"
 
 if [ "$HTTP_CODE" != "403" ]; then
     echo "FAIL: Cluster-local-gateway unauthenticated access should return 403, got $HTTP_CODE"
@@ -295,7 +302,7 @@ RESPONSE=$(curl -s -w "\n%{http_code}" \
     "http://localhost:8081/")
 BODY=$(echo "$RESPONSE" | head -n -1)
 HTTP_CODE=$(echo "$RESPONSE" | tail -1)
-echo "Test 6 namespace isolation (attacker, no token): HTTP $HTTP_CODE | $BODY"
+echo "Test 6 namespace isolation (attacker, no token): HTTP $HTTP_CODE | ${BODY:0:200}"
 
 if [ "$HTTP_CODE" == "200" ]; then
     echo "FAIL: Unauthenticated attacker namespace request should be rejected, got $HTTP_CODE"
@@ -311,7 +318,7 @@ RESPONSE=$(curl -s -w "\n%{http_code}" \
     "http://localhost:8081/")
 BODY=$(echo "$RESPONSE" | head -n -1)
 HTTP_CODE=$(echo "$RESPONSE" | tail -1)
-echo "Test 6 namespace isolation (attacker, with token): HTTP $HTTP_CODE | $BODY"
+echo "Test 6 namespace isolation (attacker, with token): HTTP $HTTP_CODE | ${BODY:0:200}"
 
 if [ "$HTTP_CODE" == "200" ]; then
     echo "FAIL: Attacker namespace token should be rejected (namespace isolation), got $HTTP_CODE"
@@ -380,7 +387,7 @@ RESPONSE=$(curl -s -w "\n%{http_code}" \
  -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}')
 BODY=$(echo "$RESPONSE" | head -n -1)
 HTTP_CODE=$(echo "$RESPONSE" | tail -1)
-echo "Test 7a raw deployment (no token): HTTP $HTTP_CODE | $BODY"
+echo "Test 7a raw deployment (no token): HTTP $HTTP_CODE | ${BODY:0:200}"
 
 if [ "$HTTP_CODE" != "403" ] && [ "$HTTP_CODE" != "302" ]; then
   echo "FAIL: Raw deployment: Expected 403/302 without token, got $HTTP_CODE"
@@ -396,7 +403,7 @@ RESPONSE=$(curl -s -w "\n%{http_code}" \
  -d '{"instances": [[6.8, 2.8, 4.8, 1.4], [6.0, 3.4, 4.5, 1.6]]}')
 BODY=$(echo "$RESPONSE" | head -n -1)
 HTTP_CODE=$(echo "$RESPONSE" | tail -1)
-echo "Test 7b raw deployment (with token): HTTP $HTTP_CODE | $BODY"
+echo "Test 7b raw deployment (with token): HTTP $HTTP_CODE | ${BODY:0:200}"
 
 if [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "404" ] && [ "$HTTP_CODE" != "503" ]; then
   echo "FAIL: Raw deployment: Expected 200/404/503 with token, got $HTTP_CODE"
