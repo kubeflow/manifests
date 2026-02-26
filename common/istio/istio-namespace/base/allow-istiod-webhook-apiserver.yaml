@@ -10,7 +10,7 @@ spec:
       operator: In
       values:
       - istiod
-  # The kubernetes api server must reach the webhook
+  # Kubernetes API server must reach Istiod injector webhook admission port.
   ingress:
   - ports:
     - protocol: TCP

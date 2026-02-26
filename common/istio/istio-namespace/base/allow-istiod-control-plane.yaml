@@ -7,12 +7,10 @@ spec:
   podSelector:
     matchLabels:
       app: istiod
+  # istiod xDS/control-plane port must be reachable by injected workloads.
+  # Keep this open to all namespaces to avoid breaking sidecar connectivity.
   ingress:
-  - from:
-    - namespaceSelector:
-        matchLabels:
-          istio-injection: enabled
-    ports:
+  - ports:
     - protocol: TCP
       port: 15012
   policyTypes:

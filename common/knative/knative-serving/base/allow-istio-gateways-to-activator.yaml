@@ -10,6 +10,7 @@ spec:
       operator: In
       values:
       - activator
+  # Allow Istio ingress gateways to reach Knative activator service port.
   ingress:
   - from:
     - namespaceSelector:

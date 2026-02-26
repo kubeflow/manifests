@@ -10,6 +10,8 @@ spec:
       operator: In
       values:
       - oauth2-proxy
+  # Istio ingressgateway must reach oauth2-proxy to serve auth-protected
+  # Kubeflow endpoints. Without this, external auth redirects fail.
   ingress:
   - from:
     - namespaceSelector:

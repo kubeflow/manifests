@@ -11,6 +11,7 @@ spec:
       values:
       - istio-ingressgateway
       - cluster-local-gateway
+  # Allow knative-serving activator/proxy traffic into Istio gateways.
   ingress:
   - from:
     - namespaceSelector:

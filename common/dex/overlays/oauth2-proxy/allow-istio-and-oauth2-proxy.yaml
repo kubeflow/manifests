@@ -7,6 +7,8 @@ spec:
   podSelector:
     matchLabels:
       app: dex
+  # Dex must be reachable by oauth2-proxy for OIDC flows and by Istio
+  # components that route/authenticate external dashboard traffic.
   ingress:
   - from:
     - namespaceSelector:

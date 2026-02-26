@@ -14,7 +14,7 @@ spec:
       operator: In
       values:
       - net-istio-webhook
-  # The kubernetes api server must reach the webhook
+  # Kubernetes API server must reach net-istio webhook admission port.
   ingress:
   - ports:
     - protocol: TCP
