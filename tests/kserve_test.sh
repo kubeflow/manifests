@@ -218,6 +218,7 @@ spec:
         - name: TARGET
           value: "Secure KServe Model"
         securityContext:
+          runAsUser: 65534
           allowPrivilegeEscalation: false
           runAsNonRoot: true
           seccompProfile:
