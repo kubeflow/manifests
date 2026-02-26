@@ -9,3 +9,4 @@ Code is more often read than written and most of the costs come from maintenance
 Code and documentation must be readable as proper technical English text, especially traditional elaborated English.
 What is not tested is not supported.
 Automation is the best documentation.
+We do trunk-based development in the master branch.
