@@ -1,17 +1,12 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: kubeflow
+
 resources:
+- namespace.yaml
 - cache-server.yaml
 - centraldashboard.yaml
-- cert-manager-webhook.yaml
 - default-allow-same-namespace.yaml
-- default-allow-same-namespace-kubeflow-system.yaml
-- default-allow-same-namespace-knative-serving.yaml
-- default-allow-same-namespace-cert-manager.yaml
-- default-allow-same-namespace-istio-system.yaml
-- default-allow-same-namespace-oauth2-proxy.yaml
-- default-allow-same-namespace-auth.yaml
 - jupyter-web-app.yaml
 - katib-controller.yaml
 - katib-db-manager.yaml
@@ -20,7 +15,6 @@ resources:
 - kserve.yaml
 - metadata-envoy.yaml
 - metadata-grpc-server.yaml
-- minio.yaml
 - ml-pipeline-ui.yaml
 - ml-pipeline.yaml
 - model-catalog.yaml
@@ -30,7 +24,5 @@ resources:
 - pvcviewer-webhook.yaml
 - spark-operator-webhook.yaml
 - tensorboards-web-app.yaml
-- trainer-webhook-kubeflow-system.yaml
-- jobset-webhook-kubeflow-system.yaml
 - training-operator-webhook.yaml
 - volumes-web-app.yaml

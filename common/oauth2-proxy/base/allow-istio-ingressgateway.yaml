@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-istio-ingressgateway
+  namespace: oauth2-proxy
+spec:
+  podSelector:
+    matchExpressions:
+    - key: app.kubernetes.io/name
+      operator: In
+      values:
+      - oauth2-proxy
+  # Istio ingressgateway must reach oauth2-proxy to serve auth-protected
+  # Kubeflow endpoints. Without this, external auth redirects fail.
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+          - istio-system
+      podSelector:
+        matchLabels:
+          app: istio-ingressgateway
+  policyTypes:
+  - Ingress

@@ -1,0 +1,23 @@
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: net-istio-webhook-apiserver
+  namespace: knative-serving
+spec:
+  podSelector:
+    matchExpressions:
+    - key: app
+      operator: In
+      values:
+      - net-istio-webhook
+    - key: role
+      operator: In
+      values:
+      - net-istio-webhook
+  # Kubernetes API server must reach net-istio webhook admission port.
+  ingress:
+  - ports:
+    - protocol: TCP
+      port: 8443
+  policyTypes:
+  - Ingress
