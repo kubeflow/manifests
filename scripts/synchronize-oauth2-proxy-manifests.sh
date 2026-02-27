@@ -7,7 +7,7 @@ source "${SCRIPT_DIRECTORY}/library.sh"
 setup_error_handling
 
 COMPONENT_NAME="oauth2-proxy"
-OAUTH2_PROXY_RELEASE="v7.10.0" # Must be a release
+OAUTH2_PROXY_RELEASE="v7.14.3" # Must be a release
 BRANCH_NAME=${BRANCH_NAME:=synchronize-${COMPONENT_NAME}-manifests-${OAUTH2_PROXY_RELEASE?}}
 
 MANIFESTS_DIRECTORY=$(dirname $SCRIPT_DIRECTORY)
