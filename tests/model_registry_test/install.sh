@@ -9,7 +9,7 @@ echo "Installing Model Registry components..."
 
 # Build and apply Model Registry server with database
 echo "Deploying Model Registry server (with database)..."
-kustomize build applications/model-registry/upstream/overlays/db \
+kustomize build applications/model-registry/upstream/overlays/postgres \
   | kubectl apply -n kubeflow -f -
 
 # Build and apply Model Registry Istio networking
