@@ -7,7 +7,7 @@ source "${SCRIPT_DIRECTORY}/library.sh"
 setup_error_handling
 
 COMPONENT_NAME="cert-manager"
-CERT_MANAGER_RELEASE="v1.16.1" # Must be a release tag in cert-manager/cert-manager
+CERT_MANAGER_RELEASE="v1.19.4" # Must be a release tag in cert-manager/cert-manager
 BRANCH_NAME=${BRANCH_NAME:=synchronize-${COMPONENT_NAME}-manifests-${CERT_MANAGER_RELEASE?}}
 
 MANIFESTS_DIRECTORY=$(dirname $SCRIPT_DIRECTORY)
