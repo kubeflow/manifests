@@ -68,13 +68,18 @@ kubectl cluster-info
 
 echo "Install Kustomize ..."
 {
-    curl --silent --location --remote-name "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_amd64.tar.gz"
-    curl --silent --location "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F${KUSTOMIZE_VERSION}/checksums.txt" | grep "linux_amd64" > checksums.txt
+    KUSTOMIZE_ASSET="kustomize_${KUSTOMIZE_VERSION}_linux_amd64.tar.gz"
+    curl --fail --show-error --silent --location --remote-name "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F${KUSTOMIZE_VERSION}/${KUSTOMIZE_ASSET}"
+    curl --fail --show-error --silent --location "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F${KUSTOMIZE_VERSION}/checksums.txt" | grep "  ${KUSTOMIZE_ASSET}$" > checksums.txt
+    if [ "$(wc -l < checksums.txt)" -ne 1 ]; then
+       echo "Failed to verify Kustomize checksums: expected exactly one checksum entry for ${KUSTOMIZE_ASSET}"
+       exit 1
+    fi
     if ! sha256sum --check checksums.txt; then
        echo "Failed to verify Kustomize checksums"
        exit 1
     fi
-    tar -xzvf "kustomize_${KUSTOMIZE_VERSION}_linux_amd64.tar.gz"
+    tar -xzvf "${KUSTOMIZE_ASSET}"
     chmod a+x kustomize
     sudo mv kustomize /usr/local/bin/kustomize
 } || { echo "Failed to install Kustomize"; exit 1; }
