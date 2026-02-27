@@ -22,6 +22,11 @@ echo "Deploying Model Registry UI..."
 kustomize build applications/model-registry/upstream/options/ui/overlays/istio \
   | kubectl apply -n kubeflow -f -
 
+# Build and apply Model Registry Catalog (demo)
+echo "Deploying Model Registry Catalog..."
+kustomize build applications/model-registry/upstream/options/catalog/overlays/demo \
+  | kubectl apply -n kubeflow -f -
+
 # Wait for Model Registry database deployment
 echo "Waiting for Model Registry database to become ready..."
 if ! kubectl wait --for=condition=available -n kubeflow deployment/model-registry-db --timeout=120s; then
