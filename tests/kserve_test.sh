@@ -15,10 +15,10 @@ export KSERVE_TEST_NAMESPACE=${NAMESPACE}
 # InferenceService, predicts via host-based routing, asserts the
 # output, and deletes the InferenceService.
 pip install -q pytest
-python -m pytest "${SCRIPT_DIRECTORY}/kserve_sklearn_test.py" -vs --log-level info
+python -m pytest "${SCRIPT_DIRECTORY}/kserve_sklearn_test.py" -vs --log-cli-level=INFO
 
 # ============================================================
-# Test 2: Ingress Gateway — Path-based & Host-based Routing (curl)
+# Test 2: Ingress Gateway -- Path-based & Host-based Routing (curl)
 # ============================================================
 # Re-deploy the InferenceService for bash/curl tests (pytest deleted it).
 cat <<EOF | kubectl apply -f -
@@ -42,7 +42,7 @@ EOF
 
 kubectl wait --for=condition=Ready inferenceservice/isvc-sklearn -n ${NAMESPACE} --timeout=300s
 
-# WARNING: allow-all rule — the predictor sidecar has no RequestAuthentication,
+# WARNING: allow-all rule -- the predictor sidecar has no RequestAuthentication,
 # so requestPrincipals: ["*"] cannot work here. Security is enforced at the
 # ingress gateway, which validates the JWT before forwarding traffic.
 cat <<EOF | kubectl apply -f -
@@ -71,25 +71,31 @@ sleep 60
 # validates the JWT.
 
 # Request without token should be rejected
-RESPONSE_NO_TOKEN=$(curl -s -o /dev/null -w "%{http_code}" \
+RESPONSE=$(curl -s -w "\n%{http_code}" \
  -H "Content-Type: application/json" \
  "http://${KSERVE_INGRESS_HOST_PORT}/serving/${NAMESPACE}/isvc-sklearn/v1/models/isvc-sklearn:predict" \
  -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}')
+BODY=$(echo "$RESPONSE" | head -n -1)
+HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+echo "Test 2a path-based (no token): HTTP $HTTP_CODE | ${BODY:0:200}"
 
-if [ "$RESPONSE_NO_TOKEN" != "403" ] && [ "$RESPONSE_NO_TOKEN" != "302" ]; then
-  echo "FAIL: Path-based: Expected 403/302 without token, got $RESPONSE_NO_TOKEN"
+if [ "$HTTP_CODE" != "403" ] && [ "$HTTP_CODE" != "302" ]; then
+  echo "FAIL: Path-based: Expected 403/302 without token, got $HTTP_CODE"
   exit 1
 fi
 
 # Request with valid token should succeed
-RESPONSE_WITH_TOKEN=$(curl -s -o /dev/null -w "%{http_code}" \
+RESPONSE=$(curl -s -w "\n%{http_code}" \
  -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
  -H "Content-Type: application/json" \
  "http://${KSERVE_INGRESS_HOST_PORT}/serving/${NAMESPACE}/isvc-sklearn/v1/models/isvc-sklearn:predict" \
  -d '{"instances": [[6.8, 2.8, 4.8, 1.4], [6.0, 3.4, 4.5, 1.6]]}')
+BODY=$(echo "$RESPONSE" | head -n -1)
+HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+echo "Test 2a path-based (with token): HTTP $HTTP_CODE | ${BODY:0:200}"
 
-if [ "$RESPONSE_WITH_TOKEN" != "200" ] && [ "$RESPONSE_WITH_TOKEN" != "404" ] && [ "$RESPONSE_WITH_TOKEN" != "503" ]; then
-  echo "FAIL: Path-based: Expected 200/404/503 with token, got $RESPONSE_WITH_TOKEN"
+if [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "404" ] && [ "$HTTP_CODE" != "503" ]; then
+  echo "FAIL: Path-based: Expected 200/404/503 with token, got $HTTP_CODE"
   exit 1
 fi
 
@@ -97,28 +103,34 @@ fi
 HOST_HEADER="Host: isvc-sklearn.${NAMESPACE}.example.com"
 
 # Request without token should be rejected
-RESPONSE_HOST_NO_TOKEN=$(curl -s -o /dev/null -w "%{http_code}" \
+RESPONSE=$(curl -s -w "\n%{http_code}" \
  -H "${HOST_HEADER}" \
  -H "Content-Type: application/json" \
  "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/isvc-sklearn:predict" \
  -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}')
+BODY=$(echo "$RESPONSE" | head -n -1)
+HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+echo "Test 2b host-based (no token): HTTP $HTTP_CODE | ${BODY:0:200}"
 
-if [ "$RESPONSE_HOST_NO_TOKEN" != "403" ] && [ "$RESPONSE_HOST_NO_TOKEN" != "302" ]; then
-  echo "FAIL: Host-based: Expected 403/302 without token, got $RESPONSE_HOST_NO_TOKEN"
+if [ "$HTTP_CODE" != "403" ] && [ "$HTTP_CODE" != "302" ]; then
+  echo "FAIL: Host-based: Expected 403/302 without token, got $HTTP_CODE"
   exit 1
 fi
 
 # Request with valid token should succeed (the AuthorizationPolicy
 # allows any request with a valid JWT principal)
-RESPONSE_HOST_WITH_TOKEN=$(curl -s -o /dev/null -w "%{http_code}" \
+RESPONSE=$(curl -s -w "\n%{http_code}" \
  -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
  -H "${HOST_HEADER}" \
  -H "Content-Type: application/json" \
  "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/isvc-sklearn:predict" \
  -d '{"instances": [[6.8, 2.8, 4.8, 1.4], [6.0, 3.4, 4.5, 1.6]]}')
+BODY=$(echo "$RESPONSE" | head -n -1)
+HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+echo "Test 2b host-based (with token): HTTP $HTTP_CODE | ${BODY:0:200}"
 
-if [ "$RESPONSE_HOST_WITH_TOKEN" != "200" ] && [ "$RESPONSE_HOST_WITH_TOKEN" != "404" ] && [ "$RESPONSE_HOST_WITH_TOKEN" != "503" ]; then
-  echo "FAIL: Host-based: Expected 200/404/503 with token, got $RESPONSE_HOST_WITH_TOKEN"
+if [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "404" ] && [ "$HTTP_CODE" != "503" ]; then
+  echo "FAIL: Host-based: Expected 200/404/503 with token, got $HTTP_CODE"
   exit 1
 fi
 
@@ -176,7 +188,10 @@ kubectl delete inferenceservice sklearn-iris -n ${NAMESPACE} || exit 1
 
 # Test unauthorized access to models web application
 UNAUTH_TOKEN="$(kubectl -n default create token default)"
-HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "${BASE_URL}/api/namespaces/${NAMESPACE}/inferenceservices" -H "Authorization: Bearer ${UNAUTH_TOKEN}")
+RESPONSE=$(curl -s -w "\n%{http_code}" "${BASE_URL}/api/namespaces/${NAMESPACE}/inferenceservices" -H "Authorization: Bearer ${UNAUTH_TOKEN}")
+BODY=$(echo "$RESPONSE" | head -n -1)
+HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+echo "Test 3 models web application (unauth): HTTP $HTTP_CODE | ${BODY:0:200}"
 [[ "$HTTP_CODE" == "403" || "$HTTP_CODE" == "401" ]] || { echo "FAILURE: Expected 401/403, got $HTTP_CODE"; exit 1; }
 echo "Models Web Application: Token from unauthorized ServiceAccount cannot list InferenceServices in $NAMESPACE namespace."
 
@@ -202,28 +217,42 @@ spec:
         env:
         - name: TARGET
           value: "Secure KServe Model"
+        securityContext:
+          runAsUser: 65534
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
+          capabilities:
+            drop: ["ALL"]
 EOF
 
 kubectl wait --for=condition=Ready ksvc/secure-model-predictor -n ${NAMESPACE} --timeout=120s
 
 # Verify unauthenticated access is blocked
-RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
+RESPONSE=$(curl -s -w "\n%{http_code}" \
     -H "Host: secure-model-predictor.${NAMESPACE}.svc.cluster.local" \
     "http://${KSERVE_INGRESS_HOST_PORT}/")
+BODY=$(echo "$RESPONSE" | head -n -1)
+HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+echo "Test 4 Knative Service (no token): HTTP $HTTP_CODE | ${BODY:0:200}"
 
-if [ "$RESPONSE" != "403" ]; then
-    echo "FAIL: Unauthenticated access should return 403, got $RESPONSE"
+if [ "$HTTP_CODE" != "403" ]; then
+    echo "FAIL: Unauthenticated access should return 403, got $HTTP_CODE"
     exit 1
 fi
 
 # Verify invalid token is rejected
-RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
+RESPONSE=$(curl -s -w "\n%{http_code}" \
     -H "Host: secure-model-predictor.${NAMESPACE}.svc.cluster.local" \
     -H "Authorization: Bearer invalid-token" \
     "http://${KSERVE_INGRESS_HOST_PORT}/")
+BODY=$(echo "$RESPONSE" | head -n -1)
+HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+echo "Test 4 Knative Service (invalid token): HTTP $HTTP_CODE | ${BODY:0:200}"
 
-if [ "$RESPONSE" != "401" ] && [ "$RESPONSE" != "403" ]; then
-    echo "FAIL: Invalid token should return 401/403, got $RESPONSE"
+if [ "$HTTP_CODE" != "401" ] && [ "$HTTP_CODE" != "403" ]; then
+    echo "FAIL: Invalid token should return 401/403, got $HTTP_CODE"
     exit 1
 fi
 
@@ -234,17 +263,23 @@ kubectl port-forward -n istio-system svc/cluster-local-gateway 8081:80 &
 PF_PID=$!
 sleep 5
 
-curl -s -o /dev/null -w "%{http_code}" \
+RESPONSE=$(curl -s -w "\n%{http_code}" \
     -H "Host: secure-model-predictor.${NAMESPACE}.svc.cluster.local" \
     -H "Authorization: Bearer $KSERVE_M2M_TOKEN" \
-    "http://localhost:8081/" > /dev/null
+    "http://localhost:8081/")
+BODY=$(echo "$RESPONSE" | head -n -1)
+HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+echo "Test 5 cluster-local (with token): HTTP $HTTP_CODE | ${BODY:0:200}"
 
-RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
+RESPONSE=$(curl -s -w "\n%{http_code}" \
     -H "Host: secure-model-predictor.${NAMESPACE}.svc.cluster.local" \
     "http://localhost:8081/")
+BODY=$(echo "$RESPONSE" | head -n -1)
+HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+echo "Test 5 cluster-local (no token): HTTP $HTTP_CODE | ${BODY:0:200}"
 
-if [ "$RESPONSE" != "403" ]; then
-    echo "FAIL: Cluster-local-gateway unauthenticated access should return 403, got $RESPONSE"
+if [ "$HTTP_CODE" != "403" ]; then
+    echo "FAIL: Cluster-local-gateway unauthenticated access should return 403, got $HTTP_CODE"
     exit 1
 fi
 
@@ -263,26 +298,117 @@ metadata:
 EOF
 
 # Unauthenticated request from attacker namespace should be REJECTED
-RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
+RESPONSE=$(curl -s -w "\n%{http_code}" \
     -H "Host: secure-model-predictor.${NAMESPACE}.svc.cluster.local" \
     "http://localhost:8081/")
+BODY=$(echo "$RESPONSE" | head -n -1)
+HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+echo "Test 6 namespace isolation (attacker, no token): HTTP $HTTP_CODE | ${BODY:0:200}"
 
-if [ "$RESPONSE" == "200" ]; then
-    echo "FAIL: Unauthenticated attacker namespace request should be rejected, got $RESPONSE"
+if [ "$HTTP_CODE" == "200" ]; then
+    echo "FAIL: Unauthenticated attacker namespace request should be rejected, got $HTTP_CODE"
     exit 1
 fi
 
 # Authenticated request from attacker namespace should ALSO be REJECTED
 ATTACKER_TOKEN=$(kubectl -n ${ATTACKER_NAMESPACE} create token attacker-service-account)
 
-RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" \
+RESPONSE=$(curl -s -w "\n%{http_code}" \
     -H "Host: secure-model-predictor.${NAMESPACE}.svc.cluster.local" \
     -H "Authorization: Bearer $ATTACKER_TOKEN" \
     "http://localhost:8081/")
+BODY=$(echo "$RESPONSE" | head -n -1)
+HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+echo "Test 6 namespace isolation (attacker, with token): HTTP $HTTP_CODE | ${BODY:0:200}"
 
-if [ "$RESPONSE" == "200" ]; then
-    echo "FAIL: Attacker namespace token should be rejected (namespace isolation), got $RESPONSE"
+if [ "$HTTP_CODE" == "200" ]; then
+    echo "FAIL: Attacker namespace token should be rejected (namespace isolation), got $HTTP_CODE"
     exit 1
+fi
+
+# ============================================================
+# Test 7: Raw Deployment Mode -- host-based routing
+# ============================================================
+# Deploy an sklearn model in RawDeployment mode. KServe creates a
+# Deployment + Service + Ingress (not Knative/VirtualService).
+# Path-based routing for raw deployment requires ingressPathTemplate
+# (kserve/kserve#5090, not yet merged), so this test uses host-based
+# routing only.
+cat <<EOF | kubectl apply -f -
+apiVersion: "serving.kserve.io/v1beta1"
+kind: "InferenceService"
+metadata:
+  name: "isvc-sklearn-raw"
+  namespace: ${NAMESPACE}
+  annotations:
+    serving.kserve.io/deploymentMode: RawDeployment
+spec:
+  predictor:
+    sklearn:
+      storageUri: "gs://kfserving-examples/models/sklearn/1.0/model"
+      resources:
+        requests:
+          cpu: "50m"
+          memory: "128Mi"
+        limits:
+          cpu: "100m"
+          memory: "256Mi"
+EOF
+
+kubectl wait --for=condition=Ready inferenceservice/isvc-sklearn-raw \
+  -n ${NAMESPACE} --timeout=300s
+
+# WARNING: allow-all rule -- same rationale as Test 2.
+# Uses serving.kserve.io/inferenceservice label (works for both
+# serverless and raw deployment modes).
+cat <<EOF | kubectl apply -f -
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-isvc-sklearn-raw
+  namespace: ${NAMESPACE}
+spec:
+  action: ALLOW
+  rules:
+  - {}
+  selector:
+    matchLabels:
+      serving.kserve.io/inferenceservice: isvc-sklearn-raw
+EOF
+
+sleep 30
+
+RAW_HOST="isvc-sklearn-raw-${NAMESPACE}.example.com"
+
+# 7a: Without token -- should be rejected
+RESPONSE=$(curl -s -w "\n%{http_code}" \
+ -H "Host: ${RAW_HOST}" \
+ -H "Content-Type: application/json" \
+ "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/isvc-sklearn-raw:predict" \
+ -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}')
+BODY=$(echo "$RESPONSE" | head -n -1)
+HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+echo "Test 7a raw deployment (no token): HTTP $HTTP_CODE | ${BODY:0:200}"
+
+if [ "$HTTP_CODE" != "403" ] && [ "$HTTP_CODE" != "302" ]; then
+  echo "FAIL: Raw deployment: Expected 403/302 without token, got $HTTP_CODE"
+  exit 1
+fi
+
+# 7b: With valid token -- should succeed
+RESPONSE=$(curl -s -w "\n%{http_code}" \
+ -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
+ -H "Host: ${RAW_HOST}" \
+ -H "Content-Type: application/json" \
+ "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/isvc-sklearn-raw:predict" \
+ -d '{"instances": [[6.8, 2.8, 4.8, 1.4], [6.0, 3.4, 4.5, 1.6]]}')
+BODY=$(echo "$RESPONSE" | head -n -1)
+HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+echo "Test 7b raw deployment (with token): HTTP $HTTP_CODE | ${BODY:0:200}"
+
+if [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "404" ] && [ "$HTTP_CODE" != "503" ]; then
+  echo "FAIL: Raw deployment: Expected 200/404/503 with token, got $HTTP_CODE"
+  exit 1
 fi
 
 # ============================================================
@@ -293,3 +419,6 @@ kill $PF_PID 2>/dev/null || true
 kubectl delete namespace ${ATTACKER_NAMESPACE} --ignore-not-found=true
 kubectl delete ksvc secure-model-predictor -n ${NAMESPACE} --ignore-not-found=true
 kubectl delete inferenceservice isvc-sklearn -n ${NAMESPACE} --ignore-not-found=true
+kubectl delete inferenceservice isvc-sklearn-raw -n ${NAMESPACE} --ignore-not-found=true
+kubectl delete authorizationpolicy allow-isvc-sklearn -n ${NAMESPACE} --ignore-not-found=true
+kubectl delete authorizationpolicy allow-isvc-sklearn-raw -n ${NAMESPACE} --ignore-not-found=true
