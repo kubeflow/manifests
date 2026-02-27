@@ -13,6 +13,11 @@ kubectl -n kubeflow get pod -l app.kubernetes.io/name=spark-operator
 
 # Wait for the operator webhook to be ready.
 kubectl -n kubeflow wait --for=condition=available --timeout=180s deploy/spark-operator-webhook
+kubectl -n kubeflow wait \
+  --for=condition=Ready \
+  pod \
+  -l app.kubernetes.io/name=spark-operator,app.kubernetes.io/component=webhook \
+  --timeout=180s
 # Wait for the webhook endpoint to be registered and routable
 kubectl -n kubeflow wait \
   --for=jsonpath='{.subsets[0].addresses[0].targetRef.kind}'=Pod \
