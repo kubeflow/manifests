@@ -8,9 +8,14 @@ cd "${REPOSITORY_ROOT}"
 kustomize build applications/spark/spark-operator/overlays/kubeflow | kubectl -n kubeflow apply --server-side --force-conflicts -f -
 
 # Wait for the operator controller to be ready.
-kubectl -n kubeflow wait --for=condition=available --timeout=60s deploy/spark-operator-controller
+kubectl -n kubeflow wait --for=condition=available --timeout=180s deploy/spark-operator-controller
 kubectl -n kubeflow get pod -l app.kubernetes.io/name=spark-operator
 
 # Wait for the operator webhook to be ready.
-kubectl -n kubeflow wait --for=condition=available --timeout=30s deploy/spark-operator-webhook
+kubectl -n kubeflow wait --for=condition=available --timeout=180s deploy/spark-operator-webhook
+# Wait for the webhook endpoint to be registered and routable
+kubectl -n kubeflow wait \
+  --for=jsonpath='{.subsets[0].addresses[0].targetRef.kind}'=Pod \
+  endpoints/spark-operator-webhook-svc \
+  --timeout=180s
 kubectl -n kubeflow get pod -l app.kubernetes.io/name=spark-operator
