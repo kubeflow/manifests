@@ -5,6 +5,10 @@ KIND_VERSION="v0.30.0"
 KUSTOMIZE_VERSION="v5.8.1"
 USER_BINARY_DIRECTORY="$HOME/.local/bin"
 
+if [[ "${GITHUB_ACTIONS:-false}" == "true" ]]; then
+    USER_BINARY_DIRECTORY="/tmp/usr/local/bin"
+fi
+
 sudo mkdir -p "${USER_BINARY_DIRECTORY}"
 export PATH="${USER_BINARY_DIRECTORY}:${PATH}"
 
