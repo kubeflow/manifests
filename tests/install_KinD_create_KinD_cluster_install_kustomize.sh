@@ -9,16 +9,24 @@ error_exit() {
     exit 1
 }
 
+run_with_elevated_privileges() {
+    if [ "$(id -u)" -eq 0 ]; then
+        "$@"
+    else
+        sudo "$@"
+    fi
+}
+
 trap 'error_exit $LINENO' ERR
 
 echo "Install KinD..."
-sudo swapoff -a
+run_with_elevated_privileges swapoff -a
 # This conditional helps running GH Workflows through
 # [act](https://github.com/nektos/act)
 if [ -e /swapfile ]; then
-    sudo rm -f /swapfile
-    sudo mkdir -p /tmp/etcd
-    sudo mount -t tmpfs tmpfs /tmp/etcd
+    run_with_elevated_privileges rm -f /swapfile
+    run_with_elevated_privileges mkdir -p /tmp/etcd
+    run_with_elevated_privileges mount -t tmpfs tmpfs /tmp/etcd
 fi
 
 {
@@ -29,7 +37,7 @@ fi
        exit 1
     fi
     chmod +x ./kind-linux-amd64
-    sudo mv kind-linux-amd64 /usr/local/bin/kind
+    run_with_elevated_privileges mv kind-linux-amd64 /usr/local/bin/kind
 } || { echo "Failed to install KinD"; exit 1; }
 
 
@@ -80,5 +88,5 @@ echo "Install Kustomize ..."
     fi
     tar -xzvf "${KUSTOMIZE_ASSET}"
     chmod a+x kustomize
-    sudo mv kustomize /usr/local/bin/kustomize
+    run_with_elevated_privileges mv kustomize /usr/local/bin/kustomize
 } || { echo "Failed to install Kustomize"; exit 1; }
