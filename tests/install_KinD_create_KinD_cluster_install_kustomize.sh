@@ -4,6 +4,7 @@ set -e
 KIND_VERSION="v0.31.0"
 KUSTOMIZE_VERSION="v5.8.1"
 USER_BINARY_DIRECTORY="${HOME}/bin"
+SCRIPT_DIRECTORY="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 error_exit() {
     echo "Error occurred in script at line: ${1}."
@@ -79,4 +80,4 @@ echo "Install Kustomize ..."
 } || { echo "Failed to install Kustomize"; exit 1; }
 
 echo "Free up disk space..."
-./tests/free-disk-space.sh
+"${SCRIPT_DIRECTORY}/free-disk-space.sh"
