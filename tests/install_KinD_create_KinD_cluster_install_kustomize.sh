@@ -3,21 +3,16 @@ set -e
 
 KIND_VERSION="v0.31.0"
 KUSTOMIZE_VERSION="v5.8.1"
+USER_BINARY_DIRECTORY="${HOME}/bin"
 
 error_exit() {
     echo "Error occurred in script at line: ${1}."
     exit 1
 }
 
-run_with_elevated_privileges() {
-    if [ "$(id -u)" -eq 0 ]; then
-        "$@"
-    else
-        sudo "$@"
-    fi
-}
-
 trap 'error_exit $LINENO' ERR
+mkdir -p "${USER_BINARY_DIRECTORY}"
+export PATH="${USER_BINARY_DIRECTORY}:${PATH}"
 
 echo "Install KinD..."
 
@@ -29,7 +24,7 @@ echo "Install KinD..."
        exit 1
     fi
     chmod +x ./kind-linux-amd64
-    run_with_elevated_privileges mv kind-linux-amd64 /usr/local/bin/kind
+    mv kind-linux-amd64 "${USER_BINARY_DIRECTORY}/kind"
 } || { echo "Failed to install KinD"; exit 1; }
 
 
@@ -80,5 +75,8 @@ echo "Install Kustomize ..."
     fi
     tar -xzvf "${KUSTOMIZE_ASSET}"
     chmod a+x kustomize
-    run_with_elevated_privileges mv kustomize /usr/local/bin/kustomize
+    mv kustomize "${USER_BINARY_DIRECTORY}/kustomize"
 } || { echo "Failed to install Kustomize"; exit 1; }
+
+echo "Free up disk space..."
+./tests/free-disk-space.sh
