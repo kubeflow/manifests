@@ -14,41 +14,12 @@ trap 'error_exit $LINENO' ERR
 sudo mkdir -p "${USER_BINARY_DIRECTORY}"
 export PATH="${USER_BINARY_DIRECTORY}:${PATH}"
 
-# Free disk space in GitHub Actions to reduce "no space left on device" failures.
-if [[ "${GITHUB_ACTIONS:-false}" == "true" ]]; then
-    echo "=== Initial disk usage ==="
-    df -h
-
-    echo "=== Freeing up disk space ==="
-
-    sudo rm -rf /usr/share/dotnet
-    sudo rm -rf /opt/ghc
-    sudo rm -rf /usr/local/share/boost
-    sudo rm -rf /usr/local/lib/android
-    sudo rm -rf /usr/local/.ghcup
-    sudo rm -rf /usr/share/swift
-
-    sudo rm -rf /opt/hostedtoolcache/CodeQL || true
-    sudo rm -rf /opt/hostedtoolcache/Java_* || true
-    sudo rm -rf /opt/hostedtoolcache/Ruby || true
-    sudo rm -rf /opt/hostedtoolcache/PyPy || true
-    sudo rm -rf /opt/hostedtoolcache/boost || true
-
-    sudo apt-get autoclean
-
-    docker system prune -af --volumes
-    docker image prune -af
-
-    echo "=== Final disk usage ==="
-    df -h
-fi
-
 echo "Install KinD..."
 sudo swapoff -a
 
-# This conditional helps running GH Workflows through
+# This conditional helps running GitHub Workflows through
 # https://github.com/nektos/act
-if [ -e /swapfile ]; then
+if [[ "${GITHUB_ACTIONS:-false}" == "true" ]] && [ -e /swapfile ]; then
     sudo rm -f /swapfile
     sudo mkdir -p /tmp/etcd
     sudo mount -t tmpfs tmpfs /tmp/etcd
@@ -96,6 +67,13 @@ nodes:
   image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
 " | kind create cluster --config - --wait 120s
 
+echo "Install kubectl ..."
+{
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    chmod +x ./kubectl
+    sudo mv kubectl "${USER_BINARY_DIRECTORY}/kubectl"
+} || { echo "Failed to install kubectl"; exit 1; }
+
 kubectl cluster-info
 
 echo "Install Kustomize ..."
@@ -115,3 +93,32 @@ echo "Install Kustomize ..."
     chmod a+x kustomize
     sudo mv kustomize "${USER_BINARY_DIRECTORY}/kustomize"
 } || { echo "Failed to install Kustomize"; exit 1; }
+
+# Free disk space in GitHub Actions to reduce "no space left on device" failures.
+if [[ "${GITHUB_ACTIONS:-false}" == "true" ]]; then
+    echo "=== Initial disk usage ==="
+    df -h
+
+    echo "=== Freeing up disk space ==="
+
+    sudo rm -rf /usr/share/dotnet
+    sudo rm -rf /opt/ghc
+    sudo rm -rf /usr/local/share/boost
+    sudo rm -rf /usr/local/lib/android
+    sudo rm -rf /usr/local/.ghcup
+    sudo rm -rf /usr/share/swift
+
+    sudo rm -rf /opt/hostedtoolcache/CodeQL || true
+    sudo rm -rf /opt/hostedtoolcache/Java_* || true
+    sudo rm -rf /opt/hostedtoolcache/Ruby || true
+    sudo rm -rf /opt/hostedtoolcache/PyPy || true
+    sudo rm -rf /opt/hostedtoolcache/boost || true
+
+    sudo apt-get autoclean
+
+    docker system prune -af --volumes
+    docker image prune -af
+
+    echo "=== Final disk usage ==="
+    df -h
+fi
