@@ -3,20 +3,23 @@ set -euxo pipefail
 
 KIND_VERSION="v0.30.0"
 KUSTOMIZE_VERSION="v5.8.1"
-USER_BINARY_DIRECTORY="/usr/local/bin"
+USER_BINARY_DIRECTORY="$HOME/.local/bin"
 
 sudo mkdir -p "${USER_BINARY_DIRECTORY}"
 export PATH="${USER_BINARY_DIRECTORY}:${PATH}"
 
 echo "Install KinD..."
-sudo swapoff -a
 
-# This conditional helps running GitHub Workflows through
 # https://github.com/nektos/act
-if [[ "${GITHUB_ACTIONS:-false}" == "true" ]] && [ -e /swapfile ]; then
-    sudo rm -f /swapfile
-    sudo mkdir -p /tmp/etcd
-    sudo mount -t tmpfs tmpfs /tmp/etcd
+# This conditional helps running GitHub Workflows through
+if [[ "${GITHUB_ACTIONS:-false}" == "true" ]]; then
+    echo "Running in GitHub Actions: Optimizing environment..."
+    sudo swapoff -a
+    if [ -e /swapfile ]; then
+        sudo rm -f /swapfile
+        sudo mkdir -p /tmp/etcd
+        sudo mount -t tmpfs tmpfs /tmp/etcd
+    fi
 fi
 
 {
@@ -27,7 +30,7 @@ fi
        exit 1
     fi
     chmod +x ./kind-linux-amd64
-    sudo mv kind-linux-amd64 "${USER_BINARY_DIRECTORY}/kind"
+    mv kind-linux-amd64 "${USER_BINARY_DIRECTORY}/kind"
 } || { echo "Failed to install KinD"; exit 1; }
 
 
@@ -65,7 +68,7 @@ echo "Install kubectl ..."
 {
     curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
     chmod +x ./kubectl
-    sudo mv kubectl "${USER_BINARY_DIRECTORY}/kubectl"
+    mv kubectl "${USER_BINARY_DIRECTORY}/kubectl"
 } || { echo "Failed to install kubectl"; exit 1; }
 
 kubectl cluster-info
@@ -85,7 +88,7 @@ echo "Install Kustomize ..."
     fi
     tar -xzvf "${KUSTOMIZE_ASSET}"
     chmod a+x kustomize
-    sudo mv kustomize "${USER_BINARY_DIRECTORY}/kustomize"
+    mv kustomize "${USER_BINARY_DIRECTORY}/kustomize"
 } || { echo "Failed to install Kustomize"; exit 1; }
 
 # Free disk space in GitHub Actions to reduce "no space left on device" failures.
