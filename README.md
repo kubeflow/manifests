@@ -125,7 +125,7 @@ The `example` directory contains an example kustomization for the single command
 #### Prerequisites
 - 16 GB of RAM recommended.
 - 8 CPU cores recommended.
-- `kind` version 0.27+.
+- `kind` version 0.31+.
 - `docker` or a more modern tool such as `podman` to run the OCI images for the Kind cluster.
 - Linux kernel subsystem changes to support many pods:
     - `sudo sysctl fs.inotify.max_user_instances=2280`
@@ -134,20 +134,7 @@ The `example` directory contains an example kustomization for the single command
 
 #### Create Kind Cluster
 ```sh
-cat <<EOF | kind create cluster --name=kubeflow --config=-
-kind: Cluster
-apiVersion: kind.x-k8s.io/v1alpha4
-nodes:
-- role: control-plane
-  image: kindest/node:v1.34.0@sha256:7416a61b42b1662ca6ca89f02028ac133a309a2a30ba309614e8ec94d976dc5a
-  kubeadmConfigPatches:
-  - |
-    kind: ClusterConfiguration
-    apiServer:
-      extraArgs:
-        "service-account-issuer": "https://kubernetes.default.svc"
-        "service-account-signing-key-file": "/etc/kubernetes/pki/sa.key"
-EOF
+./tests/install_KinD_create_KinD_cluster_install_kustomize.sh
 ```
 
 #### Save Kubeconfig
