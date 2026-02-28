@@ -3,7 +3,7 @@ set -euxo pipefail
 
 KIND_VERSION="v0.31.0"
 KUSTOMIZE_VERSION="v5.8.1"
-USER_BINARY_DIRECTORY="${HOME}/.local/bin"
+USER_BINARY_DIRECTORY="/usr/local/bin"
 
 error_exit() {
     echo "Error occurred in script at line: ${1}."
@@ -11,7 +11,7 @@ error_exit() {
 }
 
 trap 'error_exit $LINENO' ERR
-mkdir -p "${USER_BINARY_DIRECTORY}"
+sudo mkdir -p "${USER_BINARY_DIRECTORY}"
 export PATH="${USER_BINARY_DIRECTORY}:${PATH}"
 
 # Free disk space in GitHub Actions to reduce "no space left on device" failures.
@@ -53,7 +53,7 @@ echo "Install KinD..."
        exit 1
     fi
     chmod +x ./kind-linux-amd64
-    mv kind-linux-amd64 "${USER_BINARY_DIRECTORY}/kind"
+    sudo mv kind-linux-amd64 "${USER_BINARY_DIRECTORY}/kind"
 } || { echo "Failed to install KinD"; exit 1; }
 
 
@@ -104,5 +104,5 @@ echo "Install Kustomize ..."
     fi
     tar -xzvf "${KUSTOMIZE_ASSET}"
     chmod a+x kustomize
-    mv kustomize "${USER_BINARY_DIRECTORY}/kustomize"
+    sudo mv kustomize "${USER_BINARY_DIRECTORY}/kustomize"
 } || { echo "Failed to install Kustomize"; exit 1; }
