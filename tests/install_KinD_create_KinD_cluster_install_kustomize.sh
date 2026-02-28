@@ -3,7 +3,7 @@ set -e
 
 KIND_VERSION="v0.31.0"
 KUSTOMIZE_VERSION="v5.7.1"
-BIN_DIRECTORY="${HOME}/.local/bin"
+USER_LOCAL_BINARY_PATH="${HOME}/.local/bin"
 
 error_exit() {
     echo "Error occurred in script at line: ${1}."
@@ -14,8 +14,9 @@ trap 'error_exit $LINENO' ERR
 
 echo "Install KinD..."
 sudo swapoff -a
-mkdir -p "${BIN_DIRECTORY}"
-export PATH="${BIN_DIRECTORY}:${PATH}"
+mkdir -p "${USER_LOCAL_BINARY_PATH}"
+# Add the user-local binary path so the newly installed kind and kustomize binaries are available immediately.
+export PATH="${USER_LOCAL_BINARY_PATH}:${PATH}"
 
 # This conditional helps running GH Workflows through
 # [act](https://github.com/nektos/act)
@@ -33,7 +34,7 @@ fi
        exit 1
     fi
     chmod +x ./kind-linux-amd64
-    mv kind-linux-amd64 "${BIN_DIRECTORY}/kind"
+    mv kind-linux-amd64 "${USER_LOCAL_BINARY_PATH}/kind"
 } || { echo "Failed to install KinD"; exit 1; }
 
 
@@ -84,5 +85,5 @@ echo "Install Kustomize ..."
     fi
     tar -xzvf "${KUSTOMIZE_ASSET}"
     chmod a+x kustomize
-    mv kustomize "${BIN_DIRECTORY}/kustomize"
+    mv kustomize "${USER_LOCAL_BINARY_PATH}/kustomize"
 } || { echo "Failed to install Kustomize"; exit 1; }
