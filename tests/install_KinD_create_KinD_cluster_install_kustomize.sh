@@ -96,7 +96,7 @@ echo "Install Kustomize ..."
 
 # Free disk space in GitHub Actions to reduce "no space left on device" failures.
 if [[ "${GITHUB_ACTIONS:-false}" == "true" ]]; then
-    echo "=== Initial disk usage ==="
+    echo "=== Disk usage before cleanup ==="
     df -h
 
     echo "=== Freeing up disk space ==="
