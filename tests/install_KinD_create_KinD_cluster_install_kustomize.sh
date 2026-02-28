@@ -2,7 +2,7 @@
 set -e
 
 KIND_VERSION="v0.31.0"
-KUSTOMIZE_VERSION="v5.7.1"
+KUSTOMIZE_VERSION="v5.8.1"
 USER_LOCAL_BINARY_PATH="${HOME}/.local/bin"
 
 error_exit() {
