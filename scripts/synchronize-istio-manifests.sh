@@ -11,7 +11,6 @@ BRANCH_NAME=${BRANCH_NAME:=synchronize-${COMPONENT_NAME}-manifests-${COMMIT?}}
 MANIFESTS_DIRECTORY=$(dirname $SCRIPT_DIRECTORY)
 ISTIO_DIRECTORY=$MANIFESTS_DIRECTORY/common/${COMPONENT_NAME}
 create_branch "$BRANCH_NAME"
-echo "Checking out in $SOURCE_DIRECTORY to $COMMIT..."
 mkdir -p "$SOURCE_DIRECTORY"
 cd "$SOURCE_DIRECTORY"
 if [ ! -d "istio-${COMMIT}" ]; then
@@ -20,7 +19,6 @@ if [ ! -d "istio-${COMMIT}" ]; then
 fi
 ISTIOCTL="${SOURCE_DIRECTORY}/istio-${COMMIT}/bin/istioctl"
 cd "$ISTIO_DIRECTORY"
-echo "Generating CNI manifests (default)..."
 $ISTIOCTL manifest generate -f profile.yaml -f profile-overlay.yaml \
   --set components.cni.enabled=true \
   --set components.cni.namespace=kube-system > dump.yaml
@@ -29,18 +27,15 @@ mv $ISTIO_DIRECTORY/crd.yaml $ISTIO_DIRECTORY/istio-crds/base/
 mv $ISTIO_DIRECTORY/install.yaml $ISTIO_DIRECTORY/istio-install/base/
 mv $ISTIO_DIRECTORY/cluster-local-gateway.yaml $ISTIO_DIRECTORY/cluster-local-gateway/base/
 rm dump.yaml
-echo "Generating ztunnel manifests (ambient mode)..."
 $ISTIOCTL manifest generate -f profile.yaml -f profile-overlay.yaml \
   --set components.cni.enabled=true \
   --set components.ztunnel.enabled=true > dump-ztunnel.yaml
 ./split-istio-packages -f dump-ztunnel.yaml
 mv $ISTIO_DIRECTORY/ztunnel.yaml $ISTIO_DIRECTORY/istio-install/components/ambient-mode/
 rm dump-ztunnel.yaml crd.yaml install.yaml cluster-local-gateway.yaml
-check_uncommitted_changes
-echo "Updating tag in istio-sidecar-injector-patch.yaml..."
 sed -i "s/\"tag\": \".*\"/\"tag\": \"$COMMIT\"/" "$ISTIO_DIRECTORY/istio-install/base/patches/istio-sidecar-injector-patch.yaml"
 SOURCE_TEXT="\[.*\](https://github.com/${REPOSITORY_NAME}/releases/tag/.*)"
 DESTINATION_TEXT="\[$COMMIT\](https://github.com/${REPOSITORY_NAME}/releases/tag/$COMMIT)"
 update_readme "$MANIFESTS_DIRECTORY" "$SOURCE_TEXT" "$DESTINATION_TEXT"
-commit_changes "$MANIFESTS_DIRECTORY" "Upgrade istio to v.${COMMIT}" "."
+commit_changes "$MANIFESTS_DIRECTORY" "Update ${REPOSITORY_NAME} manifests from ${COMMIT}" "$MANIFESTS_DIRECTORY"
 echo "Synchronization completed successfully."

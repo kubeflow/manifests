@@ -11,14 +11,10 @@ MANIFESTS_DIRECTORY=$(dirname $SCRIPT_DIRECTORY)
 DESTINATION_DIRECTORY=$MANIFESTS_DIRECTORY/common/${COMPONENT_NAME}
 DESTINATION_FILE="$DESTINATION_DIRECTORY/base/upstream/cert-manager.yaml"
 create_branch "$BRANCH_NAME"
-check_uncommitted_changes
-echo "Downloading ${COMPONENT_NAME} manifest ${COMMIT}..."
 wget -O "$DESTINATION_FILE" \
   "https://github.com/${REPOSITORY_NAME}/releases/download/${COMMIT}/cert-manager.yaml"
 SOURCE_TEXT="\[.*\](https://github.com/${REPOSITORY_NAME}/releases/tag/v.*)"
 DESTINATION_TEXT="\[${COMMIT#v}\](https://github.com/${REPOSITORY_NAME}/releases/tag/${COMMIT})"
 update_readme "$MANIFESTS_DIRECTORY" "$SOURCE_TEXT" "$DESTINATION_TEXT"
-commit_changes "$MANIFESTS_DIRECTORY" "Update common/${COMPONENT_NAME} manifests to ${COMMIT}" \
-  "$DESTINATION_DIRECTORY" \
-  "README.md"
+commit_changes "$MANIFESTS_DIRECTORY" "Update ${REPOSITORY_NAME} manifests from ${COMMIT}" "$MANIFESTS_DIRECTORY"
 echo "Synchronization completed successfully."

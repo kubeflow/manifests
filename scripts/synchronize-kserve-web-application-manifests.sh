@@ -16,11 +16,8 @@ DESTINATION_MANIFESTS_PATH="applications/kserve/${COMPONENT_NAME}"
 SOURCE_TEXT="\[.*\](https://github.com/${REPOSITORY_NAME}/tree/.*)"
 DESTINATION_TEXT="\[${COMMIT}\](https://github.com/${REPOSITORY_NAME}/tree/${COMMIT}/${SOURCE_MANIFESTS_PATH})"
 create_branch "$BRANCH_NAME"
-check_uncommitted_changes
 clone_and_checkout "$SOURCE_DIRECTORY" "$REPOSITORY_URL" "$REPOSITORY_DIRECTORY" "$COMMIT"
 copy_manifests "${SOURCE_DIRECTORY}/${REPOSITORY_DIRECTORY}/${SOURCE_MANIFESTS_PATH}" "${MANIFESTS_DIRECTORY}/${DESTINATION_MANIFESTS_PATH}"
 update_readme "$MANIFESTS_DIRECTORY" "$SOURCE_TEXT" "$DESTINATION_TEXT"
-commit_changes "$MANIFESTS_DIRECTORY" "Update kserve models web application manifests from ${COMMIT}" \
-  "${DESTINATION_MANIFESTS_PATH}" \
-  "README.md"
+commit_changes "$MANIFESTS_DIRECTORY" "Update ${REPOSITORY_NAME} manifests from ${COMMIT}" "$MANIFESTS_DIRECTORY"
 echo "Synchronization completed successfully."

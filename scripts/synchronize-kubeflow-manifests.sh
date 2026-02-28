@@ -12,7 +12,6 @@ SOURCE_DIRECTORY=${SOURCE_DIRECTORY:=/tmp/${COMPONENT_NAME}-${COMPONENT_NAME}}
 BRANCH_NAME=${BRANCH_NAME:=synchronize-${COMPONENT_NAME}-${COMPONENT_NAME}-manifests-${COMMIT?}}
 MANIFESTS_DIRECTORY=$(dirname $SCRIPT_DIRECTORY)
 create_branch "$BRANCH_NAME"
-check_uncommitted_changes
 clone_and_checkout "$SOURCE_DIRECTORY" "$REPOSITORY_URL" "$REPOSITORY_DIRECTORY" "$COMMIT"
 copy_component_manifests() {
     local source_manifests_path=$1
@@ -55,7 +54,5 @@ copy_component_manifests "components/tensorboard-controller/config" \
 copy_component_manifests "components/pvcviewer-controller/config" \
     "applications/pvcviewer-controller/upstream" \
     "pvcviewer-controller/config"
-commit_changes "$MANIFESTS_DIRECTORY" "Update ${REPOSITORY_NAME} manifests from ${COMMIT}" \
-  "applications" \
-  "README.md"
+commit_changes "$MANIFESTS_DIRECTORY" "Update ${REPOSITORY_NAME} manifests from ${COMMIT}" "$MANIFESTS_DIRECTORY"
 echo "Synchronization completed successfully."

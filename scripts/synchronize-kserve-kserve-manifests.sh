@@ -16,7 +16,6 @@ DESTINATION_MANIFESTS_PATH="applications/${COMPONENT_NAME}/${COMPONENT_NAME}"
 SOURCE_TEXT="\[.*\](https://github.com/${REPOSITORY_NAME}/releases/tag/.*)"
 DESTINATION_TEXT="\[${COMMIT}\](https://github.com/${REPOSITORY_NAME}/releases/tag/${COMMIT}/install/${COMMIT})"
 create_branch "$BRANCH_NAME"
-check_uncommitted_changes
 clone_and_checkout "$SOURCE_DIRECTORY" "$REPOSITORY_URL" "$REPOSITORY_DIRECTORY" "$COMMIT"
 DESTINATION_DIRECTORY=$MANIFESTS_DIRECTORY/$DESTINATION_MANIFESTS_PATH
 if [ -d "$DESTINATION_DIRECTORY" ]; then
@@ -24,8 +23,5 @@ if [ -d "$DESTINATION_DIRECTORY" ]; then
 fi
 cp $SOURCE_DIRECTORY/$REPOSITORY_DIRECTORY/$SOURCE_MANIFESTS_PATH/* $DESTINATION_DIRECTORY -r
 update_readme "$MANIFESTS_DIRECTORY" "$SOURCE_TEXT" "$DESTINATION_TEXT"
-commit_changes "$MANIFESTS_DIRECTORY" "Update ${REPOSITORY_NAME} manifests from ${COMMIT}" \
-  "applications/${COMPONENT_NAME}" \
-  "README.md" \
-  "scripts"
+commit_changes "$MANIFESTS_DIRECTORY" "Update ${REPOSITORY_NAME} manifests from ${COMMIT}" "$MANIFESTS_DIRECTORY"
 echo "Synchronization completed successfully."

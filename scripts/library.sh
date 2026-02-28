@@ -28,7 +28,6 @@ clone_and_checkout() {
   local repository_url="$2"
   local repository_directory="$3"
   local commit="$4"
-  echo "Checking out in $source_directory to $commit..."
   mkdir -p "$source_directory"
   cd "$source_directory"
   # Clone repository if it doesn't exist
@@ -48,12 +47,10 @@ clone_and_checkout() {
 copy_manifests() {
   local source="$1"
   local destination="$2"
-  echo "Copying manifests..."
   if [ -d "$destination" ]; then
     rm -r "$destination"
   fi
   cp "$source" "$destination" -r
-  echo "Successfully copied all manifests."
 }
 # Update README with new commit reference
 update_readme() {

@@ -4,14 +4,15 @@ SCRIPT_DIRECTORY=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && 
 source "${SCRIPT_DIRECTORY}/library.sh"
 setup_error_handling
 COMPONENT_NAME="knative"
+REPOSITORY_NAME="knative"
 KN_SERVING_RELEASE="v1.21.1"
 KN_EXTENSION_RELEASE="v1.21.1"
 KN_EVENTING_RELEASE="v1.21.0"
+COMMIT="${KN_SERVING_RELEASE}/${KN_EVENTING_RELEASE}"
 BRANCH_NAME=${BRANCH_NAME:=synchronize-${COMPONENT_NAME}-manifests-${KN_SERVING_RELEASE?}}
 MANIFESTS_DIRECTORY=$(dirname $SCRIPT_DIRECTORY)
 DESTINATION_DIRECTORY=$MANIFESTS_DIRECTORY/common/${COMPONENT_NAME}
 create_branch "$BRANCH_NAME"
-check_uncommitted_changes
 if [ -d "$DESTINATION_DIRECTORY" ]; then
     rm -r "$DESTINATION_DIRECTORY/knative-serving/base/upstream"
     rm "$DESTINATION_DIRECTORY/knative-serving-post-install-jobs/base/serving-post-install-jobs.yaml"
@@ -73,7 +74,5 @@ replace_in_file \
   "The manifests for Knative Eventing are based off the \[v.* release\](https://github.com/knative/eventing/releases/tag/knative-v.*)" \
   "The manifests for Knative Eventing are based off the \[$KN_EVENTING_RELEASE release\](https://github.com/knative/eventing/releases/tag/knative-$KN_EVENTING_RELEASE)" \
   $DESTINATION_DIRECTORY/README.md
-commit_changes "$MANIFESTS_DIRECTORY" "Update common/knative manifests from ${KN_SERVING_RELEASE}/${KN_EVENTING_RELEASE}" \
-  "$DESTINATION_DIRECTORY" \
-  "README.md"
+commit_changes "$MANIFESTS_DIRECTORY" "Update ${REPOSITORY_NAME} manifests from ${COMMIT}" "$MANIFESTS_DIRECTORY"
 echo "Synchronization completed successfully."
