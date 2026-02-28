@@ -44,6 +44,15 @@ if [[ "${GITHUB_ACTIONS:-false}" == "true" ]]; then
 fi
 
 echo "Install KinD..."
+sudo swapoff -a
+
+# This conditional helps running GH Workflows through
+# https://github.com/nektos/act
+if [ -e /swapfile ]; then
+    sudo rm -f /swapfile
+    sudo mkdir -p /tmp/etcd
+    sudo mount -t tmpfs tmpfs /tmp/etcd
+fi
 
 {
     curl -Lo ./kind-linux-amd64 https://kind.sigs.k8s.io/dl/$KIND_VERSION/kind-linux-amd64
