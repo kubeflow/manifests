@@ -12,19 +12,16 @@ COMMIT=${COMMIT:="2.4.0"}
 SPARK_OPERATOR_HELM_CHART_REPO=${SPARK_OPERATOR_HELM_CHART_REPO:="https://kubeflow.github.io/spark-operator"}
 BRANCH_NAME=${BRANCH_NAME:=synchronize-${COMPONENT_NAME}-manifests-${COMMIT?}}
 
-# Path configurations
 MANIFESTS_DIRECTORY=$(dirname $SCRIPT_DIRECTORY)
 DESTINATION_MANIFESTS_PATH="applications/spark/${COMPONENT_NAME}/base"
 
 create_branch "$BRANCH_NAME"
-
-echo "Generating manifests from Helm chart version ${COMMIT}..."
+check_uncommitted_changes
 
 DESTINATION_DIRECTORY=$MANIFESTS_DIRECTORY/$DESTINATION_MANIFESTS_PATH
 mkdir -p $DESTINATION_DIRECTORY
 cd $DESTINATION_DIRECTORY
 
-# Create a kustomization.yaml file if it doesn't exist
 if [ ! -f kustomization.yaml ]; then
     cat > kustomization.yaml << EOF
 apiVersion: kustomize.config.k8s.io/v1beta1
@@ -41,9 +38,6 @@ helm template -n kubeflow --include-crds spark-operator spark-operator \
 --version ${COMMIT} \
 --repo ${SPARK_OPERATOR_HELM_CHART_REPO} > resources.yaml
 
-echo "Successfully generated manifests."
-
-# Use OS-compatible sed command
 if [[ "$OSTYPE" == "darwin"* ]]; then
     sed -i '' 's/Spark Operator[^|]*|[^|]*applications\/spark\/spark-operator[^|]*|[^|]*\[[0-9]\.[0-9]\.[0-9]\]([^)]*)/Spark Operator	|	applications\/spark\/spark-operator	|	['"${COMMIT}"'](https:\/\/github.com\/kubeflow\/spark-operator\/tree\/v'"${COMMIT}"')/g' "${MANIFESTS_DIRECTORY}/README.md"
 else

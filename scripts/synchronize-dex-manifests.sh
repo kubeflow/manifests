@@ -8,7 +8,6 @@ setup_error_handling
 
 COMPONENT_NAME="dex"
 REPOSITORY_NAME="dexidp/dex"
-COMMIT="v2.43.1" # Must be a release
 BRANCH_NAME=${BRANCH_NAME:=synchronize-${COMPONENT_NAME}-manifests-${COMMIT?}}
 
 MANIFESTS_DIRECTORY=$(dirname $SCRIPT_DIRECTORY)
@@ -36,4 +35,4 @@ commit_changes "$MANIFESTS_DIRECTORY" "Update common/${COMPONENT_NAME} manifests
   "$DESTINATION_DIRECTORY" \
   "README.md"
 
-echo "Synchronization completed successfully." 
+echo "Synchronization completed successfully."

@@ -8,7 +8,6 @@ setup_error_handling
 
 COMPONENT_NAME="oauth2-proxy"
 REPOSITORY_NAME="oauth2-proxy/oauth2-proxy"
-COMMIT="v7.14.3" # Must be a release
 BRANCH_NAME=${BRANCH_NAME:=synchronize-${COMPONENT_NAME}-manifests-${COMMIT?}}
 
 MANIFESTS_DIRECTORY=$(dirname $SCRIPT_DIRECTORY)
@@ -36,4 +35,4 @@ commit_changes "$MANIFESTS_DIRECTORY" "Update common/${COMPONENT_NAME} manifests
   "$DESTINATION_DIRECTORY" \
   "README.md"
 
-echo "Synchronization completed successfully." 
+echo "Synchronization completed successfully."

@@ -8,7 +8,6 @@ setup_error_handling
 
 COMPONENT_NAME="cert-manager"
 REPOSITORY_NAME="cert-manager/cert-manager"
-COMMIT="v1.19.4" # Must be a release tag in cert-manager/cert-manager
 BRANCH_NAME=${BRANCH_NAME:=synchronize-${COMPONENT_NAME}-manifests-${COMMIT?}}
 
 MANIFESTS_DIRECTORY=$(dirname $SCRIPT_DIRECTORY)

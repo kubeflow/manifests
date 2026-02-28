@@ -7,12 +7,8 @@ source "${SCRIPT_DIRECTORY}/library.sh"
 setup_error_handling
 
 COMPONENT_NAME="knative"
-KN_SERVING_RELEASE="v1.21.1" # Must be a release
-KN_EXTENSION_RELEASE="v1.21.1" # Must be a release
-KN_EVENTING_RELEASE="v1.21.0" # Must be a release
 BRANCH_NAME=${BRANCH_NAME:=synchronize-${COMPONENT_NAME}-manifests-${KN_SERVING_RELEASE?}}
 
-# Path configurations
 MANIFESTS_DIRECTORY=$(dirname $SCRIPT_DIRECTORY)
 DESTINATION_DIRECTORY=$MANIFESTS_DIRECTORY/common/${COMPONENT_NAME}
 
@@ -20,7 +16,6 @@ create_branch "$BRANCH_NAME"
 
 check_uncommitted_changes
 
-# Clean up existing files (keep README and OWNERS)
 if [ -d "$DESTINATION_DIRECTORY" ]; then
     rm -r "$DESTINATION_DIRECTORY/knative-serving/base/upstream"
     rm "$DESTINATION_DIRECTORY/knative-serving-post-install-jobs/base/serving-post-install-jobs.yaml"
@@ -28,13 +23,11 @@ if [ -d "$DESTINATION_DIRECTORY" ]; then
     rm "$DESTINATION_DIRECTORY/knative-eventing-post-install-jobs/base/eventing-post-install.yaml"
 fi
 
-# Create required directories
 mkdir -p "$DESTINATION_DIRECTORY/knative-serving/base/upstream"
 mkdir -p "$DESTINATION_DIRECTORY/knative-serving-post-install-jobs/base"
 mkdir -p "$DESTINATION_DIRECTORY/knative-eventing/base/upstream"
 mkdir -p "$DESTINATION_DIRECTORY/knative-eventing-post-install-jobs/base"
 
-echo "Downloading knative-serving manifests..."
 wget -O $DESTINATION_DIRECTORY/knative-serving/base/upstream/serving-core.yaml "https://github.com/knative/serving/releases/download/knative-$KN_SERVING_RELEASE/serving-core.yaml"
 wget -O $DESTINATION_DIRECTORY/knative-serving/base/upstream/net-istio.yaml "https://github.com/knative-extensions/net-istio/releases/download/knative-$KN_EXTENSION_RELEASE/net-istio.yaml"
 wget -O $DESTINATION_DIRECTORY/knative-serving-post-install-jobs/base/serving-post-install-jobs.yaml "https://github.com/knative/serving/releases/download/knative-$KN_SERVING_RELEASE/serving-post-install-jobs.yaml"
@@ -49,7 +42,6 @@ yq eval -i 'explode(.)' $DESTINATION_DIRECTORY/knative-serving-post-install-jobs
 
 yq eval -i 'select(.kind == "Job" and .metadata.generateName == "storage-version-migration-serving-") | .metadata.name = "storage-version-migration-serving"' $DESTINATION_DIRECTORY/knative-serving-post-install-jobs/base/serving-post-install-jobs.yaml
 
-echo "Downloading knative-eventing manifests..."
 wget -O $DESTINATION_DIRECTORY/knative-eventing/base/upstream/eventing-core.yaml "https://github.com/knative/eventing/releases/download/knative-$KN_EVENTING_RELEASE/eventing-core.yaml"
 wget -O $DESTINATION_DIRECTORY/knative-eventing/base/upstream/in-memory-channel.yaml "https://github.com/knative/eventing/releases/download/knative-$KN_EVENTING_RELEASE/in-memory-channel.yaml"
 wget -O $DESTINATION_DIRECTORY/knative-eventing/base/upstream/mt-channel-broker.yaml "https://github.com/knative/eventing/releases/download/knative-$KN_EVENTING_RELEASE/mt-channel-broker.yaml"
@@ -67,10 +59,9 @@ yq eval -i 'explode(.)' $DESTINATION_DIRECTORY/knative-eventing-post-install-job
 
 yq eval -i 'select(.kind == "Job" and .metadata.generateName == "storage-version-migration-eventing-") | .metadata.name = "storage-version-migration-eventing"' $DESTINATION_DIRECTORY/knative-eventing-post-install-jobs/base/eventing-post-install.yaml
 
-yq eval -i 'select((.kind == "ConfigMap" and .metadata.name == "config-observability") | not)' $DESTINATION_DIRECTORY/knative-eventing/base/upstream/in-memory-channel.yaml 
-yq eval -i 'select((.kind == "ConfigMap" and .metadata.name == "config-tracing") | not)' $DESTINATION_DIRECTORY/knative-eventing/base/upstream/in-memory-channel.yaml 
+yq eval -i 'select((.kind == "ConfigMap" and .metadata.name == "config-observability") | not)' $DESTINATION_DIRECTORY/knative-eventing/base/upstream/in-memory-channel.yaml
+yq eval -i 'select((.kind == "ConfigMap" and .metadata.name == "config-tracing") | not)' $DESTINATION_DIRECTORY/knative-eventing/base/upstream/in-memory-channel.yaml
 
-# Helper function to replace text in files
 replace_in_file() {
   local SOURCE_TEXT=$1
   local DESTINATION_TEXT=$2
