@@ -57,6 +57,10 @@ update_readme() {
   local manifests_directory="$1"
   local source_text="$2"
   local destination_text="$3"
+  local component_name="${4:-${COMPONENT_NAME:-}}"
+  if [ -n "$component_name" ]; then
+    echo "Updating README for ${component_name}..."
+  fi
   if [[ "$OSTYPE" == "darwin"* ]]; then
     sed -i "" "s|$source_text|$destination_text|g" "${manifests_directory}/README.md" # BSD sed of Mac OSX
   else
