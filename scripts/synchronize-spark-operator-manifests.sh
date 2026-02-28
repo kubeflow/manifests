@@ -6,7 +6,6 @@ setup_error_handling
 COMPONENT_NAME="spark-operator"
 REPOSITORY_NAME="kubeflow/spark-operator"
 COMMIT=${COMMIT:="2.4.0"}
-SPARK_OPERATOR_HELM_CHART_REPO=${SPARK_OPERATOR_HELM_CHART_REPO:="https://kubeflow.github.io/spark-operator"}
 BRANCH_NAME=${BRANCH_NAME:=synchronize-${COMPONENT_NAME}-manifests-${COMMIT?}}
 MANIFESTS_DIRECTORY=$(dirname $SCRIPT_DIRECTORY)
 DESTINATION_MANIFESTS_PATH="applications/spark/${COMPONENT_NAME}/base"
@@ -27,7 +26,7 @@ helm template -n kubeflow --include-crds spark-operator spark-operator \
 --set webhook.enable=true \
 --set webhook.port=9443 \
 --version ${COMMIT} \
---repo ${SPARK_OPERATOR_HELM_CHART_REPO} > resources.yaml
+--repo https://kubeflow.github.io/spark-operator > resources.yaml
 if [[ "$OSTYPE" == "darwin"* ]]; then
     sed -i '' 's/Spark Operator[^|]*|[^|]*applications\/spark\/spark-operator[^|]*|[^|]*\[[0-9]\.[0-9]\.[0-9]\]([^)]*)/Spark Operator	|	applications\/spark\/spark-operator	|	['"${COMMIT}"'](https:\/\/github.com\/kubeflow\/spark-operator\/tree\/v'"${COMMIT}"')/g' "${MANIFESTS_DIRECTORY}/README.md"
 else
