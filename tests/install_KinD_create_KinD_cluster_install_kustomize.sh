@@ -1,9 +1,8 @@
 #!/bin/bash
 set -e
 
-KIND_VERSION="v0.31.0"
+KIND_VERSION="v0.30.0"
 KUSTOMIZE_VERSION="v5.8.1"
-USER_LOCAL_BINARY_PATH="${HOME}/.local/bin"
 
 error_exit() {
     echo "Error occurred in script at line: ${1}."
@@ -14,10 +13,6 @@ trap 'error_exit $LINENO' ERR
 
 echo "Install KinD..."
 sudo swapoff -a
-mkdir -p "${USER_LOCAL_BINARY_PATH}"
-# Add the user-local binary path so the newly installed kind and kustomize binaries are available immediately.
-export PATH="${USER_LOCAL_BINARY_PATH}:${PATH}"
-
 # This conditional helps running GH Workflows through
 # [act](https://github.com/nektos/act)
 if [ -e /swapfile ]; then
@@ -34,7 +29,7 @@ fi
        exit 1
     fi
     chmod +x ./kind-linux-amd64
-    mv kind-linux-amd64 "${USER_LOCAL_BINARY_PATH}/kind"
+    sudo mv kind-linux-amd64 /usr/local/bin/kind
 } || { echo "Failed to install KinD"; exit 1; }
 
 
@@ -61,11 +56,11 @@ kubeadmConfigPatches:
         \"service-account-signing-key-file\": \"/etc/kubernetes/pki/sa.key\"
 nodes:
 - role: control-plane
-  image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+  image: kindest/node:v1.34.0@sha256:7416a61b42b1662ca6ca89f02028ac133a309a2a30ba309614e8ec94d976dc5a
 - role: worker
-  image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+  image: kindest/node:v1.34.0@sha256:7416a61b42b1662ca6ca89f02028ac133a309a2a30ba309614e8ec94d976dc5a
 - role: worker
-  image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+  image: kindest/node:v1.34.0@sha256:7416a61b42b1662ca6ca89f02028ac133a309a2a30ba309614e8ec94d976dc5a
 " | kind create cluster --config - --wait 120s
 
 kubectl cluster-info
@@ -85,5 +80,5 @@ echo "Install Kustomize ..."
     fi
     tar -xzvf "${KUSTOMIZE_ASSET}"
     chmod a+x kustomize
-    mv kustomize "${USER_LOCAL_BINARY_PATH}/kustomize"
+    sudo mv kustomize /usr/local/bin/kustomize
 } || { echo "Failed to install Kustomize"; exit 1; }
