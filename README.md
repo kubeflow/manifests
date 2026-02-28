@@ -110,7 +110,7 @@ The `example` directory contains an example kustomization for the single command
 - This is the master branch, which targets Kubernetes version 1.34+.
 - For the specific Kubernetes version per release, consult the [release notes](https://github.com/kubeflow/manifests/releases).
 - Either our local Kind (installed below) or your own Kubernetes cluster with a default [StorageClass](https://kubernetes.io/docs/concepts/storage/storage-classes/).
-- Kustomize version [5.7.1](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv5.7.1).
+- Kustomize version [5.8.1](https://github.com/kubernetes-sigs/kustomize/releases/tag/kustomize%2Fv5.8.1).
 - Kubectl version compatible with your Kubernetes cluster ([Version Skew Policy](https://kubernetes.io/releases/version-skew-policy/#kubectl)).
 
 ---
@@ -125,8 +125,8 @@ The `example` directory contains an example kustomization for the single command
 #### Prerequisites
 - 16 GB of RAM recommended.
 - 8 CPU cores recommended.
-- `kind` version 0.27+.
-- `docker` or a more modern tool such as `podman` to run the OCI images for the Kind cluster.
+- `kind`, `kubectl` and `kustomize` from `./tests/install_KinD_create_KinD_cluster_install_kustomize.sh`
+- `podman` or `docker` to run the OCI images for the Kind cluster.
 - Linux kernel subsystem changes to support many pods:
     - `sudo sysctl fs.inotify.max_user_instances=2280`
     - `sudo sysctl fs.inotify.max_user_watches=1255360`
@@ -134,20 +134,7 @@ The `example` directory contains an example kustomization for the single command
 
 #### Create Kind Cluster
 ```sh
-cat <<EOF | kind create cluster --name=kubeflow --config=-
-kind: Cluster
-apiVersion: kind.x-k8s.io/v1alpha4
-nodes:
-- role: control-plane
-  image: kindest/node:v1.34.0@sha256:7416a61b42b1662ca6ca89f02028ac133a309a2a30ba309614e8ec94d976dc5a
-  kubeadmConfigPatches:
-  - |
-    kind: ClusterConfiguration
-    apiServer:
-      extraArgs:
-        "service-account-issuer": "https://kubernetes.default.svc"
-        "service-account-signing-key-file": "/etc/kubernetes/pki/sa.key"
-EOF
+./tests/install_KinD_create_KinD_cluster_install_kustomize.sh
 ```
 
 #### Save Kubeconfig
@@ -762,6 +749,7 @@ pre-commit run
   **A:** Istio CNI provides better security by eliminating the need for privileged init containers, making it more compatible with Pod Security Standards (PSS). It also enables native sidecars support introduced in Kubernetes 1.28, which helps address issues with init containers and application lifecycle management.
 - **Q:** Why does Istio CNI fail on Google Kubernetes Engine (GKE) with "read-only file system" errors?
   **A:** GKE mounts `/opt/cni/bin` as read-only for security reasons. Use the GKE-specific overlay: `kubectl apply -k common/istio/istio-install/overlays/gke` (or `overlays/ambient-gke` for ambient mode). These overlays use GKE's writable CNI directory at `/home/kubernetes/bin`. For details, see [Istio CNI Prerequisites](https://istio.io/latest/docs/setup/additional-setup/cni/#prerequisites).
+
 
 
 

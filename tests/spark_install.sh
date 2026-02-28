@@ -23,4 +23,5 @@ kubectl -n kubeflow wait \
   --for=jsonpath='{.subsets[0].addresses[0].targetRef.kind}'=Pod \
   endpoints/spark-operator-webhook-svc \
   --timeout=180s
+sleep 10 # some readinessprobes for the webhook are not valid
 kubectl -n kubeflow get pod -l app.kubernetes.io/name=spark-operator
