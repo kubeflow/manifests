@@ -5,12 +5,6 @@ KIND_VERSION="v0.30.0"
 KUSTOMIZE_VERSION="v5.8.1"
 USER_BINARY_DIRECTORY="/usr/local/bin"
 
-error_exit() {
-    echo "Error occurred in script at line: ${1}."
-    exit 1
-}
-
-trap 'error_exit $LINENO' ERR
 sudo mkdir -p "${USER_BINARY_DIRECTORY}"
 export PATH="${USER_BINARY_DIRECTORY}:${PATH}"
 
@@ -60,11 +54,11 @@ kubeadmConfigPatches:
         \"service-account-signing-key-file\": \"/etc/kubernetes/pki/sa.key\"
 nodes:
 - role: control-plane
-  image: kindest/node:v1.34.3@sha256:08497ee19eace7b4b5348db5c6a1591d7752b164530a36f855cb0f2bdcbadd48
+  image: kindest/node:v1.34.0@sha256:7416a61b42b1662ca6ca89f02028ac133a309a2a30ba309614e8ec94d976dc5a
 - role: worker
-  image: kindest/node:v1.34.3@sha256:08497ee19eace7b4b5348db5c6a1591d7752b164530a36f855cb0f2bdcbadd48
+  image: kindest/node:v1.34.0@sha256:7416a61b42b1662ca6ca89f02028ac133a309a2a30ba309614e8ec94d976dc5a
 - role: worker
-  image: kindest/node:v1.34.3@sha256:08497ee19eace7b4b5348db5c6a1591d7752b164530a36f855cb0f2bdcbadd48
+  image: kindest/node:v1.34.0@sha256:7416a61b42b1662ca6ca89f02028ac133a309a2a30ba309614e8ec94d976dc5a
 " | kind create cluster --config - --wait 120s
 
 echo "Install kubectl ..."
