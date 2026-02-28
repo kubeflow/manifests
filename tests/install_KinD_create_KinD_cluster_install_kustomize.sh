@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -euxo pipefail
 
 KIND_VERSION="v0.31.0"
 KUSTOMIZE_VERSION="v5.8.1"
@@ -13,6 +13,39 @@ error_exit() {
 trap 'error_exit $LINENO' ERR
 mkdir -p "${USER_BINARY_DIRECTORY}"
 export PATH="${USER_BINARY_DIRECTORY}:${PATH}"
+
+# Free disk space in GitHub Actions to reduce "no space left on device" failures.
+if [[ "${GITHUB_ACTIONS:-false}" == "true" ]]; then
+    echo "=== Initial disk usage ==="
+    df -h
+
+    echo "=== Freeing up disk space ==="
+
+    sudo rm -rf /usr/share/dotnet
+    sudo rm -rf /opt/ghc
+    sudo rm -rf /usr/local/share/boost
+    sudo rm -rf /usr/local/lib/android
+    sudo rm -rf /usr/local/.ghcup
+    sudo rm -rf /usr/share/swift
+
+    sudo rm -rf /opt/hostedtoolcache/CodeQL || true
+    sudo rm -rf /opt/hostedtoolcache/Java_* || true
+    sudo rm -rf /opt/hostedtoolcache/Ruby || true
+    sudo rm -rf /opt/hostedtoolcache/PyPy || true
+    sudo rm -rf /opt/hostedtoolcache/boost || true
+
+    sudo apt-get autoclean
+
+    docker system prune -af --volumes
+    docker image prune -af
+
+    sudo systemctl stop containerd || true
+    sudo rm -rf /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/* || true
+    sudo systemctl start containerd || true
+
+    echo "=== Final disk usage ==="
+    df -h
+fi
 
 echo "Install KinD..."
 
@@ -77,36 +110,3 @@ echo "Install Kustomize ..."
     chmod a+x kustomize
     mv kustomize "${USER_BINARY_DIRECTORY}/kustomize"
 } || { echo "Failed to install Kustomize"; exit 1; }
-
-# Free disk space in GitHub Actions to reduce "no space left on device" failures.
-if [[ "${GITHUB_ACTIONS:-false}" == "true" ]]; then
-    echo "=== Initial disk usage ==="
-    df -h
-
-    echo "=== Freeing up disk space ==="
-
-    sudo rm -rf /usr/share/dotnet
-    sudo rm -rf /opt/ghc
-    sudo rm -rf /usr/local/share/boost
-    sudo rm -rf /usr/local/lib/android
-    sudo rm -rf /usr/local/.ghcup
-    sudo rm -rf /usr/share/swift
-
-    sudo rm -rf /opt/hostedtoolcache/CodeQL || true
-    sudo rm -rf /opt/hostedtoolcache/Java_* || true
-    sudo rm -rf /opt/hostedtoolcache/Ruby || true
-    sudo rm -rf /opt/hostedtoolcache/PyPy || true
-    sudo rm -rf /opt/hostedtoolcache/boost || true
-
-    sudo apt-get autoclean
-
-    docker system prune -af --volumes
-    docker image prune -af
-
-    sudo systemctl stop containerd || true
-    sudo rm -rf /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/* || true
-    sudo systemctl start containerd || true
-
-    echo "=== Final disk usage ==="
-    df -h
-fi
