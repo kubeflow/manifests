@@ -52,8 +52,8 @@ check_uncommitted_changes
 echo "Updating tag in istio-sidecar-injector-patch.yaml..."
 sed -i "s/\"tag\": \".*\"/\"tag\": \"$COMMIT\"/" "$ISTIO_DIRECTORY/istio-install/base/patches/istio-sidecar-injector-patch.yaml"
 
-SOURCE_TEXT="\[.*\](https://github.com/istio/istio/releases/tag/.*)"
-DESTINATION_TEXT="\[$COMMIT\](https://github.com/istio/istio/releases/tag/$COMMIT)"
+SOURCE_TEXT="\[.*\](https://github.com/${REPOSITORY_NAME}/releases/tag/.*)"
+DESTINATION_TEXT="\[$COMMIT\](https://github.com/${REPOSITORY_NAME}/releases/tag/$COMMIT)"
 
 update_readme "$MANIFESTS_DIRECTORY" "$SOURCE_TEXT" "$DESTINATION_TEXT"
 
