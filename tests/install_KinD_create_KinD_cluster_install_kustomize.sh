@@ -9,8 +9,7 @@ if [[ "${GITHUB_ACTIONS:-false}" == "true" ]]; then
     USER_BINARY_DIRECTORY="/tmp/usr/local/bin"
 fi
 
-sudo mkdir -p "${USER_BINARY_DIRECTORY}"
-sudo chown -R $(id -u):$(id -g) "${USER_BINARY_DIRECTORY}"
+mkdir -p "${USER_BINARY_DIRECTORY}"
 export PATH="${USER_BINARY_DIRECTORY}:${PATH}"
 
 echo "Install KinD..."
