@@ -20,14 +20,6 @@ run_with_elevated_privileges() {
 trap 'error_exit $LINENO' ERR
 
 echo "Install KinD..."
-run_with_elevated_privileges swapoff -a
-# This conditional helps running GH Workflows through
-# [act](https://github.com/nektos/act)
-if [ -e /swapfile ]; then
-    run_with_elevated_privileges rm -f /swapfile
-    run_with_elevated_privileges mkdir -p /tmp/etcd
-    run_with_elevated_privileges mount -t tmpfs tmpfs /tmp/etcd
-fi
 
 {
     curl -Lo ./kind-linux-amd64 https://kind.sigs.k8s.io/dl/$KIND_VERSION/kind-linux-amd64
