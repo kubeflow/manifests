@@ -11,7 +11,6 @@ REPOSITORY_NAME="kubeflow/model-registry"
 REPOSITORY_URL="https://github.com/kubeflow/model-registry.git"
 COMMIT="v0.2.13"
 REPOSITORY_DIRECTORY="model-registry"
-DEV_MODE=${DEV_MODE:=false}
 SOURCE_DIRECTORY=${SOURCE_DIRECTORY:=/tmp/kubeflow-${COMPONENT_NAME}}
 BRANCH_NAME=${BRANCH_NAME:=synchronize-kubeflow-${COMPONENT_NAME}-manifests-${COMMIT?}}
 
