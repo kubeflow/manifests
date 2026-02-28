@@ -39,10 +39,6 @@ if [[ "${GITHUB_ACTIONS:-false}" == "true" ]]; then
     docker system prune -af --volumes
     docker image prune -af
 
-    sudo systemctl stop containerd || true
-    sudo rm -rf /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs/snapshots/* || true
-    sudo systemctl start containerd || true
-
     echo "=== Final disk usage ==="
     df -h
 fi
