@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euxo pipefail
 
-KIND_VERSION="v0.31.0"
+KIND_VERSION="v0.30.0"
 KUSTOMIZE_VERSION="v5.8.1"
 USER_BINARY_DIRECTORY="/usr/local/bin"
 
@@ -50,21 +50,21 @@ containerdConfigPatches:
 # See: https://kubernetes.slack.com/archives/CEKK1KTN2/p1600268272383600
 kubeadmConfigPatches:
   - |
-    apiVersion: kubeadm.k8s.io/v1beta3
+    apiVersion: kubeadm.k8s.io/v1beta2
     kind: ClusterConfiguration
+    metadata:
+      name: config
     apiServer:
       extraArgs:
-      - name: "service-account-issuer"
-        value: "https://kubernetes.default.svc"
-      - name: "service-account-signing-key-file"
-        value: "/etc/kubernetes/pki/sa.key"
+        \"service-account-issuer\": \"https://kubernetes.default.svc\"
+        \"service-account-signing-key-file\": \"/etc/kubernetes/pki/sa.key\"
 nodes:
 - role: control-plane
-  image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+  image: kindest/node:v1.34.3@sha256:08497ee19eace7b4b5348db5c6a1591d7752b164530a36f855cb0f2bdcbadd48
 - role: worker
-  image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+  image: kindest/node:v1.34.3@sha256:08497ee19eace7b4b5348db5c6a1591d7752b164530a36f855cb0f2bdcbadd48
 - role: worker
-  image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+  image: kindest/node:v1.34.3@sha256:08497ee19eace7b4b5348db5c6a1591d7752b164530a36f855cb0f2bdcbadd48
 " | kind create cluster --config - --wait 120s
 
 echo "Install kubectl ..."
