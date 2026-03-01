@@ -21,6 +21,7 @@ data:
   {{- if .Values.kubeflow.enabled }}
   USERID_HEADER: {{ .Values.kubeflow.config.useridHeader | quote }}
   APP_PREFIX: {{ .Values.kubeflow.config.appPrefix | quote }}
+  USERID_PREFIX: {{ .Values.kubeflow.config.useridPrefix | quote }}
   {{- else }}
   APP_DISABLE_AUTH: "True"
   {{- end }}

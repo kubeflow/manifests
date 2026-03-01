@@ -1,0 +1,19 @@
+{{- if .Values.additionalServiceAccounts.pipelineRunner.create }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pipeline-runner-binding
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: pipeline-runner
+subjects:
+- kind: ServiceAccount
+  name: pipeline-runner
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+{{- end }}

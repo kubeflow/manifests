@@ -1,0 +1,31 @@
+{{- if .Values.apiServer.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: ml-pipeline
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  annotations:
+    prometheus.io/port: {{ .Values.apiServer.service.port | quote }}
+    prometheus.io/scheme: {{ .Values.apiServer.service.scheme | default "http" }}
+    prometheus.io/scrape: "true"
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+spec:
+  ports:
+  - name: http
+    port: {{ .Values.apiServer.service.port }}
+    protocol: TCP
+    targetPort: {{ .Values.apiServer.service.port }}
+  - name: grpc
+    port: {{ .Values.apiServer.service.grpcPort }}
+    protocol: TCP
+    targetPort: {{ .Values.apiServer.service.grpcPort }}
+  {{- if and .Values.apiServer.k8sNative .Values.apiServer.k8sNative.enabled .Values.apiServer.k8sNative.webhookPort }}
+  - name: webhook
+    port: {{ .Values.apiServer.k8sNative.webhookPort }}
+    protocol: TCP
+    targetPort: {{ .Values.apiServer.k8sNative.webhookPort }}
+  {{- end }}
+  selector:
+    {{- include "kubeflow-pipelines.mlPipelineSelectorLabels" . | nindent 4 }}
+{{- end }}

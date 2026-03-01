@@ -1,0 +1,15 @@
+{{- if .Values.cache.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: cache-server
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.cacheLabels" . | nindent 4 }}
+spec:
+  ports:
+  - port: {{ .Values.cache.server.service.port }}
+    targetPort: webhook-api
+  selector:
+    {{- include "kubeflow-pipelines.cacheSelectorLabels" . | nindent 4 }}
+{{- end }}

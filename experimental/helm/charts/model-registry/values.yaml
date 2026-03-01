@@ -42,7 +42,7 @@ server:
     # -- Server image repository
     repository: server
     # -- Server image tag (overrides global.imageTag if set)
-    tag: "v0.3.0"
+    tag: "v0.3.4"
     # -- Server image pull policy (overrides global.imagePullPolicy if set)
     pullPolicy: ""
     
@@ -178,7 +178,7 @@ ui:
     # -- UI image repository
     repository: model-registry-ui
     # -- UI image tag 
-    tag: "v0.3.0"
+    tag: "v0.3.4"
     # -- UI image pull policy 
     pullPolicy: ""
     
@@ -449,7 +449,7 @@ database:
     enabled: false
     image:
       repository: postgres
-      tag: "14.7-alpine3.17"
+      tag: "16-alpine"
     auth:
       database: mlmdpostgres
       username: root

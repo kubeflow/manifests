@@ -1,0 +1,138 @@
+{{- if .Values.apiServer.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-pipeline
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.mlPipelineLabels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "kubeflow-pipelines.mlPipelineSelectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+      labels:
+        {{- include "kubeflow-pipelines.mlPipelineLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: ml-pipeline
+      containers:
+      - name: ml-pipeline-api-server
+        {{- if and .Values.apiServer.k8sNative .Values.apiServer.k8sNative.enabled .Values.apiServer.image.repository .Values.apiServer.image.tag }}
+        image: "{{ .Values.apiServer.image.repository }}:{{ .Values.apiServer.image.tag }}"
+        {{- else }}
+        image: {{ include "kubeflow-pipelines.image" (dict "repository" .Values.apiServer.image.repository "tag" .Values.apiServer.image.tag "context" .) }}
+        {{- end }}
+        imagePullPolicy: IfNotPresent
+        {{- if and .Values.apiServer.k8sNative .Values.apiServer.k8sNative.enabled }}
+        command:
+          {{- toYaml .Values.apiServer.k8sNative.command | nindent 10 }}
+        args:
+          {{- toYaml .Values.apiServer.k8sNative.args | nindent 10 }}
+        {{- end }}
+        ports:
+        {{- if and .Values.apiServer.k8sNative .Values.apiServer.k8sNative.enabled .Values.apiServer.k8sNative.webhookPort }}
+        - name: webhook
+          containerPort: {{ .Values.apiServer.k8sNative.webhookPort }}
+        {{- end }}
+        - name: http
+          containerPort: 8888
+        - name: grpc
+          containerPort: 8887
+        env:
+        {{- range .Values.apiServer.additionalEnv }}
+        - name: {{ .name }}
+          {{- if .value }}
+          value: {{ .value | quote }}
+          {{- else if and .key (ne .key "null") }}
+            {{- if and .secretName .secretKey }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ .secretName }}
+              key: {{ .secretKey }}
+            {{- else if and .configMapName .configMapKey }}
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .configMapName }}
+              key: {{ .configMapKey }}
+            {{- else if or (eq .name "DBCONFIG_USER") (eq .name "DBCONFIG_PASSWORD") (eq .name "DBCONFIG_MYSQLCONFIG_USER") (eq .name "DBCONFIG_MYSQLCONFIG_PASSWORD") }}
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: {{ .key }}
+            {{- else if or (eq .name "OBJECTSTORECONFIG_ACCESSKEY") (eq .name "OBJECTSTORECONFIG_SECRETACCESSKEY") }}
+          valueFrom:
+            secretKeyRef:
+              name: mlpipeline-minio-artifact
+              key: {{ .key }}
+            {{- else }}
+          valueFrom:
+            configMapKeyRef:
+              name: pipeline-install-config
+              key: {{ .key }}
+            {{- end }}
+          {{- else if eq .name "POD_NAMESPACE" }}
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+          {{- else if eq .name "KUBEFLOW_USERID_HEADER" }}
+            {{- if eq $.Values.installMode.type "multi-user" }}
+          value: "kubeflow-userid"
+            {{- else }}
+          value: ""
+            {{- end }}
+          {{- else if eq .name "KUBEFLOW_USERID_PREFIX" }}
+            {{- if eq $.Values.installMode.type "multi-user" }}
+          value: ""
+            {{- else }}
+          value: ""
+            {{- end }}
+          {{- else if eq .name "OBJECTSTORECONFIG_SECURE" }}
+          value: "false"
+          {{- else }}
+          value: ""
+          {{- end }}
+        {{- end }}
+        {{- if eq .Values.installMode.type "multi-user" }}
+        envFrom:
+        - configMapRef:
+            name: pipeline-api-server-config
+        {{- end }}
+        livenessProbe:
+          httpGet:
+            path: /apis/v1beta1/healthz
+            port: 8888
+          initialDelaySeconds: {{ .Values.apiServer.probes.liveness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.apiServer.probes.liveness.periodSeconds }}
+          timeoutSeconds: {{ .Values.apiServer.probes.liveness.timeoutSeconds }}
+        readinessProbe:
+          httpGet:
+            path: /apis/v1beta1/healthz
+            port: 8888
+          initialDelaySeconds: {{ .Values.apiServer.probes.readiness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.apiServer.probes.readiness.periodSeconds }}
+          timeoutSeconds: {{ .Values.apiServer.probes.readiness.timeoutSeconds }}
+        resources:
+          {{- toYaml .Values.apiServer.resources | nindent 10 }}
+        securityContext:
+          {{- toYaml .Values.apiServer.securityContext | nindent 10 }}
+        startupProbe:
+          httpGet:
+            path: /apis/v1beta1/healthz
+            port: 8888
+          failureThreshold: {{ .Values.apiServer.probes.startup.failureThreshold }}
+          periodSeconds: {{ .Values.apiServer.probes.startup.periodSeconds }}
+          timeoutSeconds: {{ .Values.apiServer.probes.startup.timeoutSeconds }}
+        {{- if and .Values.apiServer.k8sNative .Values.apiServer.k8sNative.enabled .Values.apiServer.k8sNative.volumeMounts }}
+        volumeMounts:
+          {{- toYaml .Values.apiServer.k8sNative.volumeMounts | nindent 10 }}
+        {{- end }}
+      {{- if and .Values.apiServer.k8sNative .Values.apiServer.k8sNative.enabled .Values.apiServer.k8sNative.volumes }}
+      volumes:
+        {{- toYaml .Values.apiServer.k8sNative.volumes | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+{{- end }}

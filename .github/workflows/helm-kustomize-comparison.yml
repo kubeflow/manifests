@@ -38,6 +38,10 @@ jobs:
         rm get_helm.sh
     - name: Install Kustomize
       run: ./tests/kustomize_install.sh
+    - name: Build Helm dependencies for pipelines
+      run: |
+        cd experimental/helm/charts/pipelines
+        helm dependency build
     - name: Run all scenarios comparison
       env:
         VERBOSE: "true"

@@ -46,6 +46,16 @@ def clean_helm_metadata(obj: Any, component: str = "katib") -> Any:
                                 # More restrictive filtering for KServe
                                 if not label_key.startswith(('helm.sh/', 'app.kubernetes.io/managed-by')):
                                     cleaned_labels[label_key] = label_value
+                            elif component in ["pipeline", "pipelines"]:
+                                helm_specific_labels = [
+                                    'app.kubernetes.io/managed-by',
+                                    'app.kubernetes.io/version', 
+                                    'app.kubernetes.io/name',
+                                    'app.kubernetes.io/instance',
+                                    'app.kubernetes.io/component'
+                                ]
+                                if not label_key.startswith('helm.sh/') and label_key not in helm_specific_labels:
+                                    cleaned_labels[label_key] = label_value
                             else:
                                 # Standard filtering for Katib and Model Registry
                                 helm_labels = [
@@ -64,6 +74,9 @@ def clean_helm_metadata(obj: Any, component: str = "katib") -> Any:
                         cleaned_annotations = {}
                         for ann_key, ann_value in meta_value.items():
                             if not ann_key.startswith(('helm.sh/', 'meta.helm.sh/')):
+                                # For pipelines, ignore GCP icon annotation
+                                if component in ["pipeline", "pipelines"] and ann_key == 'kubernetes-engine.cloud.google.com/icon':
+                                    continue
                                 cleaned_annotations[ann_key] = ann_value
                         if cleaned_annotations:  # Only add if there are remaining annotations
                             cleaned_metadata[meta_key] = cleaned_annotations
@@ -125,6 +138,8 @@ def normalize_manifest(manifest: Dict, component: str = "katib") -> Dict:
                 # Remove leading --- if present (common in ConfigMap YAML data)
                 if normalized_value.startswith('---'):
                     normalized_value = normalized_value[3:].strip()
+                lines = normalized_value.split('\n')
+                normalized_value = '\n'.join(line.rstrip() for line in lines)
                 normalized_data[key] = normalized_value
             else:
                 normalized_data[key] = value
@@ -144,8 +159,37 @@ def normalize_manifest(manifest: Dict, component: str = "katib") -> Dict:
         metadata.pop('uid', None)
         metadata.pop('creationTimestamp', None)
         metadata.pop('managedFields', None)
+        
+        # For pipelines component, remove labels from Argo CRDs
+        if component in ["pipeline", "pipelines"] and normalized.get('kind') == 'CustomResourceDefinition':
+            crd_name = normalized.get('metadata', {}).get('name', '')
+            if 'argoproj.io' in crd_name:
+                metadata.pop('labels', None)
     
     normalized.pop('status', None)
+    
+    # For pipelines Argo CRDs, normalize schema differences between versions
+    if component in ["pipeline", "pipelines"] and normalized.get('kind') == 'CustomResourceDefinition':
+        crd_name = normalized.get('metadata', {}).get('name', '')
+        if 'argoproj.io' in crd_name and 'spec' in normalized:
+            def normalize_crd_schema(obj, path=""):
+                if isinstance(obj, dict):
+                    cleaned = {}
+                    for k, v in obj.items():
+                        if k.startswith('x-kubernetes-'):
+                            continue
+                        if k == 'default' and 'properties' in path:
+                            continue
+                        if k == 'required' and 'openAPIV3Schema.properties' in path:
+                            continue
+                        cleaned[k] = normalize_crd_schema(v, f"{path}.{k}" if path else k)
+                    return cleaned
+                elif isinstance(obj, list):
+                    return [normalize_crd_schema(item, path) for item in obj]
+                else:
+                    return obj
+            
+            normalized['spec'] = normalize_crd_schema(normalized['spec'])
     
     def remove_empty_values(obj):
         if isinstance(obj, dict):
@@ -173,7 +217,7 @@ def get_resource_key(manifest: Dict, component: str = "katib") -> str:
     else:
         return f"{kind}/{name}"
 
-def deep_diff(obj1: Any, obj2: Any, path: str = "") -> List[str]:
+def deep_diff(obj1: Any, obj2: Any, path: str = "", resource_key: str = "") -> List[str]:
     """Compare two objects and return list of differences."""
     differences = []
     
@@ -188,16 +232,21 @@ def deep_diff(obj1: Any, obj2: Any, path: str = "") -> List[str]:
             if key not in obj1:
                 differences.append(f"{key_path}: missing in kustomize")
             elif key not in obj2:
+                if 'CustomResourceDefinition' in resource_key and 'argoproj.io' in resource_key:
+                    if 'openAPIV3Schema.properties' in path and key == 'properties':
+                        continue
+                    elif '.properties.' in path:
+                        continue
                 differences.append(f"{key_path}: missing in helm")
             else:
-                differences.extend(deep_diff(obj1[key], obj2[key], key_path))
+                differences.extend(deep_diff(obj1[key], obj2[key], key_path, resource_key))
     
     elif isinstance(obj1, list):
         if len(obj1) != len(obj2):
             differences.append(f"{path}: list length mismatch ({len(obj1)} vs {len(obj2)})")
         else:
             for i, (item1, item2) in enumerate(zip(obj1, obj2)):
-                differences.extend(deep_diff(item1, item2, f"{path}[{i}]"))
+                differences.extend(deep_diff(item1, item2, f"{path}[{i}]", resource_key))
     
     elif obj1 != obj2:
         differences.append(f"{path}: '{obj1}' != '{obj2}'")
@@ -216,10 +265,72 @@ def get_expected_helm_extras(component: str, scenario: str) -> set:
         if scenario == "base":
             return {"AuthorizationPolicy/kserve-models-web-app"}
         return set()
+    elif component == "pipelines":
+        extras = {
+            # Built-in third-party Argo resources (from thirdParty.argo templates)
+            'ConfigMap/workflow-controller-configmap',
+            'Deployment/workflow-controller',
+            'PriorityClass/workflow-controller',
+            'Role/argo-role',
+            'RoleBinding/argo-binding',
+            'ServiceAccount/argo',
+        }
+        
+        # These get extra resources from the subchart dependency
+        argo_subchart_scenarios = [
+            'dev',  
+            'platform-agnostic-multi-user-emissary',  
+            'platform-agnostic-multi-user',
+            'platform-agnostic-multi-user-legacy', 
+        ]
+        
+        if any(sc in scenario for sc in argo_subchart_scenarios):
+            # Argo Workflows subchart creates these extra resources
+            extras.update({
+                # Argo Workflows subchart RBAC resources
+                'ClusterRole/pipeline-argo-workflows-admin',
+                'ClusterRole/pipeline-argo-workflows-edit',
+                'ClusterRole/pipeline-argo-workflows-view',
+                'ClusterRole/pipeline-argo-workflows-server',
+                'ClusterRole/pipeline-argo-workflows-server-cluster-template',
+                'ClusterRole/pipeline-argo-workflows-workflow-controller',
+                'ClusterRole/pipeline-argo-workflows-workflow-controller-cluster-template',
+                'ClusterRoleBinding/pipeline-argo-workflows-server',
+                'ClusterRoleBinding/pipeline-argo-workflows-server-cluster-template',
+                'ClusterRoleBinding/pipeline-argo-workflows-workflow-controller',
+                'ClusterRoleBinding/pipeline-argo-workflows-workflow-controller-cluster-template',
+                'Role/pipeline-argo-workflows-workflow',
+                'RoleBinding/pipeline-argo-workflows-workflow',
+                # Argo Workflows subchart deployments and services
+                'Deployment/pipeline-argo-workflows-server',
+                'Deployment/pipeline-argo-workflows-workflow-controller',
+                'Service/pipeline-argo-workflows-server',
+                'ServiceAccount/pipeline-argo-workflows-server',
+                'ServiceAccount/pipeline-argo-workflows-workflow-controller',
+                'ConfigMap/pipeline-argo-workflows-workflow-controller-configmap',
+                # Argo Workflows CRDs from subchart
+                'CustomResourceDefinition/clusterworkflowtemplates.argoproj.io',
+                'CustomResourceDefinition/cronworkflows.argoproj.io',
+                'CustomResourceDefinition/workflowartifactgctasks.argoproj.io',
+                'CustomResourceDefinition/workfloweventbindings.argoproj.io',
+                'CustomResourceDefinition/workflows.argoproj.io',
+                'CustomResourceDefinition/workflowtaskresults.argoproj.io',
+                'CustomResourceDefinition/workflowtasksets.argoproj.io',
+                'CustomResourceDefinition/workflowtemplates.argoproj.io',
+            })
+        
+        if 'multi-user' in scenario:
+            extras.update({
+                'ConfigMap/kubeflow-pipelines-profile-controller-code',
+                'ConfigMap/kubeflow-pipelines-profile-controller-env',
+                'ConfigMap/pipeline-api-server-config',
+            })
+        
+        return extras
     else:
         return set()
 
-def compare_manifests(kustomize_file: str, helm_file: str, component: str, scenario: str, namespace: str = "") -> bool:
+def compare_manifests(kustomize_file: str, helm_file: str, component: str, scenario: str, namespace: str = "", verbose: bool = False) -> bool:
     """Compare Kustomize and Helm manifests."""
     kustomize_manifests = load_manifests(kustomize_file)
     helm_manifests = load_manifests(helm_file)
@@ -252,11 +363,15 @@ def compare_manifests(kustomize_file: str, helm_file: str, component: str, scena
     
     if only_in_kustomize:
         print(f"Resources only in Kustomize: {len(only_in_kustomize)}")
+        for resource in sorted(only_in_kustomize):
+            print(f"  - {resource}")        
         success = False
         differences_found.extend(only_in_kustomize)
     
     if unexpected_helm_extras:
         print(f"Unexpected resources only in Helm: {len(unexpected_helm_extras)}")
+        for resource in sorted(unexpected_helm_extras):
+            print(f"  - {resource}")
         success = False
         differences_found.extend(unexpected_helm_extras)
     
@@ -265,10 +380,14 @@ def compare_manifests(kustomize_file: str, helm_file: str, component: str, scena
         kustomize_resource = kustomize_resources[key]
         helm_resource = helm_resources[key]
         
-        differences = deep_diff(kustomize_resource, helm_resource)
+        differences = deep_diff(kustomize_resource, helm_resource, resource_key=key)
         
         if differences:
             print(f"Differences in {key}: {len(differences)} fields")
+            print(f"  Detailed differences for {key}:")
+            for diff in differences:
+                print(f"    {diff}")
+            print()
             differences_found.append(key)
             success = False
     
@@ -281,7 +400,7 @@ def compare_manifests(kustomize_file: str, helm_file: str, component: str, scena
 if __name__ == "__main__":
     if len(sys.argv) < 5:
         print("Usage: python compare.py <kustomize_file> <helm_file> <component> <scenario> [namespace] [--verbose]")
-        print("Components: katib, model-registry, kserve-models-web-app")
+        print("Components: katib, model-registry, kserve-models-web-app, pipeline")
         sys.exit(1)
     
     kustomize_file = sys.argv[1]
@@ -289,11 +408,14 @@ if __name__ == "__main__":
     component = sys.argv[3]
     scenario = sys.argv[4]
     namespace = sys.argv[5] if len(sys.argv) > 5 and not sys.argv[5].startswith('--') else ""
-    
-    if component not in ["katib", "model-registry", "kserve-models-web-app", "notebook-controller"]:
+    verbose = '--verbose' in sys.argv
+
+    if component not in ["katib", "model-registry", "kserve-models-web-app", "notebook-controller", "pipelines"]:
         print(f"ERROR: Unknown component: {component}")
-        print("Supported components: katib, model-registry, kserve-models-web-app, notebook-controller")
+        print("Supported components: katib, model-registry, kserve-models-web-app, notebook-controller, pipelines")
         sys.exit(1)
-    
-    success = compare_manifests(kustomize_file, helm_file, component, scenario, namespace)
+    if component == "pipeline":
+        component = "pipelines"
+
+    success = compare_manifests(kustomize_file, helm_file, component, scenario, namespace, verbose)
     sys.exit(0 if success else 1) 

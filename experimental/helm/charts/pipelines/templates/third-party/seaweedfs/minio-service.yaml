@@ -1,0 +1,22 @@
+{{- if .Values.seaweedfs.enabled }}
+# Backward compatibility service for Minio API
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio-service
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app: seaweedfs
+    component: minio-compatibility
+spec:
+  ports:
+  - name: http
+    port: 9000
+    protocol: TCP
+    targetPort: 8333
+  selector:
+    app: seaweedfs
+    application-crd-id: kubeflow-pipelines
+{{- end }}
+

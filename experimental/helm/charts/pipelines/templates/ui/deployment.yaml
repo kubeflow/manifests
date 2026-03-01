@@ -1,0 +1,89 @@
+{{- if .Values.ui.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-pipeline-ui
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.uiLabels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "kubeflow-pipelines.uiSelectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+      labels:
+        {{- include "kubeflow-pipelines.uiLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: ml-pipeline-ui
+      volumes:
+      - name: config-volume
+        configMap:
+          name: ml-pipeline-ui-configmap
+      containers:
+      - name: ml-pipeline-ui
+        image: {{ include "kubeflow-pipelines.image" (dict "repository" .Values.ui.image.repository "tag" .Values.ui.image.tag "context" .) }}
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/config
+          readOnly: true
+        env:
+        {{- range .Values.ui.additionalEnv }}
+        - name: {{ .name }}
+          {{- if .value }}
+          value: {{ .value | quote }}
+          {{- else if and .key (ne .key "null") }}
+            {{- if or (eq .name "MINIO_ACCESS_KEY") (eq .name "MINIO_SECRET_KEY") }}
+          valueFrom:
+            secretKeyRef:
+              name: mlpipeline-minio-artifact
+              key: {{ .key }}
+            {{- else }}
+          valueFrom:
+            configMapKeyRef:
+              name: pipeline-install-config
+              key: {{ .key }}
+            {{- end }}
+          {{- else if .valueFrom }}
+          valueFrom:
+            {{- toYaml .valueFrom | nindent 12 }}
+          {{- else if or (eq .name "MINIO_NAMESPACE") (eq .name "FRONTEND_SERVER_NAMESPACE") }}
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+          {{- else if eq .name "ALLOW_CUSTOM_VISUALIZATIONS" }}
+          value: {{ $.Values.ui.env.allowCustomVisualizations | quote }}
+          {{- else if eq .name "ARGO_ARCHIVE_LOGS" }}
+          value: {{ $.Values.ui.env.argoArchiveLogs | quote }}
+          {{- else if eq .name "DISABLE_GKE_METADATA" }}
+          value: {{ $.Values.ui.env.disableGkeMetadata | quote }}
+          {{- else }}
+          value: ""
+          {{- end }}
+        {{- end }}
+        livenessProbe:
+          httpGet:
+            path: /apis/v1beta1/healthz
+            port: 3000
+          initialDelaySeconds: {{ .Values.ui.probes.liveness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.ui.probes.liveness.periodSeconds }}
+          timeoutSeconds: {{ .Values.ui.probes.liveness.timeoutSeconds }}
+        readinessProbe:
+          httpGet:
+            path: /apis/v1beta1/healthz
+            port: 3000
+          initialDelaySeconds: {{ .Values.ui.probes.readiness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.ui.probes.readiness.periodSeconds }}
+          timeoutSeconds: {{ .Values.ui.probes.readiness.timeoutSeconds }}
+        resources:
+          {{- toYaml .Values.ui.resources | nindent 10 }}
+        securityContext:
+          {{- toYaml .Values.ui.securityContext | nindent 10 }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+{{- end }}

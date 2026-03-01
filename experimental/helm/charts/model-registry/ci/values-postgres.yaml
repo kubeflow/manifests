@@ -10,7 +10,7 @@ server:
   replicas: 1
   dataStoreType: embedmd
   image:
-    tag: "v0.3.0"
+    tag: "v0.3.4"
   resources:
     limits:
       cpu: 200m
@@ -39,7 +39,7 @@ database:
     enabled: true
     image:
       repository: postgres
-      tag: "14.7-alpine3.17"
+      tag: "16-alpine"
     auth:
       database: metadb
       username: root

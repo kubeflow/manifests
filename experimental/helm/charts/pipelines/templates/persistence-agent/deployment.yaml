@@ -1,0 +1,70 @@
+{{- if .Values.persistenceAgent.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-pipeline-persistenceagent
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app: ml-pipeline-persistenceagent
+spec:
+  selector:
+    matchLabels:
+      {{- include "kubeflow-pipelines.persistenceAgentSelectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+      labels:
+        {{- include "kubeflow-pipelines.labels" . | nindent 8 }}
+        app: ml-pipeline-persistenceagent
+    spec:
+      serviceAccountName: ml-pipeline-persistenceagent
+      containers:
+      - name: ml-pipeline-persistenceagent
+        image: {{ include "kubeflow-pipelines.image" (dict "repository" .Values.persistenceAgent.image.repository "tag" .Values.persistenceAgent.image.tag "context" .) }}
+        imagePullPolicy: IfNotPresent
+        env:
+        {{- range .Values.persistenceAgent.additionalEnv }}
+        - name: {{ .name }}
+          {{- if hasKey . "value" }}
+          value: {{ .value | quote }}
+          {{- else if and (hasKey . "valueFrom") .valueFrom (not (eq .valueFrom nil)) }}
+          valueFrom:
+            {{- toYaml .valueFrom | nindent 12 }}
+          {{- else if eq .name "NAMESPACE" }}
+            {{- if eq $.Values.installMode.type "multi-user" }}
+          value: ""
+            {{- else }}
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+            {{- end }}
+          {{- else }}
+          value: ""
+          {{- end }}
+        {{- end }}
+        - name: TTL_SECONDS_AFTER_WORKFLOW_FINISH
+          value: {{ .Values.persistenceAgent.env.ttlSecondsAfterWorkflowFinish | quote }}
+        - name: NUM_WORKERS
+          value: {{ .Values.persistenceAgent.env.numWorkers | quote }}
+        - name: LOG_LEVEL
+          value: {{ .Values.global.logLevel | quote }}
+        resources:
+          {{- toYaml .Values.persistenceAgent.resources | nindent 10 }}
+        securityContext:
+          {{- toYaml .Values.persistenceAgent.securityContext | nindent 10 }}
+        volumeMounts:
+        - mountPath: /var/run/secrets/kubeflow/tokens
+          name: persistenceagent-sa-token
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+      - name: persistenceagent-sa-token
+        projected:
+          sources:
+          - serviceAccountToken:
+              audience: pipelines.kubeflow.org
+              expirationSeconds: 3600
+              path: persistenceagent-sa-token
+{{- end }}

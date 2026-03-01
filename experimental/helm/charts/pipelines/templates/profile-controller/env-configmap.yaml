@@ -1,0 +1,14 @@
+{{- if and (eq .Values.installMode.type "multi-user") .Values.profileController.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kubeflow-pipelines-profile-controller-env
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app: kubeflow-pipelines-profile-controller
+    application-crd-id: kubeflow-pipelines
+data:
+  DISABLE_ISTIO_SIDECAR: {{ .Values.profileController.disableIstioSidecar | quote }}
+{{- end }}
+

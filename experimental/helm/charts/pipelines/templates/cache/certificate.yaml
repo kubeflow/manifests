@@ -1,0 +1,21 @@
+{{- if and .Values.cache.enabled .Values.certManager.enabled }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: kfp-cache-cert
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    app: cache-server-cert-manager
+spec:
+  commonName: kfp-cache-cert
+  isCA: true
+  dnsNames:
+  - cache-server
+  - cache-server.{{ include "kubeflow-pipelines.namespace" . }}
+  - cache-server.{{ include "kubeflow-pipelines.namespace" . }}.svc
+  issuerRef:
+    kind: Issuer
+    name: kfp-cache-selfsigned-issuer
+  secretName: webhook-server-tls
+{{- end }}
+

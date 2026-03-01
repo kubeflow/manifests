@@ -1,0 +1,73 @@
+{{- if .Values.scheduledWorkflow.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-pipeline-scheduledworkflow
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+{{- if eq .Values.installMode.type "multi-user" }}
+    app: ml-pipeline-scheduledworkflow
+    app.kubernetes.io/component: ml-pipeline
+    app.kubernetes.io/name: kubeflow-pipelines
+    application-crd-id: kubeflow-pipelines
+{{- else }}
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app: ml-pipeline-scheduledworkflow
+{{- end }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "kubeflow-pipelines.scheduledWorkflowSelectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+      labels:
+{{- if eq .Values.installMode.type "multi-user" }}
+        app: ml-pipeline-scheduledworkflow
+        app.kubernetes.io/component: ml-pipeline
+        app.kubernetes.io/name: kubeflow-pipelines
+        application-crd-id: kubeflow-pipelines
+{{- else }}
+        {{- include "kubeflow-pipelines.labels" . | nindent 8 }}
+        app: ml-pipeline-scheduledworkflow
+{{- end }}
+    spec:
+      serviceAccountName: ml-pipeline-scheduledworkflow
+      containers:
+      - name: ml-pipeline-scheduledworkflow
+        image: {{ include "kubeflow-pipelines.image" (dict "repository" .Values.scheduledWorkflow.image.repository "tag" .Values.scheduledWorkflow.image.tag "context" .) }}
+        imagePullPolicy: IfNotPresent
+        env:
+        {{- range .Values.scheduledWorkflow.additionalEnv }}
+        - name: {{ .name }}
+          {{- if hasKey . "value" }}
+          value: {{ .value | quote }}
+          {{- else if and (hasKey . "valueFrom") .valueFrom (not (eq .valueFrom nil)) }}
+          valueFrom:
+            {{- toYaml .valueFrom | nindent 12 }}
+          {{- else }}
+          value: ""
+          {{- end }}
+        {{- end }}
+        - name: CRON_SCHEDULE_TIMEZONE
+          valueFrom:
+            configMapKeyRef:
+              key: cronScheduleTimezone
+              name: pipeline-install-config
+        securityContext:
+          {{- toYaml .Values.scheduledWorkflow.securityContext | nindent 10 }}
+        volumeMounts:
+        - mountPath: /var/run/secrets/kubeflow/tokens
+          name: scheduledworkflow-sa-token
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+      - name: scheduledworkflow-sa-token
+        projected:
+          sources:
+          - serviceAccountToken:
+              audience: pipelines.kubeflow.org
+              expirationSeconds: 3600
+              path: scheduledworkflow-sa-token
+{{- end }}
