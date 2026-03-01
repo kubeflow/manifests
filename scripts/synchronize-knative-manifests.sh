@@ -52,7 +52,11 @@ replace_in_file() {
   local SOURCE_TEXT=$1
   local DESTINATION_TEXT=$2
   local FILE=$3
-  sed -i "s|$SOURCE_TEXT|$DESTINATION_TEXT|g" $FILE
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    sed -i '' "s|$SOURCE_TEXT|$DESTINATION_TEXT|g" "$FILE"
+  else
+    sed -i "s|$SOURCE_TEXT|$DESTINATION_TEXT|g" "$FILE"
+  fi
 }
 replace_in_file \
   "\[.*\](https://github.com/knative/serving/releases/tag/knative-.*) <" \
@@ -74,5 +78,7 @@ replace_in_file \
   "The manifests for Knative Eventing are based off the \[v.* release\](https://github.com/knative/eventing/releases/tag/knative-v.*)" \
   "The manifests for Knative Eventing are based off the \[$KN_EVENTING_RELEASE release\](https://github.com/knative/eventing/releases/tag/knative-$KN_EVENTING_RELEASE)" \
   $DESTINATION_DIRECTORY/README.md
-commit_changes "$MANIFESTS_DIRECTORY" "Update ${REPOSITORY_NAME} manifests from ${COMMIT}" "$MANIFESTS_DIRECTORY"
+commit_changes "$MANIFESTS_DIRECTORY" "Update ${REPOSITORY_NAME} manifests from ${COMMIT}" \
+  "$DESTINATION_DIRECTORY" \
+  "README.md"
 echo "Synchronization completed successfully."
