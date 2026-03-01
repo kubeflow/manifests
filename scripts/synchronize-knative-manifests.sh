@@ -52,7 +52,7 @@ replace_in_file() {
   local SOURCE_TEXT=$1
   local DESTINATION_TEXT=$2
   local FILE=$3
-  if [[ "$OSTYPE" == darwin* ]]; then
+  if [[ "$OSTYPE" == "darwin"* ]]; then
     sed -i '' "s|$SOURCE_TEXT|$DESTINATION_TEXT|g" "$FILE"
   else
     sed -i "s|$SOURCE_TEXT|$DESTINATION_TEXT|g" "$FILE"
