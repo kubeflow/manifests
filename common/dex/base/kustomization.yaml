@@ -5,7 +5,9 @@ namespace: auth
 resources:
 - namespace.yaml
 - config-map.yaml
-- crds.yaml
+- upstream/crds.yaml
+- dex-rbac.yaml
+- dex-serviceaccount.yaml
 - deployment.yaml
 - service.yaml
 - dex-passwords.yaml
