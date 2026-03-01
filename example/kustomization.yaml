@@ -45,7 +45,7 @@ resources:
 # - ../common/istio/istio-install/overlays/ambient-oauth2-proxy
 # - ../common/istio/istio-install/overlays/ambient-oauth2-proxy-gke
 # GKE mounts `/opt/cni/bin` as read-only. The GKE overlays use `/home/kubernetes/bin`.
-# For details, see [Istio CNI Prerequisites](https://istio.io/latest/docs/setup/additional-setup/cni/#prerequisites)
+# For details, see https://istio.io/latest/docs/setup/additional-setup/cni/#prerequisites
 # Oauth2-proxy
 # NOTE: only uncomment ONE of the following overlays, depending on your cluster type
 - ../common/oauth2-proxy/overlays/m2m-dex-only       # for all clusters
@@ -98,6 +98,15 @@ resources:
 - ../applications/kserve/models-web-app/overlays/kubeflow
 # Spark Operator
 - ../applications/spark/spark-operator/overlays/kubeflow
+
+# Model Registry
+- ../applications/model-registry/upstream/overlays/postgres
+# Model Registry Istio networking (VirtualService for /api/model_registry/)
+- ../applications/model-registry/upstream/options/istio
+# Model Registry UI
+- ../applications/model-registry/upstream/options/ui/overlays/istio
+# Model Registry Catalog (demo)
+- ../applications/model-registry/upstream/options/catalog/overlays/demo
 
 # Ray is an experimental integration
 # Here is the documentation for Ray: https://docs.ray.io/en/latest/
