@@ -14,9 +14,6 @@ check_uncommitted_changes() {
 create_branch() {
   local branch="$1"
   check_uncommitted_changes
-  if [ $(git branch --list "$branch") ]; then
-    echo "WARNING: Branch $branch already exists."
-  fi
   if ! git show-ref --verify --quiet refs/heads/$branch; then
     git checkout -b "$branch"
   else

@@ -29,9 +29,6 @@ wget -O $DESTINATION_DIRECTORY/knative-serving-post-install-jobs/base/serving-po
 yq eval -i '... comments=""' $DESTINATION_DIRECTORY/knative-serving/base/upstream/serving-core.yaml
 yq eval -i '... comments=""' $DESTINATION_DIRECTORY/knative-serving/base/upstream/net-istio.yaml
 yq eval -i '... comments=""' $DESTINATION_DIRECTORY/knative-serving-post-install-jobs/base/serving-post-install-jobs.yaml
-yq eval -i 'explode(.)' $DESTINATION_DIRECTORY/knative-serving/base/upstream/serving-core.yaml
-yq eval -i 'explode(.)' $DESTINATION_DIRECTORY/knative-serving/base/upstream/net-istio.yaml
-yq eval -i 'explode(.)' $DESTINATION_DIRECTORY/knative-serving-post-install-jobs/base/serving-post-install-jobs.yaml
 yq eval -i 'select(.kind == "Job" and .metadata.generateName == "storage-version-migration-serving-") | .metadata.name = "storage-version-migration-serving"' $DESTINATION_DIRECTORY/knative-serving-post-install-jobs/base/serving-post-install-jobs.yaml
 wget -O $DESTINATION_DIRECTORY/knative-eventing/base/upstream/eventing-core.yaml "https://github.com/knative/eventing/releases/download/knative-$KN_EVENTING_RELEASE/eventing-core.yaml"
 wget -O $DESTINATION_DIRECTORY/knative-eventing/base/upstream/in-memory-channel.yaml "https://github.com/knative/eventing/releases/download/knative-$KN_EVENTING_RELEASE/in-memory-channel.yaml"
@@ -41,10 +38,6 @@ yq eval -i '... comments=""' $DESTINATION_DIRECTORY/knative-eventing/base/upstre
 yq eval -i '... comments=""' $DESTINATION_DIRECTORY/knative-eventing/base/upstream/in-memory-channel.yaml
 yq eval -i '... comments=""' $DESTINATION_DIRECTORY/knative-eventing/base/upstream/mt-channel-broker.yaml
 yq eval -i '... comments=""' $DESTINATION_DIRECTORY/knative-eventing-post-install-jobs/base/eventing-post-install.yaml
-yq eval -i 'explode(.)' $DESTINATION_DIRECTORY/knative-eventing/base/upstream/eventing-core.yaml
-yq eval -i 'explode(.)' $DESTINATION_DIRECTORY/knative-eventing/base/upstream/in-memory-channel.yaml
-yq eval -i 'explode(.)' $DESTINATION_DIRECTORY/knative-eventing/base/upstream/mt-channel-broker.yaml
-yq eval -i 'explode(.)' $DESTINATION_DIRECTORY/knative-eventing-post-install-jobs/base/eventing-post-install.yaml
 yq eval -i 'select(.kind == "Job" and .metadata.generateName == "storage-version-migration-eventing-") | .metadata.name = "storage-version-migration-eventing"' $DESTINATION_DIRECTORY/knative-eventing-post-install-jobs/base/eventing-post-install.yaml
 yq eval -i 'select((.kind == "ConfigMap" and .metadata.name == "config-observability") | not)' $DESTINATION_DIRECTORY/knative-eventing/base/upstream/in-memory-channel.yaml
 yq eval -i 'select((.kind == "ConfigMap" and .metadata.name == "config-tracing") | not)' $DESTINATION_DIRECTORY/knative-eventing/base/upstream/in-memory-channel.yaml
@@ -52,7 +45,7 @@ replace_in_file() {
   local SOURCE_TEXT=$1
   local DESTINATION_TEXT=$2
   local FILE=$3
-  sed -i "s|$SOURCE_TEXT|$DESTINATION_TEXT|g" $FILE
+  sed -i "s|$SOURCE_TEXT|$DESTINATION_TEXT|g" "$FILE"
 }
 replace_in_file \
   "\[.*\](https://github.com/knative/serving/releases/tag/knative-.*) <" \
@@ -74,5 +67,7 @@ replace_in_file \
   "The manifests for Knative Eventing are based off the \[v.* release\](https://github.com/knative/eventing/releases/tag/knative-v.*)" \
   "The manifests for Knative Eventing are based off the \[$KN_EVENTING_RELEASE release\](https://github.com/knative/eventing/releases/tag/knative-$KN_EVENTING_RELEASE)" \
   $DESTINATION_DIRECTORY/README.md
-commit_changes "$MANIFESTS_DIRECTORY" "Update ${REPOSITORY_NAME} manifests from ${COMMIT}" "$MANIFESTS_DIRECTORY"
+commit_changes "$MANIFESTS_DIRECTORY" "Update ${REPOSITORY_NAME} manifests from ${COMMIT}" \
+  "$DESTINATION_DIRECTORY" \
+  "README.md"
 echo "Synchronization completed successfully."
