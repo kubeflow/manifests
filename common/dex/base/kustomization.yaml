@@ -1,3 +1,4 @@
+# Upstream is https://github.com/dexidp/dex/blob/master/examples/k8s/dex.yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: auth
@@ -6,8 +7,8 @@ resources:
 - namespace.yaml
 - config-map.yaml
 - upstream/crds.yaml
-- dex-rbac.yaml
-- dex-serviceaccount.yaml
+- rbac.yaml
+- serviceaccount.yaml
 - deployment.yaml
 - service.yaml
 - dex-passwords.yaml
