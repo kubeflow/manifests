@@ -52,11 +52,7 @@ replace_in_file() {
   local SOURCE_TEXT=$1
   local DESTINATION_TEXT=$2
   local FILE=$3
-  if [[ "$OSTYPE" == "darwin"* ]]; then
-    sed -i '' "s|$SOURCE_TEXT|$DESTINATION_TEXT|g" "$FILE"
-  else
-    sed -i "s|$SOURCE_TEXT|$DESTINATION_TEXT|g" "$FILE"
-  fi
+  sed -i "s|$SOURCE_TEXT|$DESTINATION_TEXT|g" "$FILE"
 }
 replace_in_file \
   "\[.*\](https://github.com/knative/serving/releases/tag/knative-.*) <" \
