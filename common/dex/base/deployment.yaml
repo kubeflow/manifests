@@ -5,7 +5,7 @@ metadata:
     app: dex
   name: dex
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: dex

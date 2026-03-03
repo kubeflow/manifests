@@ -4,6 +4,7 @@ metadata:
   name: dex
 spec:
   type: ClusterIP
+  sessionAffinity: ClientIP
   ports:
   - name: dex
     port: 5556
