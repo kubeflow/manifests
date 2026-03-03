@@ -7,26 +7,37 @@ resources:
 - virtual-service.yaml
 - authorizationpolicy.yaml
 
-commonLabels:
-  kustomize.component: profiles
 
-patchesStrategicMerge:
-- patches/kfam.yaml
-- patches/remove-namespace.yaml
 
 configurations:
 - params.yaml
 
-vars:
-- name: PROFILES_NAMESPACE
-  fieldref:
-    fieldpath: metadata.namespace
-  objref:
-    name: profiles-kfam
-    kind: Service
-    apiVersion: v1
 
 images:
 - name: ghcr.io/kubeflow/kubeflow/kfam
   newName: ghcr.io/kubeflow/kubeflow/kfam
   newTag: v1.10.0
+labels:
+- includeSelectors: true
+  pairs:
+    kustomize.component: profiles
+patches:
+- path: patches/kfam.yaml
+- path: patches/remove-namespace.yaml
+replacements:
+- source:
+    fieldPath: metadata.namespace
+    kind: Service
+    name: profiles-kfam
+    version: v1
+  targets:
+  - fieldPaths:
+    - spec.http.0.route.0.destination.host
+    options:
+      delimiter: .
+      index: 1
+    select:
+      group: networking.istio.io
+      kind: VirtualService
+      name: profiles-kfam
+      version: v1alpha3

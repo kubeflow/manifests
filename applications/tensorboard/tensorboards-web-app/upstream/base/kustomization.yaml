@@ -8,9 +8,6 @@ resources:
 - service.yaml
 namePrefix: tensorboards-web-app-
 namespace: kubeflow
-commonLabels:
-  app: tensorboards-web-app
-  kustomize.component: tensorboards-web-app
 images:
 - name: ghcr.io/kubeflow/kubeflow/tensorboards-web-app
   newName: ghcr.io/kubeflow/kubeflow/tensorboards-web-app
@@ -21,53 +18,74 @@ configMapGenerator:
 - envs:
   - params.env
   name: parameters
-vars:
-- fieldref:
-    fieldPath: data.TWA_CLUSTER_DOMAIN
-  name: TWA_CLUSTER_DOMAIN
-  objref:
-    apiVersion: v1
-    kind: ConfigMap
-    name: parameters
-- fieldref:
-    fieldPath: metadata.namespace
-  name: TWA_NAMESPACE
-  objref:
-    apiVersion: v1
-    kind: Service
-    name: service
-- fieldref:
+labels:
+- includeSelectors: true
+  pairs:
+    app: tensorboards-web-app
+    kustomize.component: tensorboards-web-app
+replacements:
+- source:
     fieldPath: data.TWA_USERID_HEADER
-  name: TWA_USERID_HEADER
-  objref:
-    apiVersion: v1
     kind: ConfigMap
     name: parameters
-- fieldref:
+    version: v1
+  targets:
+  - fieldPaths:
+    - spec.template.spec.containers.0.env.1.value
+    select:
+      group: apps
+      kind: Deployment
+      name: deployment
+      version: v1
+- source:
     fieldPath: data.TWA_USERID_PREFIX
-  name: TWA_USERID_PREFIX
-  objref:
-    apiVersion: v1
     kind: ConfigMap
     name: parameters
-- fieldref:
+    version: v1
+  targets:
+  - fieldPaths:
+    - spec.template.spec.containers.0.env.2.value
+    select:
+      group: apps
+      kind: Deployment
+      name: deployment
+      version: v1
+- source:
     fieldPath: data.TWA_PREFIX
-  name: TWA_PREFIX
-  objref:
-    apiVersion: v1
     kind: ConfigMap
     name: parameters
-- fieldref:
+    version: v1
+  targets:
+  - fieldPaths:
+    - spec.template.spec.containers.0.env.0.value
+    select:
+      group: apps
+      kind: Deployment
+      name: deployment
+      version: v1
+- source:
     fieldPath: data.TWA_APP_SECURE_COOKIES
-  name: TWA_APP_SECURE_COOKIES
-  objref:
-    apiVersion: v1
     kind: ConfigMap
     name: parameters
-- name: TWA_APP_ENABLE_METRICS
-  fieldref:
+    version: v1
+  targets:
+  - fieldPaths:
+    - spec.template.spec.containers.0.env.3.value
+    select:
+      group: apps
+      kind: Deployment
+      name: deployment
+      version: v1
+- source:
     fieldPath: data.TWA_APP_ENABLE_METRICS
-  objref:
-    apiVersion: v1
     kind: ConfigMap
     name: parameters
+    version: v1
+  targets:
+  - fieldPaths:
+    - spec.template.spec.containers.0.env.4.value
+    select:
+      group: apps
+      kind: Deployment
+      name: deployment
+      version: v1

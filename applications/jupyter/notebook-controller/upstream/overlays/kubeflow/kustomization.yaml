@@ -3,11 +3,11 @@ kind: Kustomization
 resources:
 - ../../base
 namespace: kubeflow
-patchesStrategicMerge:
-- patches/remove-namespace.yaml
 configMapGenerator:
-- name: config
-  behavior: merge
+- behavior: merge
   literals:
   - USE_ISTIO=true
   - ISTIO_GATEWAY=kubeflow/kubeflow-gateway
+  name: config
+patches:
+- path: patches/remove-namespace.yaml

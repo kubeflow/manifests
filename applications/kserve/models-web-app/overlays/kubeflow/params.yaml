@@ -1,4 +1,4 @@
-commonLabels:
+labels:
 - kind: AuthorizationPolicy
   path: spec/selector/matchLabels
   create: true

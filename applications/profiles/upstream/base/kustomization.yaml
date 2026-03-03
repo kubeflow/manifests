@@ -6,8 +6,6 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
 - ../default
-patchesStrategicMerge:
-- patches/manager.yaml
 
 images:
 - name: ghcr.io/kubeflow/kubeflow/profile-controller
@@ -15,6 +13,8 @@ images:
   newTag: v1.10.0
 
 configMapGenerator:
-- name: namespace-labels-data
-  files:
+- files:
   - namespace-labels.yaml
+  name: namespace-labels-data
+patches:
+- path: patches/manager.yaml

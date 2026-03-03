@@ -4,44 +4,92 @@
 # the certificate.
 # TODO(jlewi): We should eventually refactor the manifests to delete
 # bootstrap and use certmanager by default.
-bases:
-- ../../base
 
 resources:
 - certificate.yaml
+- ../../base
 
 namespace: kubeflow
 
 namePrefix: admission-webhook-
 
-commonLabels:
-  app: poddefaults
-  kustomize.component: poddefaults
-  app.kubernetes.io/component: poddefaults
-  app.kubernetes.io/name: poddefaults
 
-patchesStrategicMerge:
-- mutating-webhook-configuration.yaml
-- deployment.yaml
 
 generatorOptions:
   disableNameSuffixHash: true
 
-vars:
 # These vars are used to substitute in the namespace, service name and
 # deployment name into the mutating WebHookConfiguration.
 # Since its a CR kustomize isn't aware of those fields and won't
 # transform them.
 # We need the var names to be relatively unique so that when we
 # compose with other applications they won't conflict.
-- name: podDefaultsCertName
-  objref:
+replacements:
+- source:
+    fieldPath: metadata.name
+    kind: Certificate
+    name: cert
+  targets:
+  - fieldPaths:
+    - metadata.annotations.[cert-manager.io/inject-ca-from]
+    options:
+      delimiter: /
+      index: 1
+    select:
+      group: admissionregistration.k8s.io
+      kind: MutatingWebhookConfiguration
+      name: mutating-webhook-configuration
+- source:
+    fieldPath: metadata.namespace
+    kind: Service
+    name: service
+    version: v1
+  targets:
+  - fieldPaths:
+    - metadata.annotations.[cert-manager.io/inject-ca-from]
+    options:
+      delimiter: /
+    select:
+      group: admissionregistration.k8s.io
+      kind: MutatingWebhookConfiguration
+      name: mutating-webhook-configuration
+  - fieldPaths:
+    - spec.commonName
+    - spec.dnsNames.0
+    - spec.dnsNames.1
+    options:
+      delimiter: .
+      index: 1
+    select:
       kind: Certificate
-      group: cert-manager.io
-      version: v1
       name: cert
-  fieldref:
-    fieldpath: metadata.name
+- source:
+    fieldPath: metadata.name
+    kind: Service
+    name: service
+    version: v1
+  targets:
+  - fieldPaths:
+    - spec.commonName
+    - spec.dnsNames.0
+    - spec.dnsNames.1
+    options:
+      delimiter: .
+    select:
+      kind: Certificate
+      name: cert
 
 configurations:
 - params.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+labels:
+- includeSelectors: true
+  pairs:
+    app: poddefaults
+    app.kubernetes.io/component: poddefaults
+    app.kubernetes.io/name: poddefaults
+    kustomize.component: poddefaults
+patches:
+- path: mutating-webhook-configuration.yaml
+- path: deployment.yaml
