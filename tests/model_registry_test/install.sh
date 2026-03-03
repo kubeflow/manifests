@@ -58,5 +58,5 @@ if ! kubectl wait --for=condition=available -n kubeflow deployment/model-registr
 fi
 
 echo "Model Registry installation complete!"
-kubectl get pods -n kubeflow -l app.kubernetes.io/name=model-registry
-kubectl get pods -n kubeflow -l app=model-registry-ui
+kubectl get pods -n kubeflow -l component=model-registry-server
+kubectl get pods -n kubeflow -l component=model-registry-ui
