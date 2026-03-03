@@ -16,22 +16,11 @@ SOURCE_TEXT="\[[^]]*\](https://github.com/${REPOSITORY_NAME}/tree/[^)]*)"
 DESTINATION_TEXT="\[${COMMIT#v}\](https://github.com/${REPOSITORY_NAME}/tree/${COMMIT})"
 create_branch "$BRANCH_NAME"
 clone_and_checkout "$SOURCE_DIRECTORY" "$REPOSITORY_URL" "$REPOSITORY_DIRECTORY" "$COMMIT"
-DESTINATION_DIRECTORY=$MANIFESTS_DIRECTORY/$DESTINATION_MANIFESTS_PATH
-mkdir -p $DESTINATION_DIRECTORY
-cd $DESTINATION_DIRECTORY
-if [ ! -f kustomization.yaml ]; then
-    cat > kustomization.yaml << EOF
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-- resources.yaml
-EOF
-fi
 helm template -n kubeflow --include-crds spark-operator \
 --set "spark.jobNamespaces={}" \
 --set webhook.enable=true \
 --set webhook.port=9443 \
-"${SOURCE_DIRECTORY}/${REPOSITORY_DIRECTORY}/charts/spark-operator-chart" > resources.yaml
+"${SOURCE_DIRECTORY}/${REPOSITORY_DIRECTORY}/charts/spark-operator-chart" > "${MANIFESTS_DIRECTORY}/${DESTINATION_MANIFESTS_PATH}/resources.yaml"
 update_readme "$MANIFESTS_DIRECTORY" "$SOURCE_TEXT" "$DESTINATION_TEXT"
 commit_changes "$MANIFESTS_DIRECTORY" "Update ${REPOSITORY_NAME} manifests from ${COMMIT}" "$MANIFESTS_DIRECTORY"
 echo "Synchronization completed successfully."
