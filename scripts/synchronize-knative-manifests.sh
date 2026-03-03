@@ -39,8 +39,6 @@ yq eval -i '... comments=""' $DESTINATION_DIRECTORY/knative-eventing/base/upstre
 yq eval -i '... comments=""' $DESTINATION_DIRECTORY/knative-eventing/base/upstream/mt-channel-broker.yaml
 yq eval -i '... comments=""' $DESTINATION_DIRECTORY/knative-eventing-post-install-jobs/base/eventing-post-install.yaml
 yq eval -i 'select(.kind == "Job" and .metadata.generateName == "storage-version-migration-eventing-") | .metadata.name = "storage-version-migration-eventing"' $DESTINATION_DIRECTORY/knative-eventing-post-install-jobs/base/eventing-post-install.yaml
-yq eval -i 'select((.kind == "ConfigMap" and .metadata.name == "config-observability") | not)' $DESTINATION_DIRECTORY/knative-eventing/base/upstream/in-memory-channel.yaml
-yq eval -i 'select((.kind == "ConfigMap" and .metadata.name == "config-tracing") | not)' $DESTINATION_DIRECTORY/knative-eventing/base/upstream/in-memory-channel.yaml
 replace_in_file() {
   local SOURCE_TEXT=$1
   local DESTINATION_TEXT=$2
