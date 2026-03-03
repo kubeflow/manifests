@@ -22,8 +22,8 @@ echo "Deploying Model Registry UI..."
 kustomize build applications/model-registry/upstream/options/ui/overlays/istio \
   | kubectl apply -n kubeflow -f -
 
-# Build and apply Model Registry Catalog (demo)
-echo "Deploying Model Registry Catalog..."
+# Build and apply Model Catalog (demo)
+echo "Deploying Model Catalog..."
 kustomize build applications/model-registry/upstream/options/catalog/overlays/demo \
   | kubectl apply -n kubeflow -f -
 
@@ -59,4 +59,4 @@ fi
 
 echo "Model Registry installation complete!"
 kubectl get pods -n kubeflow -l component=model-registry-server
-kubectl get pods -n kubeflow -l component=model-registry-ui
+kubectl get pods -n kubeflow -l app=model-registry-ui
