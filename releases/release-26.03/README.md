@@ -21,6 +21,6 @@ The 26.03 release cycle is proposed as follows
 - **Monday, Jan 26th 2026** - Release cycle begins
 - **Monday, Mar 2nd 2026** - Feature freeze, manifests sync starts, RC.1 is cut
 - **Monday, Mar 16th 2026** - Distribution testing ends, pre-release bug fixing stage starts
-- **Monday, Mar 20 2026** - Pre-release bug fixing stage ends
-- **Monday, Mar 20 2026** - Docs update ends
-- **Monday, Mar 20 2026** - Kubeflow v26.03 Released
+- **Friday, Mar 20th 2026** - Pre-release bug fixing stage ends
+- **Friday, Mar 20th 2026** - Docs update ends
+- **Friday, Mar 20th 2026** - Kubeflow v26.03 Released
