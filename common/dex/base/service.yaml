@@ -11,7 +11,7 @@ spec:
       # In practice that is typically an in-cluster ingress or proxy pod IP,
       # not the original end-user IP. Keep the timeout bounded so a single
       # authentication flow stays sticky without creating long-lived skew.
-      timeoutSeconds: 600
+      timeoutSeconds: 60
   ports:
   - name: dex
     port: 5556
