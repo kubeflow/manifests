@@ -194,7 +194,7 @@ Identify speakers for recorded presentation
 <p>
 Review Working Group edits
 <p>
-Create and distribute 2rd version to Working Groups
+Create and distribute 2nd version to Working Groups
 <p>
 Ask for final comments
    </td>
