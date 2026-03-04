@@ -278,7 +278,7 @@ Provide /lgtm from content providers and approvers
   <tr>
    <td>3 days out
 <p>
-Get final /ltgm from stakeholders
+Get final /lgtm from stakeholders
 <p>
 Steering Committee adds Final edits
    </td>
