@@ -9,9 +9,9 @@ The release team will go over the provided feedback on Monday, November 8th, pro
 - [Handbook](https://github.com/kubeflow/manifests/blob/v1.4.0/docs/releases/handbook.md)
 - [Release Team](https://github.com/kubeflow/manifests/blob/v1.4.0/docs/releases/release-1.4/release-team.md)
 - [Timeline](https://github.com/kubeflow/manifests/tree/v1.4.0/docs/releases/release-1.4)
-- Recondrings
+- Recordings
   - [Part 1](https://drive.google.com/file/d/1MxOzR4wgvETfhLv_74wEkAdkElGSPeTm/view)
-  - [Part 1](https://drive.google.com/file/d/1wz-jIAOSw3N7V9XHxPoDIEfv5hOdFFn1/view)
+  - [Part 2](https://drive.google.com/file/d/1wz-jIAOSw3N7V9XHxPoDIEfv5hOdFFn1/view)
 
 ### Rules
 - Respectful, solution-oriented communication
