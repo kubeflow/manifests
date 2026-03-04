@@ -1,4 +1,4 @@
-# Kubeflow Manifests
+# Kubeflow AI reference platform manifests
 
 ![build checks status](https://github.com/kubeflow/manifests/actions/workflows/full_kubeflow_integration_test.yaml/badge.svg?branch=master)
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/9940/badge)](https://www.bestpractices.dev/projects/9940)
@@ -749,6 +749,7 @@ pre-commit run
   **A:** Istio CNI provides better security by eliminating the need for privileged init containers, making it more compatible with Pod Security Standards (PSS). It also enables native sidecars support introduced in Kubernetes 1.28, which helps address issues with init containers and application lifecycle management.
 - **Q:** Why does Istio CNI fail on Google Kubernetes Engine (GKE) with "read-only file system" errors?
   **A:** GKE mounts `/opt/cni/bin` as read-only for security reasons. Use the GKE-specific overlay: `kubectl apply -k common/istio/istio-install/overlays/gke` (or `overlays/ambient-gke` for ambient mode). These overlays use GKE's writable CNI directory at `/home/kubernetes/bin`. For details, see [Istio CNI Prerequisites](https://istio.io/latest/docs/setup/additional-setup/cni/#prerequisites).
+
 
 
 
