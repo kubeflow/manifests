@@ -260,7 +260,7 @@ Install Kubeflow Istio resources:
 kustomize build common/istio/kubeflow-istio-resources/base | kubectl apply -f -
 ```
 
-#### Multi-tenancy components
+#### Multi-tenancy components (Profiles + KFAM)
 
 ```sh
 ./tests/multi_tenancy_install.sh
@@ -458,13 +458,7 @@ Install the PVC Viewer Controller official Kubeflow component:
 kustomize build applications/pvcviewer-controller/upstream/base | kubectl apply -f -
 ```
 
-#### Profiles + KFAM
-
-Install the Profile Controller, Kubeflow Access-Management (KFAM), Kubeflow Roles, and Network Policies:
-
-```sh
-./tests/multi_tenancy_install.sh
-```
+For details, see [`tests/kubeflow_profile_install.sh`](tests/kubeflow_profile_install.sh).
 
 For details, see [`tests/multi_tenancy_install.sh`](tests/multi_tenancy_install.sh).
 
@@ -478,17 +472,10 @@ Install the Volumes Web Application official Kubeflow component:
 
 For details, see [`tests/volumes_web_application_install.sh`](tests/volumes_web_application_install.sh).
 
-#### Tensorboard
-
-Install the Tensorboards Web Application official Kubeflow component:
+#### Tensorboard web application and controller
 
 ```sh
 kustomize build applications/tensorboard/tensorboards-web-app/upstream/overlays/istio | kubectl apply -f -
-```
-
-Install the Tensorboard Controller official Kubeflow component:
-
-```sh
 kustomize build applications/tensorboard/tensorboard-controller/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
@@ -520,8 +507,6 @@ Finally, create a new namespace for the default user (named `kubeflow-user-examp
 export KF_PROFILE=kubeflow-user-example-com
 ./tests/kubeflow_profile_install.sh
 ```
-
-For details, see [`tests/kubeflow_profile_install.sh`](tests/kubeflow_profile_install.sh).
 
 ### Connect to Your Kubeflow Cluster
 
@@ -580,7 +565,7 @@ For security reasons, we don't want to use the default username and email for th
 
 If you have an identity provider (LDAP, GitHub, Google, Microsoft, OIDC, SAML, GitLab) available, you should use that instead of static passwords and connect it to oauth2-proxy or Dex as explained in the sections above. This is best practice instead of using static passwords.
 
-For security reasons, we don't want to use the default static password for the default Kubeflow user when installing in security-sensitive environments. Instead, you should define your own password and apply it either **before creating the cluster** or **after creating the cluster**.
+For security reasons, we do not want to use the default static password for the default Kubeflow user when installing in security-sensitive environments. Instead, you should define your own password and apply it either **before creating the cluster** or **after creating the cluster**.
 
 Pick a password for the default user, with email `user@example.com`, and hash it using `bcrypt`:
 
@@ -638,26 +623,11 @@ For modifications and in-place upgrades of the Kubeflow platform, we provide a r
 - With labels, you can use `kubectl apply` with `--prune` and `--dry-run` to list prunable resources.
 - Sometimes there are major changes; for example, in the 1.9 release, we switched to oauth2-proxy, which needs additional attention (cleanup istio-system once); or 1.9.1 -> 1.10 `kubectl delete clusterrolebinding meta-controller-cluster-role-binding`
 - Nevertheless, with a bit of Kubernetes knowledge, one should be able to upgrade.
-
-### Kubernetes upgrade fails due to `PodDisruptionBudget`
-
-To work around this remove these `PodDisruptionBudget`s for the time of the upgrade.
-You can most easily find them via the `k9s` pdb overview of this resource, alternatively with this command:
-
-```
-$ kubectl get --all-namespaces PodDisruptionBudget
-```
-
-As of now the following `PodDisruptionBudget`s are problematic in the upgrade
-context, all due to the `minAvailable` attribute:
-
-- **eventing-webhook** from _knative-eventing_
-- **activator-pdb** from _knative-serving_
-- **webhook-pdb** from _knative-serving_
+- 1.10.2 -> 1.11.0 migrates from minio to seaweedfs, so you should delete minio and maybe migrate your data via S3 commands.
 
 ## Release Process
 
-The Manifest Working Group releases Kubeflow based on the [release timeline](https://github.com/kubeflow/community/blob/master/releases/handbook.md#timeline). The community and the release team work closely with the Manifest Working Group to define the specific dates at the start of the [release cycle](https://github.com/kubeflow/community/blob/master/releases/handbook.md#releasing) and follow the [release versioning policy](https://github.com/kubeflow/community/blob/master/releases/handbook.md#versioning-policy), as defined in the [Kubeflow release handbook](https://github.com/kubeflow/community/blob/master/releases/handbook.md).
+[Kubeflow release handbook](https://github.com/kubeflow/manifests/blob/master/releases/kubeflow-ai-reference-platform-release-handbook.md).
 
 ### Security
 
@@ -708,11 +678,6 @@ pre-commit run
   **A:** Istio CNI provides better security by eliminating the need for privileged init containers, making it more compatible with Pod Security Standards (PSS). It also enables native sidecars support introduced in Kubernetes 1.28, which helps address issues with init containers and application lifecycle management.
 - **Q:** Why does Istio CNI fail on Google Kubernetes Engine (GKE) with "read-only file system" errors?
   **A:** GKE mounts `/opt/cni/bin` as read-only for security reasons. Use the GKE-specific overlay: `kubectl apply -k common/istio/istio-install/overlays/gke` (or `overlays/ambient-gke` for ambient mode). These overlays use GKE's writable CNI directory at `/home/kubernetes/bin`. For details, see [Istio CNI Prerequisites](https://istio.io/latest/docs/setup/additional-setup/cni/#prerequisites).
-
-
-
-
-
 
 
 
