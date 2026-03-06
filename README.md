@@ -3,10 +3,10 @@
 ![build checks status](https://github.com/kubeflow/manifests/actions/workflows/full_kubeflow_integration_test.yaml/badge.svg?branch=master)
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/9940/badge)](https://www.bestpractices.dev/projects/9940)
 
-Thhis repository helps you to install Kubeflow Platform in popular Kubernetes clusters such as Kind, Minikube, Rancher, EKS, AKS, and GKE. The manifests include all Kubeflow components (Pipelines, Kserve, etc.), the **Kubeflow Central Dashboard**, and other applications that comprise the **Kubeflow Platform**. It is used and adapted around the world by small and large enterprises alike that have strict legal, security and multi-tenancy reuqirements for their machine learning platforms. Nevertheless it is also beneficial for academic users wanting to explore the end-to-end capabilities of the Kubeflow Platform and contribute to it.
+This repository helps you to install Kubeflow Platform in popular Kubernetes clusters such as Kind, Minikube, Rancher, EKS, AKS, and GKE. The manifests include all Kubeflow components (Pipelines, KServe, etc.), the **Kubeflow Central Dashboard**, and other applications that comprise the **Kubeflow Platform**. It is used and adapted around the world by small and large enterprises alike that have strict legal, security and multi-tenancy requirements for their machine learning platforms. Nevertheless it is also beneficial for academic users wanting to explore the end-to-end capabilities of the Kubeflow Platform and contribute to it.
 
 For a stable and conservative experience, we recommend using the [latest stable release](https://github.com/kubeflow/manifests/releases). However, please consult the more up-to-date documentation in the master branch.
-You can also install the master branch of [`kubeflow/manifests`](https://github.com/kubeflow/manifests) by following the instructions [here](https://github.com/kubeflow/manifests?tab=readme-ov-file#installation) and providing us with feedback. We have a stong CI/CD that tests every commit with typical customer scenarios.
+You can also install the master branch of [`kubeflow/manifests`](https://github.com/kubeflow/manifests) by following the instructions [here](https://github.com/kubeflow/manifests?tab=readme-ov-file#installation) and providing us with feedback. Our continuous integration workflow runs end-to-end installation and tests on pull requests and pushes to the `master` branch in the upstream `kubeflow/manifests` repository; see the [full Kubeflow integration test workflow](https://github.com/kubeflow/manifests/actions/workflows/full_kubeflow_integration_test.yaml) for details.
 
 We are planning to cut 2 releases per year, for example 26.03 and 26.10 before each KubeCon EU and NA.
 We ask each working group/component to provide non-breaking patch releases for 6 months based on the version in each date release.
@@ -52,7 +52,7 @@ The Kubeflow Platform/Manifests repository is organized under three main directo
 | `common` | Common services, maintained by the Manifests WG |
 | `experimental` | Third-party integrations and platform experiments (e.g., Ray or security improvements) |
 
-All components are deployable with `kustomize`, some also via Helm. You can choose to deploy the entire Kubeflow platform or individual components.
+All components are deployable with `kustomize`. In addition, experimental Helm charts for selected components are available under [`experimental/helm/`](experimental/helm/). You can choose to deploy the entire Kubeflow platform or individual components.
 
 ## Kubeflow Components Versions
 
@@ -106,7 +106,7 @@ The `example` directory contains an example kustomization for the single command
 ### Prerequisites
 - For the specific Kubernetes version per release, consult the [release notes](https://github.com/kubeflow/manifests/releases).
 - Our Kind script below will take care of installing continously tested Kubernetes, Kustomize and Kubectl versions for you.
-- We use Kind as default but also support Minikube, Rancher, EKS, AKS, and GKE. GKE might need tiny adjustments documented here in this file and Openshift is also possible.
+- We use Kind as default but also support Minikube, Rancher, EKS, AKS, and GKE. GKE might need tiny adjustments documented here in this file and OpenShift is also possible.
 
 ---
 **NOTE**
@@ -138,7 +138,7 @@ kind get kubeconfig --name kubeflow > /tmp/kubeflow-config
 export KUBECONFIG=/tmp/kubeflow-config
 ```
 
-#### Optionally create a Secret based on existing credentials if you run into dockerhub pull limits
+#### Optionally create a Secret based on existing credentials if you run into Docker Hub pull limits
 ```sh
 docker login
 kubectl create secret generic regcred \
@@ -158,7 +158,7 @@ Congratulations! You can now start experimenting and running your end-to-end ML 
 
 ### Install Individual Components
 
-In this section, we will install each Kubeflow official component (under `applications`) and each common service (under `common`) separately, using just `kubectl` and `kustomize`. This can help you a lot when debubigging your installation or if you are encountering installation problems.
+In this section, we will install each Kubeflow official component (under `applications`) and each common service (under `common`) separately, using just `kubectl` and `kustomize`. This can help you a lot when debugging your installation or if you are encountering installation problems.
 
 If all the following commands are executed, the result is the same as in the above section of the single command installation. The purpose of this section is to:
 
@@ -206,7 +206,7 @@ kustomize build common/istio/istio-install/overlays/gke | kubectl apply -f -
 
 #### Oauth2-proxy
 
-The oauth2-proxy extends your Istio Ingress-Gateway capabilities to function as an OIDC client. It supports user sessions as well as proper token-based machine-to-machine authentication. Authorization which is completely different form authentication is handled via Kubernetes RBAC.
+The oauth2-proxy extends your Istio Ingress-Gateway capabilities to function as an OIDC client. It supports user sessions as well as proper token-based machine-to-machine authentication. Authorization which is completely different form authentication is handled via Kubernetes RBAC and Istio authorizationpolicies.
 
 ```sh
 echo "Installing oauth2-proxy..."
@@ -399,7 +399,7 @@ Install the [Multi-User Kubeflow Pipelines](https://www.kubeflow.org/docs/compon
 
 For details, see [`tests/pipelines_install.sh`](tests/pipelines_install.sh).
 
-This installs Argo with the runasnonroot emissary executor. Please note that you are still responsible for analyzing the security issues that arise when containers are run with root access and for deciding if the Kubeflow pipeline main containers are run as runasnonroot. It is generally strongly recommended that all user-accessible OCI containers run with Pod Security Standards [restricted](https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted) and KFP 2.16.0+ has the cpability to set runAsNonRoot, runAsUser and runAsGroup via the SDK and the KFP api server configuration.
+This installs Argo with the runasnonroot emissary executor. Please note that you are still responsible for analyzing the security issues that arise when containers are run with root access and for deciding if the Kubeflow pipeline main containers are run as runasnonroot. It is generally strongly recommended that all user-accessible OCI containers run with Pod Security Standards [restricted](https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted) and KFP 2.16.0+ has the capability to set runAsNonRoot, runAsUser and runAsGroup via the SDK and the KFP api server configuration.
 
 ##### Pipeline Definitions Stored as Kubernetes Resources
 
