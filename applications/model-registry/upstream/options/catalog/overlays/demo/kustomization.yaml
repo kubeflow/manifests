@@ -11,6 +11,8 @@ configMapGenerator:
   - dev-organization-models.yaml=dev-organization-models.yaml
   - dev-validated-models.yaml=dev-validated-models.yaml
   - dev-community-models.yaml=dev-community-models.yaml
+  - dev-organization-mcp-servers.yaml=dev-organization-mcp-servers.yaml
+  - dev-community-mcp-servers.yaml=dev-community-mcp-servers.yaml
   name: model-catalog-sources
   options:
     disableNameSuffixHash: true

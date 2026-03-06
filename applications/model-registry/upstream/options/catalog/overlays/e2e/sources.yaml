@@ -23,3 +23,11 @@ catalogs:
     properties:
       yamlCatalogPath: /testdata/nonexistent-catalog.yaml
 
+mcp_catalogs:
+  - name: Test MCP Servers
+    id: test_mcp_servers
+    type: yaml
+    enabled: true
+    properties:
+      yamlCatalogPath: /testdata/test-mcp-servers.yaml
+

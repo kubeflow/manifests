@@ -18,6 +18,7 @@ configMapGenerator:
   files:
   - test-catalog.yaml
   - disabled-catalog.yaml
+  - test-mcp-servers.yaml
   name: model-catalog-testdata
   options:
     disableNameSuffixHash: true
