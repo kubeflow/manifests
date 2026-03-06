@@ -355,7 +355,7 @@ Optionally, you can install Knative Eventing, which can be used for inference re
 kustomize build common/knative/knative-eventing/base | kubectl apply -f -
 ```
 
-#### KServe model serving and Kserve models web application
+#### KServe model serving and KServe models web application
 
 ```sh
 ./tests/kserve_install.sh
