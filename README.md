@@ -105,7 +105,7 @@ The `example` directory contains an example kustomization for the single command
 
 ### Prerequisites
 - For the specific Kubernetes version per release, consult the [release notes](https://github.com/kubeflow/manifests/releases).
-- Our Kind script below will take care of installing continously tested Kubernetes, Kustomize and Kubectl versions for you.
+- Our Kind script below will take care of installing continuously tested Kubernetes, Kustomize and Kubectl versions for you.
 - We use Kind as default but also support Minikube, Rancher, EKS, AKS, and GKE. GKE might need tiny adjustments documented here in this file and OpenShift is also possible.
 
 ---
