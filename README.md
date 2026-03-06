@@ -331,8 +331,6 @@ For Keycloak, we have rough guidelines in <https://github.com/kubeflow/manifests
 
 #### Central Dashboard
 
-Install the Central Dashboard official Kubeflow component:
-
 ```sh
 ./tests/central_dashboard_install.sh
 ```
@@ -345,11 +343,7 @@ Install the Admission Webhook for PodDefaults:
 kustomize build applications/admission-webhook/upstream/overlays/cert-manager | kubectl apply -f -
 ```
 
-#### Knative
-
-Knative is used by the KServe official Kubeflow component.
-
-Install Knative Serving:
+#### Knative (used by KServe)
 
 ```sh
 ./tests/knative_install.sh
@@ -361,11 +355,7 @@ Optionally, you can install Knative Eventing, which can be used for inference re
 kustomize build common/knative/knative-eventing/base | kubectl apply -f -
 ```
 
-#### KServe
-
-KFServing was rebranded to KServe.
-
-Install the KServe component and Models web application:
+#### KServe model serving and KServe models web application
 
 ```sh
 ./tests/kserve_install.sh
@@ -443,9 +433,7 @@ kustomize build applications/tensorboard/tensorboards-web-app/upstream/overlays/
 kustomize build applications/tensorboard/tensorboard-controller/upstream/overlays/kubeflow | kubectl apply -f -
 ```
 
-#### Trainer
-
-Install the Trainer (training operator v2) official Kubeflow component:
+#### Trainer (training operator v2)
 
 ```sh
 ./tests/trainer_install.sh
@@ -581,7 +569,7 @@ For modifications and in-place upgrades of the Kubeflow platform, we provide a r
 - With labels, you can use `kubectl apply` with `--prune` and `--dry-run` to list prunable resources.
 - Sometimes there are major changes; for example, in the 1.9 release, we switched to oauth2-proxy, which needs additional attention (cleanup istio-system once); or 1.9.1 -> 1.10 `kubectl delete clusterrolebinding meta-controller-cluster-role-binding`
 - Nevertheless, with a bit of Kubernetes knowledge, one should be able to upgrade.
-- 1.10.2 -> 1.11.0 migrates from minio to seaweedfs, so you should delete minio and maybe migrate your data via S3 commands.
+- 1.10.2 -> 1.11.0 migrates from minio to seaweedfs, so you should delete minio and maybe migrate your data via S3 commands to seaweedfs.
 
 ## Release Process
 
@@ -636,7 +624,4 @@ pre-commit run
   **A:** Istio CNI provides better security by eliminating the need for privileged init containers, making it more compatible with Pod Security Standards (PSS). It also enables native sidecars support introduced in Kubernetes 1.28, which helps address issues with init containers and application lifecycle management.
 - **Q:** Why does Istio CNI fail on Google Kubernetes Engine (GKE) with "read-only file system" errors?
   **A:** GKE mounts `/opt/cni/bin` as read-only for security reasons. Use the GKE-specific overlay: `kubectl apply -k common/istio/istio-install/overlays/gke` (or `overlays/ambient-gke` for ambient mode). These overlays use GKE's writable CNI directory at `/home/kubernetes/bin`. For details, see [Istio CNI Prerequisites](https://istio.io/latest/docs/setup/additional-setup/cni/#prerequisites).
-
-
-
 
