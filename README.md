@@ -343,7 +343,7 @@ Install the Admission Webhook for PodDefaults:
 kustomize build applications/admission-webhook/upstream/overlays/cert-manager | kubectl apply -f -
 ```
 
-#### Knative (used by Kserve)
+#### Knative (used by KServe)
 
 ```sh
 ./tests/knative_install.sh
