@@ -185,8 +185,6 @@ Cert-manager is used by many Kubeflow components to provide certificates for adm
 ./tests/cert_manager_install.sh
 ```
 
-For details, see [`tests/cert_manager_install.sh`](tests/cert_manager_install.sh).
-
 #### Istio
 
 Istio is used by most Kubeflow components to secure their traffic, enforce network authorization, and implement routing policies. This installation uses Istio CNI, which eliminates the need for privileged init containers and improves compatibility with Pod Security Standards. If you use Cilium CNI on your cluster, you must configure it properly for Istio as shown [here](https://docs.cilium.io/en/latest/network/servicemesh/istio/); otherwise, you will encounter RBAC access denied on the central dashboard.
@@ -196,8 +194,6 @@ Install Istio:
 ```sh
 ./tests/istio-cni_install.sh
 ```
-
-For details, see [`tests/istio-cni_install.sh`](tests/istio-cni_install.sh).
 
 For Google Kubernetes Engine (GKE), use the GKE-specific overlay instead:
 ```sh
@@ -276,8 +272,6 @@ Install Dex:
 ./tests/dex_install.sh
 ```
 
-For details, see [`tests/dex_install.sh`](tests/dex_install.sh).
-
 To connect to your desired identity providers (LDAP, GitHub, Google, Microsoft, OIDC, SAML, GitLab), please take a look at <https://dexidp.io/docs/connectors/oidc/>. We recommend using OIDC in general since it is compatible with most providers. For example, Azure in the following example. You need to modify <https://github.com/kubeflow/manifests/blob/master/common/dex/overlays/oauth2-proxy/config-map.yaml> and add some environment variables in <https://github.com/kubeflow/manifests/blob/master/common/dex/base/deployment.yaml> by adding a patch section in your main Kustomization file. For guidance, please check out [Upgrading and Extending](#upgrading-and-extending).
 
 ```yaml
@@ -343,8 +337,6 @@ Install the Central Dashboard official Kubeflow component:
 ./tests/central_dashboard_install.sh
 ```
 
-For details, see [`tests/central_dashboard_install.sh`](tests/central_dashboard_install.sh).
-
 #### Admission Webhook
 
 Install the Admission Webhook for PodDefaults:
@@ -363,8 +355,6 @@ Install Knative Serving:
 ./tests/knative_install.sh
 ```
 
-For details, see [`tests/knative_install.sh`](tests/knative_install.sh).
-
 Optionally, you can install Knative Eventing, which can be used for inference request logging:
 
 ```sh
@@ -381,8 +371,6 @@ Install the KServe component and Models web application:
 ./tests/kserve_install.sh
 ```
 
-For details, see [`tests/kserve_install.sh`](tests/kserve_install.sh) and [`tests/kserve_test.sh`](tests/kserve_test.sh).
-
 #### Kubeflow Pipelines
 
 Kubeflow Pipelines offers two deployment options to choose from, each designed for different use cases and operational preferences. The traditional database-based approach stores pipeline definitions in an external database, while the Kubernetes native API mode leverages Kubernetes custom resources for pipeline definition storage and management.
@@ -396,8 +384,6 @@ Install the [Multi-User Kubeflow Pipelines](https://www.kubeflow.org/docs/compon
 ```sh
 ./tests/pipelines_install.sh
 ```
-
-For details, see [`tests/pipelines_install.sh`](tests/pipelines_install.sh).
 
 This installs Argo with the runasnonroot emissary executor. Please note that you are still responsible for analyzing the security issues that arise when containers are run with root access and for deciding if the Kubeflow pipeline main containers are run as runasnonroot. It is generally strongly recommended that all user-accessible OCI containers run with Pod Security Standards [restricted](https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted) and KFP 2.16.0+ has the capability to set runAsNonRoot, runAsUser and runAsGroup via the SDK and the KFP api server configuration.
 
@@ -423,26 +409,14 @@ For detailed pipeline compilation instructions, please refer to the [Kubeflow Pi
 
 #### Katib
 
-Install the Katib official Kubeflow component:
-
 ```sh
 ./tests/katib_install.sh
 ```
 
-For details, see [`tests/katib_install.sh`](tests/katib_install.sh) and [`tests/katib_test.sh`](tests/katib_test.sh).
-
-
 #### Notebooks 1.0
-
-Install the Notebook Controller official Kubeflow component:
 
 ```sh
 kustomize build applications/jupyter/notebook-controller/upstream/overlays/kubeflow | kubectl apply -f -
-```
-
-Install the Jupyter Web Application official Kubeflow component:
-
-```sh
 kustomize build applications/jupyter/jupyter-web-app/upstream/overlays/istio | kubectl apply -f -
 ```
 
@@ -452,25 +426,15 @@ This feature is still in development.
 
 #### PVC Viewer Controller
 
-Install the PVC Viewer Controller official Kubeflow component:
-
 ```sh
 kustomize build applications/pvcviewer-controller/upstream/base | kubectl apply -f -
 ```
 
-For details, see [`tests/kubeflow_profile_install.sh`](tests/kubeflow_profile_install.sh).
-
-For details, see [`tests/multi_tenancy_install.sh`](tests/multi_tenancy_install.sh).
-
 #### Volumes Web Application
-
-Install the Volumes Web Application official Kubeflow component:
 
 ```sh
 ./tests/volumes_web_application_install.sh
 ```
-
-For details, see [`tests/volumes_web_application_install.sh`](tests/volumes_web_application_install.sh).
 
 #### Tensorboard web application and controller
 
@@ -487,17 +451,11 @@ Install the Trainer (training operator v2) official Kubeflow component:
 ./tests/trainer_install.sh
 ```
 
-For details, see [`tests/trainer_install.sh`](tests/trainer_install.sh).
-
 #### Spark Operator
-
-Install the Spark Operator:
 
 ```sh
 ./tests/spark_install.sh
 ```
-
-For details, see [`tests/spark_install.sh`](tests/spark_install.sh).
 
 #### User Namespaces
 
@@ -678,6 +636,7 @@ pre-commit run
   **A:** Istio CNI provides better security by eliminating the need for privileged init containers, making it more compatible with Pod Security Standards (PSS). It also enables native sidecars support introduced in Kubernetes 1.28, which helps address issues with init containers and application lifecycle management.
 - **Q:** Why does Istio CNI fail on Google Kubernetes Engine (GKE) with "read-only file system" errors?
   **A:** GKE mounts `/opt/cni/bin` as read-only for security reasons. Use the GKE-specific overlay: `kubectl apply -k common/istio/istio-install/overlays/gke` (or `overlays/ambient-gke` for ambient mode). These overlays use GKE's writable CNI directory at `/home/kubernetes/bin`. For details, see [Istio CNI Prerequisites](https://istio.io/latest/docs/setup/additional-setup/cni/#prerequisites).
+
 
 
 
