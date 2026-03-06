@@ -1,0 +1,8 @@
+apiVersion: kubeflow.org/v1
+kind: Profile
+metadata:
+  name: test-profile
+spec:
+  owner:
+    kind: User
+    name: test-user
