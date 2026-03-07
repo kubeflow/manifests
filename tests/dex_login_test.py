@@ -17,8 +17,8 @@ DEX_USERNAME = "user@example.com"
 DEX_PASSWORD = "12341234"
 DEX_AUTH_TYPE = "local"
 # Matches replicas: 2 in common/dex/base/deployment.yaml.
-# Three sessions is sufficient to verify concurrent authentication across both replicas.
-PARALLEL_SESSIONS = 3
+# Use a larger burst so the replica-distribution assertion is statistically stable in CI.
+PARALLEL_SESSIONS = 8
 # Dex authcode GC window: authcodes must be deleted after token exchange completes.
 GC_WAIT_SECONDS = 90
 REQUEST_TIMEOUT_SECONDS = 15
