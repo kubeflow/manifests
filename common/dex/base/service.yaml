@@ -4,14 +4,8 @@ metadata:
   name: dex
 spec:
   type: ClusterIP
-  sessionAffinity: ClientIP
-  sessionAffinityConfig:
-    clientIP:
-      # ClientIP affinity uses the source IP seen by this Service.
-      # In practice that is typically an in-cluster ingress or proxy pod IP,
-      # not the original end-user IP. Keep the timeout bounded so a single
-      # authentication flow stays sticky without creating long-lived skew.
-      timeoutSeconds: 60
+  # No sessionAffinity needed: storage.type=kubernetes stores all auth state
+  # as CRDs shared across pods, so any replica can complete any login flow.
   ports:
   - name: dex
     port: 5556
