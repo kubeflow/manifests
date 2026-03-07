@@ -1,0 +1,29 @@
+{{- if and (eq .Values.installMode.type "multi-user") .Values.profileController.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kubeflow-pipelines-profile-controller-env
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app: kubeflow-pipelines-profile-controller
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+data:
+  DISABLE_ISTIO_SIDECAR: {{ .Values.profileController.disableIstioSidecar | quote }}
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kubeflow-pipelines-profile-controller-code
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    app: kubeflow-pipelines-profile-controller
+  annotations:
+    {{- include "kubeflow-pipelines.annotations" . | nindent 4 }}
+data:
+  sync.py: |
+{{ .Files.Get "files/sync.py" | indent 4 }}
+{{- end }}

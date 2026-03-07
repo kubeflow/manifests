@@ -1,0 +1,15 @@
+{{- if and .Values.seaweedfs.enabled .Values.networking.istio.enabled }}
+apiVersion: "networking.istio.io/v1alpha3"
+kind: DestinationRule
+metadata:
+  name: ml-pipeline-seaweedfs
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+spec:
+  host: seaweedfs.{{ include "kubeflow-pipelines.namespace" . }}.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
+{{- end }}
+

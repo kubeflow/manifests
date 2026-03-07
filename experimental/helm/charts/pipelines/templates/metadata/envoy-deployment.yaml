@@ -1,0 +1,41 @@
+{{- if .Values.metadata.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metadata-envoy-deployment
+  namespace: {{ include "kubeflow-pipelines.namespace" . }}
+  labels:
+    {{- include "kubeflow-pipelines.labels" . | nindent 4 }}
+    component: metadata-envoy
+spec:
+  replicas: {{ .Values.metadata.envoy.replicas }}
+  selector:
+    matchLabels:
+      component: metadata-envoy
+      application-crd-id: kubeflow-pipelines
+  template:
+    metadata:
+      labels:
+        {{- include "kubeflow-pipelines.labels" . | nindent 8 }}
+        component: metadata-envoy
+        sidecar.istio.io/inject: "false"
+    spec:
+      containers:
+      - name: container
+        image: {{ include "kubeflow-pipelines.image" (dict "repository" .Values.metadata.envoy.image.repository "tag" .Values.metadata.envoy.image.tag "context" .) }}
+        args: ["/etc/envoy/envoy-config.yaml"]
+        ports:
+        - name: md-envoy
+          containerPort: 9090
+        - name: envoy-admin
+          containerPort: 9901
+        securityContext:
+          {{- toYaml .Values.metadata.envoy.securityContext | nindent 10 }}
+        volumeMounts:
+        - name: envoy-config
+          mountPath: /etc/envoy
+      volumes:
+      - name: envoy-config
+        configMap:
+          name: metadata-envoy-configmap
+{{- end }}
