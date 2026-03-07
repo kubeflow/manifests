@@ -4,6 +4,8 @@ metadata:
   name: dex
 spec:
   type: ClusterIP
+  # No sessionAffinity needed: storage.type=kubernetes stores all auth state
+  # as CRDs shared across pods, so any replica can complete any login flow.
   ports:
   - name: dex
     port: 5556
