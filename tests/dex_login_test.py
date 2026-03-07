@@ -31,7 +31,7 @@ DEX_AUTHCODE_RESOURCE = "authcodes.dex.coreos.com"
 
 
 @dataclass
-class ParallelLoginResult:
+class ParallelAuthenticationResult:
     index: int
     ok: bool
     error: str = ""
@@ -314,7 +314,7 @@ def count_authcodes_objects() -> int:
     return len([line for line in result.stdout.splitlines() if line.strip()])
 
 
-def run_single_login() -> str:
+def run_single_authentication() -> str:
     manager = DexSessionManager(
         endpoint_url=ENDPOINT_URL,
         skip_tls_verify=True,
@@ -325,12 +325,12 @@ def run_single_login() -> str:
     return manager.get_session_cookies()
 
 
-def run_parallel_login_session(index: int) -> ParallelLoginResult:
+def run_parallel_authentication_session(index: int) -> ParallelAuthenticationResult:
     try:
-        run_single_login()
-        return ParallelLoginResult(index=index, ok=True)
+        run_single_authentication()
+        return ParallelAuthenticationResult(index=index, ok=True)
     except Exception as exc:
-        return ParallelLoginResult(index=index, ok=False, error=str(exc))
+        return ParallelAuthenticationResult(index=index, ok=False, error=str(exc))
 
 
 def run_parallel_validation() -> None:
@@ -338,7 +338,7 @@ def run_parallel_validation() -> None:
     Validates that:
     1. PARALLEL_SESSIONS concurrent authentication sessions all succeed against a
        multi-replica Dex deployment.
-    2. Login traffic is distributed across at least two Dex replicas (load balancer
+    2. Authentication traffic is distributed across at least two Dex replicas (load balancer
        is working). With no sessionAffinity on the Dex Service, the Kubernetes load
        balancer distributes connections freely, so a single burst is sufficient to
        observe both replicas receiving traffic.
@@ -369,7 +369,7 @@ def run_parallel_validation() -> None:
     failures = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=PARALLEL_SESSIONS) as executor:
         futures = [
-            executor.submit(run_parallel_login_session, index)
+            executor.submit(run_parallel_authentication_session, index)
             for index in range(PARALLEL_SESSIONS)
         ]
         for future in concurrent.futures.as_completed(futures, timeout=REQUEST_TIMEOUT_SECONDS * 3):
@@ -437,7 +437,7 @@ def run_parallel_validation() -> None:
 
 
 def main() -> None:
-    run_single_login()
+    run_single_authentication()
     print("Dex single authentication validation passed")
 
     run_parallel_validation()
