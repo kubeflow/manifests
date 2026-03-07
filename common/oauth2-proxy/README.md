@@ -275,11 +275,19 @@ for listing notebooks:
 
 ## KServe Authentication
 
+> **CI:** [`.github/workflows/kserve_test.yaml`](../../.github/workflows/kserve_test.yaml) · [`tests/kserve_test.sh`](../../tests/kserve_test.sh)
+
 KServe inference endpoints are secured through a layered approach using
 Istio `RequestAuthentication` and `AuthorizationPolicy` resources.
 The examples below focus on machine-to-machine (M2M) access using service
 account tokens. Browser-based user access follows the general Kubeflow
 `oauth2-proxy` flow described above.
+
+KServe supports both **host-based** and **path-based** routing for inference
+endpoints. Host-based routing is the default; path-based routing requires
+configuring `ingressPathTemplate` in the KServe `inferenceservice-config`
+ConfigMap (see [kserve/kserve#5090](https://github.com/kserve/kserve/pull/5090)
+for raw deployment support).
 
 ### Traffic Flow and Security Layers
 
@@ -334,109 +342,10 @@ cluster. In environments where the principal is not propagated (e.g., some
 KinD-based CI setups), `requestPrincipals` will always be empty at the
 sidecar, and the rule will never match.
 
-In such environments, the CI tests use a permissive fallback:
-
-```yaml
-spec:
-  action: ALLOW
-  rules:
-  - {}   # allow-all: security is enforced at the ingress gateway
-  selector:
-    matchLabels:
-      serving.knative.dev/service: isvc-sklearn-predictor
-```
-
-> **Important:** `rules: [{}]` allows **all** traffic to the predictor pod,
-> including unauthenticated requests that bypass the ingress gateway.
-> This is acceptable in CI because the ingress gateway's
-> `RequestAuthentication` is the primary security boundary — it validates
-> the JWT **before** forwarding traffic to the predictor. However, in
-> production clusters with proper mTLS configuration, prefer
-> `requestPrincipals: ["*"]` for defense in depth.
-
-### Path-Based and Host-Based Routing
-
-KServe supports two routing modes for inference requests, both secured by the
-same authentication flow:
-
-| Mode | URL pattern | Configuration |
-|------|-------------|---------------|
-| Path-based | `http://<gateway>/serving/<namespace>/<name>/v1/models/<name>:predict` | `pathTemplate` in `inferenceservice-config` ConfigMap |
-| Host-based | `http://<gateway>/v1/models/<name>:predict` with `Host: <name>.<namespace>.example.com` | `domainTemplate` in `inferenceservice-config` ConfigMap |
-
-Path-based routing is configured via a kustomize patch on the
-`inferenceservice-config` ConfigMap
-(`applications/kserve/kserve/kustomization.yaml`):
-
-```json
-{
-  "pathTemplate": "/serving/{{ .Namespace }}/{{ .Name }}"
-}
-```
-
-KServe auto-generates a `VirtualService` on the `kubeflow-gateway` for each
-`InferenceService`, enabling both routing modes simultaneously.
-
-### KServe Models Web Application Authentication
-
-The KServe Models Web Application (`kserve-models-web-app`) uses the same
-XSRF + Bearer token authentication pattern as other Kubeflow web applications.
-API calls require:
-
-1. A valid XSRF token (obtained via cookie on the initial page load)
-2. A valid `Authorization: Bearer <token>` header
-3. The token's identity must have RBAC permissions in the target namespace
-
-Unauthorized service accounts (e.g., `default` SA from a different namespace)
-receive `401`/`403` when attempting to list `InferenceService` resources in a
-namespace they do not have access to.
-
-### CI Test Coverage
-
-The KServe test suite (`tests/kserve_test.sh`) validates the following
-authentication and security scenarios end-to-end in a KinD cluster:
-
-| # | Test | What is verified |
-|---|------|-----------------|
-| 1 | Model prediction via KServe Python SDK | InferenceService deployment, prediction, and cleanup using the `kserve` SDK with M2M token |
-| 2a | Path-based routing without token | Unauthenticated request returns `403`/`302` |
-| 2b | Host-based routing without token | Unauthenticated request returns `403`/`302` |
-| 2c | Path-based routing with valid token | Authenticated request returns `200` |
-| 2d | Host-based routing with valid token | Authenticated request returns `200` |
-| 3 | KServe Models Web App API | XSRF + auth flow, unauthorized SA gets `401`/`403` |
-| 4 | Knative Service auth via cluster-local-gateway | Unauthenticated and invalid-token requests are rejected |
-| 5 | Cluster-local-gateway authentication | Direct access without token returns `403` |
-| 6 | Namespace isolation | Cross-namespace attacker token is rejected |
-
-### Architecture Analysis (Future Improvements)
-
-The analysis of KServe auth capabilities suggests that while it's possible to limit access to only authenticated agents,
-there might be some improvements required to enable access only to authorized agents.
-
-This is based on the following:
-
-1. KServe Controller Manager patch integrating kube-rbac-proxy[^6].
-
-   This suggests the kserve **might** use the same mechanism based on
-   `SubjectAccessReviews`. Having a look at the kubeflow/manifests I see it's
-   not enabled.
-2. Search through the docs and code:
-
-   * https://github.com/kserve/kserve/tree/v0.12.0/docs/samples/istio-dex
-   * https://github.com/kserve/kserve/tree/v0.12.0/docs/samples/gcp-iap
-
-   The docs above mention that while it's possible to enable authentication,
-   authorization is more complicated and probably we need to add
-   `AuthorizationPolicy`
-
-   > create an [Istio AuthorizationPolicy](https://istio.io/latest/docs/reference/config/security/authorization-policy/) to grant access to the pods or disable it
-
-   Most probably some work is needed to enable authorized access to kserve models.
-3. Potential improvement: adding `source.namespaces` to the `AuthorizationPolicy`
-   to restrict access to traffic originating from specific namespaces (e.g.,
-   `istio-system`). This would provide an additional layer of security but
-   requires proper mTLS/PeerAuthentication configuration to propagate SPIFFE
-   identities correctly.
+In CI environments where the JWT principal is not propagated, the tests use
+`rules: [{}]` (allow-all) as a fallback -- security remains enforced at the
+ingress gateway. In production with proper mTLS, prefer
+`requestPrincipals: ["*"]` for defense in depth.
 
 ## Links
 
@@ -445,4 +354,3 @@ This is based on the following:
 [^3]: [oauth2-proxy](https://github.com/oauth2-proxy/oauth2-proxy)
 [^4]: [Kubernetes TokenReview](https://kubernetes.io/docs/reference/kubernetes-api/authentication-resources/token-review-v1/)
 [^5]: [Kubernetes SubjectAccessReview](https://kubernetes.io/docs/reference/kubernetes-api/authorization-resources/subject-access-review-v3/)
-[^6]: [Kube RBAC Proxy](https://github.com/brancz/kube-rbac-proxy)
