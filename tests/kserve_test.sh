@@ -415,6 +415,9 @@ fi
 # Cleanup
 # ============================================================
 kill $PF_PID 2>/dev/null || true
+sleep 2
+kill -9 $PF_PID 2>/dev/null || true
+wait $PF_PID 2>/dev/null || true
 
 kubectl delete namespace ${ATTACKER_NAMESPACE} --ignore-not-found=true
 kubectl delete ksvc secure-model-predictor -n ${NAMESPACE} --ignore-not-found=true
