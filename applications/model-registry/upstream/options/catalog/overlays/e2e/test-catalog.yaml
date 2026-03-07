@@ -21,7 +21,7 @@ models:
         string_value: "group-1"
     artifacts:
       - name: pytorch-artifact
-        uri: s3://bucket/test-model-1.tar.gz
+        uri: s3://bucket/test-model-1-pytorch.tar.gz
         customProperties:
           accuracy:
             metadataType: MetadataDoubleValue
@@ -32,6 +32,27 @@ models:
           framework_type:
             metadataType: MetadataStringValue
             string_value: pytorch
+      - name: onnx-variant-artifact
+        uri: s3://bucket/test-model-1-onnx.tar.gz
+        customProperties:
+          accuracy:
+            metadataType: MetadataDoubleValue
+            double_value: 0.90
+          overall_average:
+            metadataType: MetadataDoubleValue
+            double_value: 88.0
+          framework_type:
+            metadataType: MetadataStringValue
+            string_value: onnx
+      - name: tensorrt-variant-artifact
+        uri: s3://bucket/test-model-1-tensorrt.tar.gz
+        customProperties:
+          accuracy:
+            metadataType: MetadataDoubleValue
+            double_value: 0.85
+          framework_type:
+            metadataType: MetadataStringValue
+            string_value: tensorrt
 
   - name: test-model-2
     description: Secondary test model with medium accuracy
