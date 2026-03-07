@@ -5,25 +5,29 @@ source "${SCRIPT_DIRECTORY}/library.sh"
 setup_error_handling
 COMPONENT_NAME="dex"
 REPOSITORY_NAME="dexidp/dex"
+REPOSITORY_URL="https://github.com/dexidp/dex.git"
 COMMIT="v2.45.0"
+REPOSITORY_DIRECTORY="dex"
+SOURCE_DIRECTORY=${SOURCE_DIRECTORY:=/tmp/kubeflow-${COMPONENT_NAME}}
 BRANCH_NAME=${BRANCH_NAME:=synchronize-${COMPONENT_NAME}-manifests-${COMMIT?}}
 MANIFESTS_DIRECTORY=$(dirname $SCRIPT_DIRECTORY)
-DESTINATION_DIRECTORY=$MANIFESTS_DIRECTORY/common/${COMPONENT_NAME}
+DESTINATION_MANIFESTS_PATH="common/${COMPONENT_NAME}"
+DESTINATION_DIRECTORY=$MANIFESTS_DIRECTORY/${DESTINATION_MANIFESTS_PATH}
 UPSTREAM_DIRECTORY=$DESTINATION_DIRECTORY/base/upstream
 create_branch "$BRANCH_NAME"
-if [[ "$OSTYPE" == "darwin"* ]]; then
-    sed -i "" "s|ghcr.io/dexidp/dex:v[0-9.]*|ghcr.io/dexidp/dex:${COMMIT}|g" \
-        $DESTINATION_DIRECTORY/base/deployment.yaml
-else
-    sed -i "s|ghcr.io/dexidp/dex:v[0-9.]*|ghcr.io/dexidp/dex:${COMMIT}|g" \
-        $DESTINATION_DIRECTORY/base/deployment.yaml
-fi
+clone_and_checkout "$SOURCE_DIRECTORY" "$REPOSITORY_URL" "$REPOSITORY_DIRECTORY" "$COMMIT"
+
+sed -i "s|ghcr.io/dexidp/dex:v[0-9.]*|ghcr.io/dexidp/dex:${COMMIT}|g" \
+  "$DESTINATION_DIRECTORY/base/deployment.yaml"
+
 mkdir -p "$UPSTREAM_DIRECTORY"
-curl --silent --show-error --fail --location \
-    "https://raw.githubusercontent.com/${REPOSITORY_NAME}/${COMMIT}/scripts/manifests/crds/authcodes.yaml" \
-    > "$UPSTREAM_DIRECTORY/crds.yaml"
+cp \
+  "$SOURCE_DIRECTORY/$REPOSITORY_DIRECTORY/scripts/manifests/crds/authcodes.yaml" \
+  "$UPSTREAM_DIRECTORY/crds.yaml"
 SOURCE_TEXT="\[.*\](https://github.com/${REPOSITORY_NAME}/releases/tag/v.*)"
 DESTINATION_TEXT="\[${COMMIT#v}\](https://github.com/${REPOSITORY_NAME}/releases/tag/${COMMIT})"
 update_readme "$MANIFESTS_DIRECTORY" "$SOURCE_TEXT" "$DESTINATION_TEXT"
-commit_changes "$MANIFESTS_DIRECTORY" "Update ${REPOSITORY_NAME} manifests from ${COMMIT}" "$MANIFESTS_DIRECTORY"
+commit_changes "$MANIFESTS_DIRECTORY" "Update ${REPOSITORY_NAME} manifests from ${COMMIT}" \
+  "$DESTINATION_MANIFESTS_PATH" \
+  "README.md"
 echo "Synchronization completed successfully."
