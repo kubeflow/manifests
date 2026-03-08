@@ -79,7 +79,7 @@ jobs:
       run: ./tests/PSS_enable.sh
 
     - name: Collect Logs on Failure
-      if: failure()
+      if: failure() || cancelled()
       run: |
         mkdir -p logs
         kubectl get all --all-namespaces > logs/resources.txt

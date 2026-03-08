@@ -419,9 +419,9 @@ sleep 2
 kill -9 $PF_PID 2>/dev/null || true
 wait $PF_PID 2>/dev/null || true
 
-kubectl delete namespace ${ATTACKER_NAMESPACE} --ignore-not-found=true
-kubectl delete ksvc secure-model-predictor -n ${NAMESPACE} --ignore-not-found=true
-kubectl delete inferenceservice isvc-sklearn -n ${NAMESPACE} --ignore-not-found=true
-kubectl delete inferenceservice isvc-sklearn-raw -n ${NAMESPACE} --ignore-not-found=true
-kubectl delete authorizationpolicy allow-isvc-sklearn -n ${NAMESPACE} --ignore-not-found=true
-kubectl delete authorizationpolicy allow-isvc-sklearn-raw -n ${NAMESPACE} --ignore-not-found=true
+kubectl delete namespace ${ATTACKER_NAMESPACE} --ignore-not-found=true --wait=false
+kubectl delete ksvc secure-model-predictor -n ${NAMESPACE} --ignore-not-found=true --wait=false
+kubectl delete inferenceservice isvc-sklearn -n ${NAMESPACE} --ignore-not-found=true --wait=false
+kubectl delete inferenceservice isvc-sklearn-raw -n ${NAMESPACE} --ignore-not-found=true --wait=false
+kubectl delete authorizationpolicy allow-isvc-sklearn -n ${NAMESPACE} --ignore-not-found=true --wait=false
+kubectl delete authorizationpolicy allow-isvc-sklearn-raw -n ${NAMESPACE} --ignore-not-found=true --wait=false
