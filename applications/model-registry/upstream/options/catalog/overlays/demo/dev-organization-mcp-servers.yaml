@@ -1,0 +1,474 @@
+source: Organization MCP
+mcp_servers:
+  - name: dynatrace-mcp
+    provider: Dynatrace
+    license: apache-2.0
+    license_link: https://github.com/dynatrace-oss/dynatrace-mcp-server/blob/main/LICENSE
+    description: >-
+      Official Dynatrace-OSS project exposing DQL queries, problem feeds, and vulnerability data.
+      Gives agents real-time service health, letting them recommend rollbacks or capacity fixes inside OpenShift.
+    readme: |-
+      # Dynatrace MCP Server
+
+      **MCP Server Summary:**
+      The Dynatrace MCP Server provides AI agents with access to observability data, enabling intelligent monitoring and analysis.
+
+      ## Features
+      - Execute DQL queries for real-time observability
+      - Access problem feeds and incident information
+      - Retrieve vulnerability data from monitored services
+
+      ## Prerequisites
+      - Dynatrace API token with appropriate permissions
+      - Dynatrace environment URL
+
+      ## Installation
+      ```bash
+      npm install @dynatrace-oss/dynatrace-mcp-server
+      ```
+
+      ## Configuration
+      Set the following environment variables:
+      - `DYNATRACE_API_TOKEN`: Your Dynatrace API token
+      - `DYNATRACE_ENV_URL`: Your Dynatrace environment URL
+    version: "1.0.1"
+    transports:
+      - http
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzOCIgaGVpZ2h0PSIzOCIgdmlld0JveD0iMCAwIDM4IDM4Ij4KICA8dGl0bGU+TUNQIFNlcnZlciBpY29uPC90aXRsZT4KICA8ZGVmcz4KICAgIDxzdHlsZT4KICAgICAgLmJne2ZpbGw6I2ZmZjt9CiAgICAgIC5ib3JkZXJ7ZmlsbDojZTBlMGUwO30KICAgICAgLmFjY2VudHtmaWxsOiMwMDY2Y2M7fQogICAgICAubm9kZXtmaWxsOiMwMDY2Y2M7fQogICAgPC9zdHlsZT4KICA8L2RlZnM+CiAgPHJlY3QgY2xhc3M9ImJvcmRlciIgeD0iMCIgeT0iMCIgd2lkdGg9IjM4IiBoZWlnaHQ9IjM4IiByeD0iNCIgcnk9IjQiLz4KICA8cmVjdCBjbGFzcz0iYmciIHg9IjEiIHk9IjEiIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgcng9IjMiIHJ5PSIzIi8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjE5IiBjeT0iMTkiIHI9IjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMTkiIGN5PSI3IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMjkiIGN5PSIxMyIgcj0iMi41Ii8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjI5IiBjeT0iMjUiIHI9IjIuNSIvPgogIDxjaXJjbGUgY2xhc3M9Im5vZGUiIGN4PSIxOSIgY3k9IjMxIiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjI1IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjEzIiByPSIyLjUiLz4KICA8bGluZSB4MT0iMTkiIHkxPSIxNCIgeDI9IjE5IiB5Mj0iOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjE2IiB4Mj0iMjciIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjIyIiB4Mj0iMjciIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxOSIgeTE9IjI0IiB4Mj0iMTkiIHkyPSIyOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjIyIiB4Mj0iMTEiIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjE2IiB4Mj0iMTEiIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgo8L3N2Zz4K
+    documentationUrl: https://docs.dynatrace.com/mcp
+    repositoryUrl: https://github.com/dynatrace-oss/dynatrace-mcp-server
+    sourceCode: dynatrace-oss/dynatrace-mcp-server
+    publishedDate: "2025-01-15"
+    tools:
+      - name: execute_dql
+        description: Execute Dynatrace Query Language (DQL) queries
+        accessType: read_only
+        parameters:
+          - name: query
+            type: string
+            description: DQL query to execute
+            required: true
+          - name: time_range
+            type: string
+            description: Time range for query (e.g., -1h, -24h)
+            required: false
+      - name: get_problems
+        description: Retrieve active problems and incidents
+        accessType: read_only
+        parameters:
+          - name: status
+            type: string
+            description: "Filter by status: OPEN, RESOLVED, or ALL"
+            required: false
+      - name: get_vulnerabilities
+        description: Query security vulnerabilities in monitored services
+        accessType: read_only
+        parameters:
+          - name: severity
+            type: string
+            description: "Minimum severity: CRITICAL, HIGH, MEDIUM, LOW"
+            required: false
+    artifacts:
+      - uri: oci://ghcr.io/dynatrace-oss/dynatrace-mcp-server:1.0.1
+        createTimeSinceEpoch: "1736942400000"
+        lastUpdateTimeSinceEpoch: "1736942400000"
+    customProperties:
+      observability:
+        metadataType: MetadataStringValue
+        string_value: ""
+      monitoring:
+        metadataType: MetadataStringValue
+        string_value: ""
+      apm:
+        metadataType: MetadataStringValue
+        string_value: ""
+      verifiedSource:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      secureEndpoint:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      sast:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      readOnlyTools:
+        metadataType: MetadataBoolValue
+        bool_value: true
+    createTimeSinceEpoch: "1736942400000"
+    lastUpdateTimeSinceEpoch: "1736942400000"
+
+  - name: github-mcp
+    provider: GitHub
+    license: mit
+    license_link: https://opensource.org/licenses/MIT
+    description: >-
+      Access GitHub repositories, issues, pull requests, and actions.
+      Search code, create issues, and manage workflows.
+    readme: |-
+      # GitHub MCP Server
+
+      **MCP Server Summary:**
+      Full GitHub integration for AI agents.
+
+      ## Features
+      - Code search across repositories
+      - Issue management
+      - Pull request operations
+
+      ## Prerequisites
+      - GitHub Personal Access Token
+      - Appropriate repository permissions
+    version: "2.1.0"
+    transports:
+      - stdio
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzOCIgaGVpZ2h0PSIzOCIgdmlld0JveD0iMCAwIDM4IDM4Ij4KICA8dGl0bGU+TUNQIFNlcnZlciBpY29uPC90aXRsZT4KICA8ZGVmcz4KICAgIDxzdHlsZT4KICAgICAgLmJne2ZpbGw6I2ZmZjt9CiAgICAgIC5ib3JkZXJ7ZmlsbDojZTBlMGUwO30KICAgICAgLmFjY2VudHtmaWxsOiMwMDY2Y2M7fQogICAgICAubm9kZXtmaWxsOiMwMDY2Y2M7fQogICAgPC9zdHlsZT4KICA8L2RlZnM+CiAgPHJlY3QgY2xhc3M9ImJvcmRlciIgeD0iMCIgeT0iMCIgd2lkdGg9IjM4IiBoZWlnaHQ9IjM4IiByeD0iNCIgcnk9IjQiLz4KICA8cmVjdCBjbGFzcz0iYmciIHg9IjEiIHk9IjEiIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgcng9IjMiIHJ5PSIzIi8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjE5IiBjeT0iMTkiIHI9IjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMTkiIGN5PSI3IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMjkiIGN5PSIxMyIgcj0iMi41Ii8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjI5IiBjeT0iMjUiIHI9IjIuNSIvPgogIDxjaXJjbGUgY2xhc3M9Im5vZGUiIGN4PSIxOSIgY3k9IjMxIiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjI1IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjEzIiByPSIyLjUiLz4KICA8bGluZSB4MT0iMTkiIHkxPSIxNCIgeDI9IjE5IiB5Mj0iOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjE2IiB4Mj0iMjciIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjIyIiB4Mj0iMjciIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxOSIgeTE9IjI0IiB4Mj0iMTkiIHkyPSIyOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjIyIiB4Mj0iMTEiIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjE2IiB4Mj0iMTEiIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgo8L3N2Zz4K
+    documentationUrl: https://docs.github.com/mcp
+    repositoryUrl: https://github.com/github/github-mcp
+    sourceCode: github/github-mcp
+    publishedDate: "2025-01-14"
+    tools:
+      - name: search_code
+        description: Search for code across repositories
+        accessType: read_only
+        parameters:
+          - name: query
+            type: string
+            description: Search query
+            required: true
+      - name: get_issues
+        description: List issues for a repository
+        accessType: read_only
+        parameters:
+          - name: owner
+            type: string
+            description: Repository owner
+            required: true
+          - name: repo
+            type: string
+            description: Repository name
+            required: true
+      - name: create_issue
+        description: Create a new issue
+        accessType: read_write
+        revoked: true
+        revokedReason: "Security vulnerability CVE-2025-1234 - write operations temporarily disabled pending patch"
+        parameters:
+          - name: owner
+            type: string
+            description: Repository owner
+            required: true
+          - name: repo
+            type: string
+            description: Repository name
+            required: true
+          - name: title
+            type: string
+            description: Issue title
+            required: true
+      - name: get_pull_requests
+        description: List pull requests
+        accessType: read_only
+        parameters:
+          - name: owner
+            type: string
+            description: Repository owner
+            required: true
+          - name: repo
+            type: string
+            description: Repository name
+            required: true
+    artifacts:
+      - uri: oci://ghcr.io/github/github-mcp:2.1.0
+        createTimeSinceEpoch: "1736856000000"
+        lastUpdateTimeSinceEpoch: "1736856000000"
+    customProperties:
+      git:
+        metadataType: MetadataStringValue
+        string_value: ""
+      version-control:
+        metadataType: MetadataStringValue
+        string_value: ""
+      ci-cd:
+        metadataType: MetadataStringValue
+        string_value: ""
+      verifiedSource:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      secureEndpoint:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      sast:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      readOnlyTools:
+        metadataType: MetadataBoolValue
+        bool_value: false
+    createTimeSinceEpoch: "1736856000000"
+    lastUpdateTimeSinceEpoch: "1736856000000"
+
+  - name: slack-mcp
+    provider: Slack Technologies
+    license: mit
+    license_link: https://opensource.org/licenses/MIT
+    description: >-
+      Send messages, manage channels, and integrate with Slack workspaces.
+      Perfect for automated notifications and team communication.
+    readme: |-
+      # Slack MCP Server
+
+      **MCP Server Summary:**
+      Slack workspace integration for AI agents.
+
+      ## Features
+      - Send messages to channels
+      - List channels
+      - Retrieve message history
+
+      ## Prerequisites
+      - Slack Bot Token
+      - Appropriate workspace permissions
+    version: "1.5.0"
+    transports:
+      - sse
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzOCIgaGVpZ2h0PSIzOCIgdmlld0JveD0iMCAwIDM4IDM4Ij4KICA8dGl0bGU+TUNQIFNlcnZlciBpY29uPC90aXRsZT4KICA8ZGVmcz4KICAgIDxzdHlsZT4KICAgICAgLmJne2ZpbGw6I2ZmZjt9CiAgICAgIC5ib3JkZXJ7ZmlsbDojZTBlMGUwO30KICAgICAgLmFjY2VudHtmaWxsOiMwMDY2Y2M7fQogICAgICAubm9kZXtmaWxsOiMwMDY2Y2M7fQogICAgPC9zdHlsZT4KICA8L2RlZnM+CiAgPHJlY3QgY2xhc3M9ImJvcmRlciIgeD0iMCIgeT0iMCIgd2lkdGg9IjM4IiBoZWlnaHQ9IjM4IiByeD0iNCIgcnk9IjQiLz4KICA8cmVjdCBjbGFzcz0iYmciIHg9IjEiIHk9IjEiIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgcng9IjMiIHJ5PSIzIi8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjE5IiBjeT0iMTkiIHI9IjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMTkiIGN5PSI3IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMjkiIGN5PSIxMyIgcj0iMi41Ii8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjI5IiBjeT0iMjUiIHI9IjIuNSIvPgogIDxjaXJjbGUgY2xhc3M9Im5vZGUiIGN4PSIxOSIgY3k9IjMxIiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjI1IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjEzIiByPSIyLjUiLz4KICA8bGluZSB4MT0iMTkiIHkxPSIxNCIgeDI9IjE5IiB5Mj0iOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjE2IiB4Mj0iMjciIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjIyIiB4Mj0iMjciIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxOSIgeTE9IjI0IiB4Mj0iMTkiIHkyPSIyOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjIyIiB4Mj0iMTEiIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjE2IiB4Mj0iMTEiIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgo8L3N2Zz4K
+    repositoryUrl: https://github.com/slack/slack-mcp
+    sourceCode: slack/slack-mcp
+    publishedDate: "2025-01-08"
+    tools:
+      - name: send_message
+        description: Send a message to a channel
+        accessType: read_write
+        revoked: true
+        revokedReason: "Rate limiting issues detected - tool temporarily disabled while investigating"
+        parameters:
+          - name: channel
+            type: string
+            description: Channel ID or name
+            required: true
+          - name: text
+            type: string
+            description: Message text
+            required: true
+      - name: list_channels
+        description: List available channels
+        accessType: read_only
+        parameters: []
+      - name: get_channel_history
+        description: Get message history for a channel
+        accessType: read_only
+        parameters:
+          - name: channel
+            type: string
+            description: Channel ID
+            required: true
+    artifacts:
+      - uri: oci://ghcr.io/slack/slack-mcp:1.5.0
+        createTimeSinceEpoch: "1736337600000"
+        lastUpdateTimeSinceEpoch: "1736337600000"
+    customProperties:
+      messaging:
+        metadataType: MetadataStringValue
+        string_value: ""
+      collaboration:
+        metadataType: MetadataStringValue
+        string_value: ""
+      notifications:
+        metadataType: MetadataStringValue
+        string_value: ""
+      verifiedSource:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      secureEndpoint:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      sast:
+        metadataType: MetadataBoolValue
+        bool_value: false
+      readOnlyTools:
+        metadataType: MetadataBoolValue
+        bool_value: false
+    createTimeSinceEpoch: "1736337600000"
+    lastUpdateTimeSinceEpoch: "1736337600000"
+
+  - name: jira-mcp
+    provider: Atlassian
+    license: apache-2.0
+    license_link: https://www.apache.org/licenses/LICENSE-2.0
+    description: >-
+      Manage Jira issues, projects, and workflows.
+      Create, update, and query issues using natural language.
+    readme: |-
+      # Jira MCP Server
+
+      **MCP Server Summary:**
+      Jira project management integration.
+
+      ## Features
+      - JQL search
+      - Issue creation and updates
+      - Workflow management
+
+      ## Prerequisites
+      - Jira API token
+      - Site URL configuration
+    version: "1.3.2"
+    transports:
+      - http
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzOCIgaGVpZ2h0PSIzOCIgdmlld0JveD0iMCAwIDM4IDM4Ij4KICA8dGl0bGU+TUNQIFNlcnZlciBpY29uPC90aXRsZT4KICA8ZGVmcz4KICAgIDxzdHlsZT4KICAgICAgLmJne2ZpbGw6I2ZmZjt9CiAgICAgIC5ib3JkZXJ7ZmlsbDojZTBlMGUwO30KICAgICAgLmFjY2VudHtmaWxsOiMwMDY2Y2M7fQogICAgICAubm9kZXtmaWxsOiMwMDY2Y2M7fQogICAgPC9zdHlsZT4KICA8L2RlZnM+CiAgPHJlY3QgY2xhc3M9ImJvcmRlciIgeD0iMCIgeT0iMCIgd2lkdGg9IjM4IiBoZWlnaHQ9IjM4IiByeD0iNCIgcnk9IjQiLz4KICA8cmVjdCBjbGFzcz0iYmciIHg9IjEiIHk9IjEiIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgcng9IjMiIHJ5PSIzIi8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjE5IiBjeT0iMTkiIHI9IjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMTkiIGN5PSI3IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMjkiIGN5PSIxMyIgcj0iMi41Ii8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjI5IiBjeT0iMjUiIHI9IjIuNSIvPgogIDxjaXJjbGUgY2xhc3M9Im5vZGUiIGN4PSIxOSIgY3k9IjMxIiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjI1IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjEzIiByPSIyLjUiLz4KICA8bGluZSB4MT0iMTkiIHkxPSIxNCIgeDI9IjE5IiB5Mj0iOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjE2IiB4Mj0iMjciIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjIyIiB4Mj0iMjciIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxOSIgeTE9IjI0IiB4Mj0iMTkiIHkyPSIyOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjIyIiB4Mj0iMTEiIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjE2IiB4Mj0iMTEiIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgo8L3N2Zz4K
+    documentationUrl: https://developer.atlassian.com/mcp
+    repositoryUrl: https://github.com/atlassian/jira-mcp
+    sourceCode: atlassian/jira-mcp
+    publishedDate: "2025-01-11"
+    tools:
+      - name: search_issues
+        description: Search issues using JQL
+        accessType: read_only
+        parameters:
+          - name: jql
+            type: string
+            description: JQL query
+            required: true
+      - name: get_issue
+        description: Get issue details
+        accessType: read_only
+        parameters:
+          - name: issue_key
+            type: string
+            description: Issue key (e.g., PROJ-123)
+            required: true
+      - name: create_issue
+        description: Create a new issue
+        accessType: read_write
+        parameters:
+          - name: project
+            type: string
+            description: Project key
+            required: true
+          - name: summary
+            type: string
+            description: Issue summary
+            required: true
+          - name: issue_type
+            type: string
+            description: Issue type
+            required: true
+      - name: update_issue
+        description: Update an existing issue
+        accessType: read_write
+        parameters:
+          - name: issue_key
+            type: string
+            description: Issue key
+            required: true
+    artifacts:
+      - uri: oci://ghcr.io/atlassian/jira-mcp:1.3.2
+        createTimeSinceEpoch: "1736596800000"
+        lastUpdateTimeSinceEpoch: "1736596800000"
+    customProperties:
+      project-management:
+        metadataType: MetadataStringValue
+        string_value: ""
+      issue-tracking:
+        metadataType: MetadataStringValue
+        string_value: ""
+      agile:
+        metadataType: MetadataStringValue
+        string_value: ""
+      verifiedSource:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      secureEndpoint:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      sast:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      readOnlyTools:
+        metadataType: MetadataBoolValue
+        bool_value: false
+    createTimeSinceEpoch: "1736596800000"
+    lastUpdateTimeSinceEpoch: "1736596800000"
+
+  - name: aws-mcp
+    provider: Amazon Web Services
+    license: apache-2.0
+    license_link: https://www.apache.org/licenses/LICENSE-2.0
+    description: >-
+      Interact with Amazon Web Services resources.
+      Manage EC2 instances, S3 buckets, Lambda functions, and more.
+    readme: |-
+      # AWS MCP Server
+
+      **MCP Server Summary:**
+      Amazon Web Services resource management.
+
+      ## Features
+      - EC2 instance management
+      - S3 bucket operations
+      - Lambda invocation
+      - CloudWatch monitoring
+
+      ## Prerequisites
+      - AWS credentials configured
+      - Appropriate IAM permissions
+    version: "2.0.1"
+    transports:
+      - http
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzOCIgaGVpZ2h0PSIzOCIgdmlld0JveD0iMCAwIDM4IDM4Ij4KICA8dGl0bGU+TUNQIFNlcnZlciBpY29uPC90aXRsZT4KICA8ZGVmcz4KICAgIDxzdHlsZT4KICAgICAgLmJne2ZpbGw6I2ZmZjt9CiAgICAgIC5ib3JkZXJ7ZmlsbDojZTBlMGUwO30KICAgICAgLmFjY2VudHtmaWxsOiMwMDY2Y2M7fQogICAgICAubm9kZXtmaWxsOiMwMDY2Y2M7fQogICAgPC9zdHlsZT4KICA8L2RlZnM+CiAgPHJlY3QgY2xhc3M9ImJvcmRlciIgeD0iMCIgeT0iMCIgd2lkdGg9IjM4IiBoZWlnaHQ9IjM4IiByeD0iNCIgcnk9IjQiLz4KICA8cmVjdCBjbGFzcz0iYmciIHg9IjEiIHk9IjEiIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgcng9IjMiIHJ5PSIzIi8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjE5IiBjeT0iMTkiIHI9IjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMTkiIGN5PSI3IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMjkiIGN5PSIxMyIgcj0iMi41Ii8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjI5IiBjeT0iMjUiIHI9IjIuNSIvPgogIDxjaXJjbGUgY2xhc3M9Im5vZGUiIGN4PSIxOSIgY3k9IjMxIiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjI1IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjEzIiByPSIyLjUiLz4KICA8bGluZSB4MT0iMTkiIHkxPSIxNCIgeDI9IjE5IiB5Mj0iOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjE2IiB4Mj0iMjciIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjIyIiB4Mj0iMjciIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxOSIgeTE9IjI0IiB4Mj0iMTkiIHkyPSIyOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjIyIiB4Mj0iMTEiIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjE2IiB4Mj0iMTEiIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgo8L3N2Zz4K
+    documentationUrl: https://docs.aws.amazon.com/mcp
+    repositoryUrl: https://github.com/aws/aws-mcp
+    sourceCode: aws/aws-mcp
+    publishedDate: "2025-01-09"
+    tools:
+      - name: list_ec2_instances
+        description: List EC2 instances
+        accessType: read_only
+        parameters:
+          - name: region
+            type: string
+            description: AWS region
+            required: true
+      - name: list_s3_buckets
+        description: List S3 buckets
+        accessType: read_only
+        parameters: []
+      - name: invoke_lambda
+        description: Invoke a Lambda function
+        accessType: read_write
+        parameters:
+          - name: function_name
+            type: string
+            description: Lambda function name or ARN
+            required: true
+      - name: describe_cloudwatch_alarms
+        description: List CloudWatch alarms
+        accessType: read_only
+        parameters: []
+    artifacts:
+      - uri: oci://public.ecr.aws/aws/aws-mcp:2.0.1
+        createTimeSinceEpoch: "1736424000000"
+        lastUpdateTimeSinceEpoch: "1736424000000"
+    customProperties:
+      cloud:
+        metadataType: MetadataStringValue
+        string_value: ""
+      aws:
+        metadataType: MetadataStringValue
+        string_value: ""
+      infrastructure:
+        metadataType: MetadataStringValue
+        string_value: ""
+      verifiedSource:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      secureEndpoint:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      sast:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      readOnlyTools:
+        metadataType: MetadataBoolValue
+        bool_value: false
+    createTimeSinceEpoch: "1736424000000"
+    lastUpdateTimeSinceEpoch: "1736424000000"

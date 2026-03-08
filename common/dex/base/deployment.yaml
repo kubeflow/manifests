@@ -16,7 +16,7 @@ spec:
     spec:
       serviceAccountName: dex
       containers:
-      - image: ghcr.io/dexidp/dex:v2.44.0
+      - image: ghcr.io/dexidp/dex:v2.45.0
         name: dex
         command: ["dex", "serve", "/etc/dex/cfg/config.yaml"]
         ports:
@@ -26,6 +26,8 @@ spec:
           allowPrivilegeEscalation: false
           seccompProfile:
             type: RuntimeDefault
+          runAsUser: 1001
+          runAsGroup: 1001
           runAsNonRoot: true
           capabilities:
             drop:

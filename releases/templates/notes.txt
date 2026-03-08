@@ -1,0 +1,20 @@
+[NOTES] Release team meeting {month}/{day}/{year}
+
+Hello everyone, here are the notes and highlights from today's Release team call. This is only an overview of the discussed items. If you'd like more info feel free to take a look at our notes and recording.
+
+* Topic A
+* Decision B
+
+Attendees:
+* Name
+
+Here are also some links for anyone that would like to get involved with the release team. You'll also need to join the kubeflow-discuss mailing list to get access to them.
+
+Handbook: https://github.com/kubeflow/community/blob/master/releases/handbook.md
+Calendar invite: arrik.to/kf-release-team-cal
+Meeting Notes: arrik.to/kf-release-team-notes
+Recordings: arrik.to/kf-release-team-recordings
+Meet Room: arrik.to/kf-release-team-meet
+GDrive: arrik.to/kf-release-team-drive
+
+{name}, on behalf of the Release Team

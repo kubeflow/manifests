@@ -1,25 +1,29 @@
 #!/bin/bash
-set -e
+set -euxo pipefail
 
 KIND_VERSION="v0.30.0"
-KUSTOMIZE_VERSION="v5.7.1"
+KUSTOMIZE_VERSION="v5.8.1"
+USER_BINARY_DIRECTORY="$HOME/.local/bin"
 
-error_exit() {
-    echo "Error occurred in script at line: ${1}."
-    exit 1
-}
+if [[ "${GITHUB_ACTIONS:-false}" == "true" ]]; then
+    USER_BINARY_DIRECTORY="/tmp/usr/local/bin"
+fi
 
-trap 'error_exit $LINENO' ERR
+mkdir -p "${USER_BINARY_DIRECTORY}"
+export PATH="${USER_BINARY_DIRECTORY}:${PATH}"
 
 echo "Install KinD..."
-sudo swapoff -a
 
-# This conditional helps running GH Workflows through
-# [act](https://github.com/nektos/act)
-if [ -e /swapfile ]; then
-    sudo rm -f /swapfile
-    sudo mkdir -p /tmp/etcd
-    sudo mount -t tmpfs tmpfs /tmp/etcd
+# https://github.com/nektos/act
+# This conditional helps running GitHub Workflows through
+if [[ "${GITHUB_ACTIONS:-false}" == "true" ]]; then
+    echo "Running in GitHub Actions: Optimizing environment..."
+    sudo swapoff -a
+    if [ -e /swapfile ]; then
+        sudo rm -f /swapfile
+        sudo mkdir -p /tmp/etcd
+        sudo mount -t tmpfs tmpfs /tmp/etcd
+    fi
 fi
 
 {
@@ -30,7 +34,7 @@ fi
        exit 1
     fi
     chmod +x ./kind-linux-amd64
-    sudo mv kind-linux-amd64 /usr/local/bin/kind
+    mv kind-linux-amd64 "${USER_BINARY_DIRECTORY}/kind"
 } || { echo "Failed to install KinD"; exit 1; }
 
 
@@ -64,6 +68,13 @@ nodes:
   image: kindest/node:v1.34.0@sha256:7416a61b42b1662ca6ca89f02028ac133a309a2a30ba309614e8ec94d976dc5a
 " | kind create cluster --config - --wait 120s
 
+echo "Install kubectl ..."
+{
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    chmod +x ./kubectl
+    mv kubectl "${USER_BINARY_DIRECTORY}/kubectl"
+} || { echo "Failed to install kubectl"; exit 1; }
+
 kubectl cluster-info
 
 echo "Install Kustomize ..."
@@ -81,5 +92,34 @@ echo "Install Kustomize ..."
     fi
     tar -xzvf "${KUSTOMIZE_ASSET}"
     chmod a+x kustomize
-    sudo mv kustomize /usr/local/bin/kustomize
+    mv kustomize "${USER_BINARY_DIRECTORY}/kustomize"
 } || { echo "Failed to install Kustomize"; exit 1; }
+
+# Free disk space in GitHub Actions to reduce "no space left on device" failures.
+if [[ "${GITHUB_ACTIONS:-false}" == "true" ]]; then
+    echo "=== Disk usage before cleanup ==="
+    df -h
+
+    echo "=== Freeing up disk space ==="
+
+    sudo rm -rf /usr/share/dotnet
+    sudo rm -rf /opt/ghc
+    sudo rm -rf /usr/local/share/boost
+    sudo rm -rf /usr/local/lib/android
+    sudo rm -rf /usr/local/.ghcup
+    sudo rm -rf /usr/share/swift
+
+    sudo rm -rf /opt/hostedtoolcache/CodeQL || true
+    sudo rm -rf /opt/hostedtoolcache/Java_* || true
+    sudo rm -rf /opt/hostedtoolcache/Ruby || true
+    sudo rm -rf /opt/hostedtoolcache/PyPy || true
+    sudo rm -rf /opt/hostedtoolcache/boost || true
+
+    sudo apt-get autoclean
+
+    docker system prune -af --volumes
+    docker image prune -af
+
+    echo "=== Final disk usage ==="
+    df -h
+fi

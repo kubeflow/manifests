@@ -1,0 +1,616 @@
+source: Community and custom
+mcp_servers:
+  - name: prometheus-mcp
+    provider: Prometheus Community
+    license: apache-2.0
+    license_link: https://www.apache.org/licenses/LICENSE-2.0
+    description: >-
+      Query Prometheus metrics and alerts directly from your agent.
+      Provides PromQL query execution, alert retrieval, and metric discovery.
+    readme: |-
+      # Prometheus MCP Server
+
+      **MCP Server Summary:**
+      Access Prometheus metrics and alerting data through the MCP protocol.
+
+      ## Features
+      - Execute PromQL queries
+      - Query range data
+      - Retrieve active alerts
+
+      ## Prerequisites
+      - Prometheus server access
+      - Network connectivity to Prometheus API
+    version: "0.9.2"
+    transports:
+      - http
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzOCIgaGVpZ2h0PSIzOCIgdmlld0JveD0iMCAwIDM4IDM4Ij4KICA8dGl0bGU+TUNQIFNlcnZlciBpY29uPC90aXRsZT4KICA8ZGVmcz4KICAgIDxzdHlsZT4KICAgICAgLmJne2ZpbGw6I2ZmZjt9CiAgICAgIC5ib3JkZXJ7ZmlsbDojZTBlMGUwO30KICAgICAgLmFjY2VudHtmaWxsOiMwMDY2Y2M7fQogICAgICAubm9kZXtmaWxsOiMwMDY2Y2M7fQogICAgPC9zdHlsZT4KICA8L2RlZnM+CiAgPHJlY3QgY2xhc3M9ImJvcmRlciIgeD0iMCIgeT0iMCIgd2lkdGg9IjM4IiBoZWlnaHQ9IjM4IiByeD0iNCIgcnk9IjQiLz4KICA8cmVjdCBjbGFzcz0iYmciIHg9IjEiIHk9IjEiIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgcng9IjMiIHJ5PSIzIi8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjE5IiBjeT0iMTkiIHI9IjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMTkiIGN5PSI3IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMjkiIGN5PSIxMyIgcj0iMi41Ii8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjI5IiBjeT0iMjUiIHI9IjIuNSIvPgogIDxjaXJjbGUgY2xhc3M9Im5vZGUiIGN4PSIxOSIgY3k9IjMxIiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjI1IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjEzIiByPSIyLjUiLz4KICA8bGluZSB4MT0iMTkiIHkxPSIxNCIgeDI9IjE5IiB5Mj0iOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjE2IiB4Mj0iMjciIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjIyIiB4Mj0iMjciIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxOSIgeTE9IjI0IiB4Mj0iMTkiIHkyPSIyOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjIyIiB4Mj0iMTEiIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjE2IiB4Mj0iMTEiIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgo8L3N2Zz4K
+    repositoryUrl: https://github.com/prometheus-community/prometheus-mcp
+    sourceCode: prometheus-community/prometheus-mcp
+    publishedDate: "2025-01-10"
+    tools:
+      - name: query
+        description: Execute PromQL queries
+        accessType: read_only
+        parameters:
+          - name: query
+            type: string
+            description: PromQL query expression
+            required: true
+      - name: query_range
+        description: Execute PromQL range queries
+        accessType: read_only
+        parameters:
+          - name: query
+            type: string
+            description: PromQL query expression
+            required: true
+          - name: start
+            type: string
+            description: Start timestamp
+            required: true
+          - name: end
+            type: string
+            description: End timestamp
+            required: true
+      - name: get_alerts
+        description: Retrieve active alerts
+        accessType: read_only
+        parameters: []
+    artifacts:
+      - uri: oci://ghcr.io/prometheus-community/prometheus-mcp:0.9.2
+        createTimeSinceEpoch: "1736510400000"
+        lastUpdateTimeSinceEpoch: "1736510400000"
+    customProperties:
+      # Tags (MetadataStringValue with empty string_value)
+      metrics:
+        metadataType: MetadataStringValue
+        string_value: ""
+      monitoring:
+        metadataType: MetadataStringValue
+        string_value: ""
+      alerting:
+        metadataType: MetadataStringValue
+        string_value: ""
+      # Security indicators (MetadataBoolValue)
+      verifiedSource:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      secureEndpoint:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      sast:
+        metadataType: MetadataBoolValue
+        bool_value: false
+      readOnlyTools:
+        metadataType: MetadataBoolValue
+        bool_value: true
+    createTimeSinceEpoch: "1736510400000"
+    lastUpdateTimeSinceEpoch: "1736510400000"
+
+  - name: kubernetes-mcp
+    provider: CNCF
+    license: apache-2.0
+    license_link: https://www.apache.org/licenses/LICENSE-2.0
+    description: >-
+      Interact with Kubernetes clusters through natural language.
+      List pods, check deployments, view logs, and manage resources.
+    readme: |-
+      # Kubernetes MCP Server
+
+      **MCP Server Summary:**
+      Comprehensive Kubernetes cluster management through MCP.
+
+      ## Features
+      - Pod management and listing
+      - Deployment operations
+      - Log retrieval
+      - Scaling operations
+
+      ## Prerequisites
+      - kubectl configured with cluster access
+      - Appropriate RBAC permissions
+    version: "1.2.0"
+    transports:
+      - stdio
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzOCIgaGVpZ2h0PSIzOCIgdmlld0JveD0iMCAwIDM4IDM4Ij4KICA8dGl0bGU+TUNQIFNlcnZlciBpY29uPC90aXRsZT4KICA8ZGVmcz4KICAgIDxzdHlsZT4KICAgICAgLmJne2ZpbGw6I2ZmZjt9CiAgICAgIC5ib3JkZXJ7ZmlsbDojZTBlMGUwO30KICAgICAgLmFjY2VudHtmaWxsOiMwMDY2Y2M7fQogICAgICAubm9kZXtmaWxsOiMwMDY2Y2M7fQogICAgPC9zdHlsZT4KICA8L2RlZnM+CiAgPHJlY3QgY2xhc3M9ImJvcmRlciIgeD0iMCIgeT0iMCIgd2lkdGg9IjM4IiBoZWlnaHQ9IjM4IiByeD0iNCIgcnk9IjQiLz4KICA8cmVjdCBjbGFzcz0iYmciIHg9IjEiIHk9IjEiIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgcng9IjMiIHJ5PSIzIi8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjE5IiBjeT0iMTkiIHI9IjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMTkiIGN5PSI3IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMjkiIGN5PSIxMyIgcj0iMi41Ii8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjI5IiBjeT0iMjUiIHI9IjIuNSIvPgogIDxjaXJjbGUgY2xhc3M9Im5vZGUiIGN4PSIxOSIgY3k9IjMxIiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjI1IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjEzIiByPSIyLjUiLz4KICA8bGluZSB4MT0iMTkiIHkxPSIxNCIgeDI9IjE5IiB5Mj0iOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjE2IiB4Mj0iMjciIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjIyIiB4Mj0iMjciIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxOSIgeTE9IjI0IiB4Mj0iMTkiIHkyPSIyOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjIyIiB4Mj0iMTEiIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjE2IiB4Mj0iMTEiIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgo8L3N2Zz4K
+    repositoryUrl: https://github.com/cncf/kubernetes-mcp
+    sourceCode: cncf/kubernetes-mcp
+    publishedDate: "2025-01-12"
+    tools:
+      - name: get_pods
+        description: List pods in a namespace
+        accessType: read_only
+        parameters:
+          - name: namespace
+            type: string
+            description: Kubernetes namespace
+            required: true
+      - name: get_deployments
+        description: List deployments
+        accessType: read_only
+        parameters:
+          - name: namespace
+            type: string
+            description: Kubernetes namespace
+            required: true
+      - name: get_logs
+        description: Retrieve pod logs
+        accessType: read_only
+        parameters:
+          - name: namespace
+            type: string
+            description: Kubernetes namespace
+            required: true
+          - name: pod_name
+            type: string
+            description: Name of the pod
+            required: true
+      - name: scale_deployment
+        description: Scale a deployment
+        accessType: read_write
+        parameters:
+          - name: namespace
+            type: string
+            description: Kubernetes namespace
+            required: true
+          - name: deployment_name
+            type: string
+            description: Name of the deployment
+            required: true
+          - name: replicas
+            type: number
+            description: Desired number of replicas
+            required: true
+    artifacts:
+      - uri: oci://ghcr.io/cncf/kubernetes-mcp:1.2.0
+        createTimeSinceEpoch: "1736683200000"
+        lastUpdateTimeSinceEpoch: "1736683200000"
+    customProperties:
+      kubernetes:
+        metadataType: MetadataStringValue
+        string_value: ""
+      containers:
+        metadataType: MetadataStringValue
+        string_value: ""
+      orchestration:
+        metadataType: MetadataStringValue
+        string_value: ""
+      verifiedSource:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      secureEndpoint:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      sast:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      readOnlyTools:
+        metadataType: MetadataBoolValue
+        bool_value: false
+    createTimeSinceEpoch: "1736683200000"
+    lastUpdateTimeSinceEpoch: "1736683200000"
+
+  - name: openshift-mcp
+    provider: Red Hat
+    license: apache-2.0
+    license_link: https://www.apache.org/licenses/LICENSE-2.0
+    description: >-
+      Red Hat OpenShift integration for container platform management.
+      Deploy applications, manage routes, and monitor cluster health.
+    readme: |-
+      # OpenShift MCP Server
+
+      **MCP Server Summary:**
+      Red Hat OpenShift container platform integration.
+
+      ## Features
+      - Project listing
+      - Route management
+      - Build operations
+
+      ## Prerequisites
+      - OpenShift CLI (oc) configured
+      - Cluster admin or developer access
+    version: "1.0.0"
+    transports:
+      - stdio
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzOCIgaGVpZ2h0PSIzOCIgdmlld0JveD0iMCAwIDM4IDM4Ij4KICA8dGl0bGU+TUNQIFNlcnZlciBpY29uPC90aXRsZT4KICA8ZGVmcz4KICAgIDxzdHlsZT4KICAgICAgLmJne2ZpbGw6I2ZmZjt9CiAgICAgIC5ib3JkZXJ7ZmlsbDojZTBlMGUwO30KICAgICAgLmFjY2VudHtmaWxsOiMwMDY2Y2M7fQogICAgICAubm9kZXtmaWxsOiMwMDY2Y2M7fQogICAgPC9zdHlsZT4KICA8L2RlZnM+CiAgPHJlY3QgY2xhc3M9ImJvcmRlciIgeD0iMCIgeT0iMCIgd2lkdGg9IjM4IiBoZWlnaHQ9IjM4IiByeD0iNCIgcnk9IjQiLz4KICA8cmVjdCBjbGFzcz0iYmciIHg9IjEiIHk9IjEiIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgcng9IjMiIHJ5PSIzIi8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjE5IiBjeT0iMTkiIHI9IjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMTkiIGN5PSI3IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMjkiIGN5PSIxMyIgcj0iMi41Ii8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjI5IiBjeT0iMjUiIHI9IjIuNSIvPgogIDxjaXJjbGUgY2xhc3M9Im5vZGUiIGN4PSIxOSIgY3k9IjMxIiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjI1IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjEzIiByPSIyLjUiLz4KICA8bGluZSB4MT0iMTkiIHkxPSIxNCIgeDI9IjE5IiB5Mj0iOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjE2IiB4Mj0iMjciIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjIyIiB4Mj0iMjciIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxOSIgeTE9IjI0IiB4Mj0iMTkiIHkyPSIyOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjIyIiB4Mj0iMTEiIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjE2IiB4Mj0iMTEiIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgo8L3N2Zz4K
+    repositoryUrl: https://github.com/redhat/openshift-mcp
+    sourceCode: redhat/openshift-mcp
+    publishedDate: "2025-01-13"
+    tools:
+      - name: get_projects
+        description: List OpenShift projects
+        accessType: read_only
+        parameters: []
+      - name: get_routes
+        description: List routes in a project
+        accessType: read_only
+        parameters:
+          - name: project
+            type: string
+            description: Project name
+            required: true
+      - name: get_builds
+        description: List builds and their status
+        accessType: read_only
+        parameters:
+          - name: project
+            type: string
+            description: Project name
+            required: true
+      - name: start_build
+        description: Trigger a new build
+        accessType: read_write
+        parameters:
+          - name: project
+            type: string
+            description: Project name
+            required: true
+          - name: build_config
+            type: string
+            description: Build configuration name
+            required: true
+    artifacts:
+      - uri: oci://registry.redhat.io/openshift/openshift-mcp:1.0.0
+        createTimeSinceEpoch: "1736769600000"
+        lastUpdateTimeSinceEpoch: "1736769600000"
+    customProperties:
+      openshift:
+        metadataType: MetadataStringValue
+        string_value: ""
+      containers:
+        metadataType: MetadataStringValue
+        string_value: ""
+      kubernetes:
+        metadataType: MetadataStringValue
+        string_value: ""
+      enterprise:
+        metadataType: MetadataStringValue
+        string_value: ""
+      verifiedSource:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      secureEndpoint:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      sast:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      readOnlyTools:
+        metadataType: MetadataBoolValue
+        bool_value: false
+    createTimeSinceEpoch: "1736769600000"
+    lastUpdateTimeSinceEpoch: "1736769600000"
+
+  - name: elasticsearch-mcp
+    provider: Elastic
+    license: elastic-2.0
+    license_link: https://www.elastic.co/licensing/elastic-license
+    description: >-
+      Query and analyze data in Elasticsearch clusters.
+      Execute searches, aggregations, and manage indices.
+    readme: |-
+      # Elasticsearch MCP Server
+
+      **MCP Server Summary:**
+      Elasticsearch data query and analysis.
+
+      ## Features
+      - Search queries
+      - Aggregations
+      - Index management
+
+      ## Prerequisites
+      - Elasticsearch cluster access
+      - API credentials (if authentication enabled)
+    version: "0.8.0"
+    transports:
+      - http
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzOCIgaGVpZ2h0PSIzOCIgdmlld0JveD0iMCAwIDM4IDM4Ij4KICA8dGl0bGU+TUNQIFNlcnZlciBpY29uPC90aXRsZT4KICA8ZGVmcz4KICAgIDxzdHlsZT4KICAgICAgLmJne2ZpbGw6I2ZmZjt9CiAgICAgIC5ib3JkZXJ7ZmlsbDojZTBlMGUwO30KICAgICAgLmFjY2VudHtmaWxsOiMwMDY2Y2M7fQogICAgICAubm9kZXtmaWxsOiMwMDY2Y2M7fQogICAgPC9zdHlsZT4KICA8L2RlZnM+CiAgPHJlY3QgY2xhc3M9ImJvcmRlciIgeD0iMCIgeT0iMCIgd2lkdGg9IjM4IiBoZWlnaHQ9IjM4IiByeD0iNCIgcnk9IjQiLz4KICA8cmVjdCBjbGFzcz0iYmciIHg9IjEiIHk9IjEiIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgcng9IjMiIHJ5PSIzIi8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjE5IiBjeT0iMTkiIHI9IjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMTkiIGN5PSI3IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMjkiIGN5PSIxMyIgcj0iMi41Ii8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjI5IiBjeT0iMjUiIHI9IjIuNSIvPgogIDxjaXJjbGUgY2xhc3M9Im5vZGUiIGN4PSIxOSIgY3k9IjMxIiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjI1IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjEzIiByPSIyLjUiLz4KICA8bGluZSB4MT0iMTkiIHkxPSIxNCIgeDI9IjE5IiB5Mj0iOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjE2IiB4Mj0iMjciIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjIyIiB4Mj0iMjciIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxOSIgeTE9IjI0IiB4Mj0iMTkiIHkyPSIyOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjIyIiB4Mj0iMTEiIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjE2IiB4Mj0iMTEiIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgo8L3N2Zz4K
+    repositoryUrl: https://github.com/elastic/elasticsearch-mcp
+    sourceCode: elastic/elasticsearch-mcp
+    publishedDate: "2024-12-20"
+    tools:
+      - name: search
+        description: Execute a search query
+        accessType: read_only
+        parameters:
+          - name: index
+            type: string
+            description: Index name or pattern
+            required: true
+      - name: aggregate
+        description: Execute an aggregation query
+        accessType: read_only
+        parameters:
+          - name: index
+            type: string
+            description: Index name or pattern
+            required: true
+      - name: get_indices
+        description: List available indices
+        accessType: read_only
+        parameters: []
+    artifacts:
+      - uri: oci://docker.elastic.co/elasticsearch/elasticsearch-mcp:0.8.0
+        createTimeSinceEpoch: "1734696000000"
+        lastUpdateTimeSinceEpoch: "1734696000000"
+    customProperties:
+      search:
+        metadataType: MetadataStringValue
+        string_value: ""
+      analytics:
+        metadataType: MetadataStringValue
+        string_value: ""
+      logging:
+        metadataType: MetadataStringValue
+        string_value: ""
+      verifiedSource:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      secureEndpoint:
+        metadataType: MetadataBoolValue
+        bool_value: false
+      sast:
+        metadataType: MetadataBoolValue
+        bool_value: false
+      readOnlyTools:
+        metadataType: MetadataBoolValue
+        bool_value: true
+    createTimeSinceEpoch: "1734696000000"
+    lastUpdateTimeSinceEpoch: "1734696000000"
+
+  # Remote MCP Servers - hosted externally, accessed via network endpoints
+  # Note: Remote servers do not have artifacts as they are hosted externally
+  - name: openai-assistants-mcp
+    provider: OpenAI
+    license: mit
+    license_link: https://opensource.org/licenses/MIT
+    description: >-
+      Access OpenAI Assistants API for advanced AI conversations and tool use.
+      This is a remotely hosted MCP server provided by OpenAI's cloud infrastructure.
+    readme: |-
+      # OpenAI Assistants MCP Server
+
+      **MCP Server Summary:**
+      Remotely hosted MCP server for OpenAI Assistants integration.
+
+      ## Features
+      - Create and manage AI assistants
+      - Execute conversations with tool use
+      - Retrieve assistant responses
+
+      ## Note
+      This is a remote MCP server hosted by OpenAI. No local deployment required.
+    deploymentMode: remote
+    endpoints:
+      http: https://api.openai.com/v1/mcp
+      sse: https://api.openai.com/v1/mcp/stream
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzOCIgaGVpZ2h0PSIzOCIgdmlld0JveD0iMCAwIDM4IDM4Ij4KICA8dGl0bGU+TUNQIFNlcnZlciBpY29uPC90aXRsZT4KICA8ZGVmcz4KICAgIDxzdHlsZT4KICAgICAgLmJne2ZpbGw6I2ZmZjt9CiAgICAgIC5ib3JkZXJ7ZmlsbDojZTBlMGUwO30KICAgICAgLmFjY2VudHtmaWxsOiMwMDY2Y2M7fQogICAgICAubm9kZXtmaWxsOiMwMDY2Y2M7fQogICAgPC9zdHlsZT4KICA8L2RlZnM+CiAgPHJlY3QgY2xhc3M9ImJvcmRlciIgeD0iMCIgeT0iMCIgd2lkdGg9IjM4IiBoZWlnaHQ9IjM4IiByeD0iNCIgcnk9IjQiLz4KICA8cmVjdCBjbGFzcz0iYmciIHg9IjEiIHk9IjEiIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgcng9IjMiIHJ5PSIzIi8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjE5IiBjeT0iMTkiIHI9IjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMTkiIGN5PSI3IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMjkiIGN5PSIxMyIgcj0iMi41Ii8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjI5IiBjeT0iMjUiIHI9IjIuNSIvPgogIDxjaXJjbGUgY2xhc3M9Im5vZGUiIGN4PSIxOSIgY3k9IjMxIiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjI1IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjEzIiByPSIyLjUiLz4KICA8bGluZSB4MT0iMTkiIHkxPSIxNCIgeDI9IjE5IiB5Mj0iOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjE2IiB4Mj0iMjciIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjIyIiB4Mj0iMjciIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxOSIgeTE9IjI0IiB4Mj0iMTkiIHkyPSIyOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjIyIiB4Mj0iMTEiIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjE2IiB4Mj0iMTEiIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgo8L3N2Zz4K
+    documentationUrl: https://platform.openai.com/docs/assistants
+    repositoryUrl: https://github.com/openai/openai-mcp
+    sourceCode: openai/openai-mcp
+    publishedDate: "2025-01-20"
+    tools:
+      - name: create_assistant
+        description: Create a new AI assistant
+        accessType: read_write
+        parameters:
+          - name: name
+            type: string
+            description: Assistant name
+            required: true
+          - name: instructions
+            type: string
+            description: System instructions for the assistant
+            required: true
+      - name: chat
+        description: Send a message to an assistant
+        accessType: read_write
+        parameters:
+          - name: assistant_id
+            type: string
+            description: ID of the assistant
+            required: true
+          - name: message
+            type: string
+            description: User message
+            required: true
+      - name: list_assistants
+        description: List available assistants
+        accessType: read_only
+        parameters: []
+    customProperties:
+      ai:
+        metadataType: MetadataStringValue
+        string_value: ""
+      assistants:
+        metadataType: MetadataStringValue
+        string_value: ""
+      cloud:
+        metadataType: MetadataStringValue
+        string_value: ""
+      remote:
+        metadataType: MetadataStringValue
+        string_value: ""
+      verifiedSource:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      secureEndpoint:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      sast:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      readOnlyTools:
+        metadataType: MetadataBoolValue
+        bool_value: false
+    createTimeSinceEpoch: "1737388800000"
+    lastUpdateTimeSinceEpoch: "1737388800000"
+
+  - name: anthropic-claude-mcp
+    provider: Anthropic
+    license: apache-2.0
+    license_link: https://www.apache.org/licenses/LICENSE-2.0
+    description: >-
+      Access Anthropic's Claude models through a remotely hosted MCP server.
+      Enables tool use, multi-turn conversations, and computer use capabilities.
+    readme: |-
+      # Anthropic Claude MCP Server
+
+      **MCP Server Summary:**
+      Remote MCP server for Claude AI integration.
+
+      ## Features
+      - Multi-turn conversations with Claude
+      - Tool use and function calling
+      - Computer use capabilities (beta)
+
+      ## Note
+      This server is hosted by Anthropic. API key required for access.
+    deploymentMode: remote
+    endpoints:
+      sse: https://api.anthropic.com/v1/mcp/events
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzOCIgaGVpZ2h0PSIzOCIgdmlld0JveD0iMCAwIDM4IDM4Ij4KICA8dGl0bGU+TUNQIFNlcnZlciBpY29uPC90aXRsZT4KICA8ZGVmcz4KICAgIDxzdHlsZT4KICAgICAgLmJne2ZpbGw6I2ZmZjt9CiAgICAgIC5ib3JkZXJ7ZmlsbDojZTBlMGUwO30KICAgICAgLmFjY2VudHtmaWxsOiMwMDY2Y2M7fQogICAgICAubm9kZXtmaWxsOiMwMDY2Y2M7fQogICAgPC9zdHlsZT4KICA8L2RlZnM+CiAgPHJlY3QgY2xhc3M9ImJvcmRlciIgeD0iMCIgeT0iMCIgd2lkdGg9IjM4IiBoZWlnaHQ9IjM4IiByeD0iNCIgcnk9IjQiLz4KICA8cmVjdCBjbGFzcz0iYmciIHg9IjEiIHk9IjEiIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgcng9IjMiIHJ5PSIzIi8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjE5IiBjeT0iMTkiIHI9IjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMTkiIGN5PSI3IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMjkiIGN5PSIxMyIgcj0iMi41Ii8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjI5IiBjeT0iMjUiIHI9IjIuNSIvPgogIDxjaXJjbGUgY2xhc3M9Im5vZGUiIGN4PSIxOSIgY3k9IjMxIiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjI1IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjEzIiByPSIyLjUiLz4KICA8bGluZSB4MT0iMTkiIHkxPSIxNCIgeDI9IjE5IiB5Mj0iOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjE2IiB4Mj0iMjciIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjIyIiB4Mj0iMjciIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxOSIgeTE9IjI0IiB4Mj0iMTkiIHkyPSIyOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjIyIiB4Mj0iMTEiIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjE2IiB4Mj0iMTEiIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgo8L3N2Zz4K
+    documentationUrl: https://docs.anthropic.com/mcp
+    repositoryUrl: https://github.com/anthropic/claude-mcp
+    sourceCode: anthropic/claude-mcp
+    publishedDate: "2025-01-18"
+    tools:
+      - name: chat
+        description: Send a message to Claude
+        accessType: read_only
+        parameters:
+          - name: message
+            type: string
+            description: User message
+            required: true
+          - name: model
+            type: string
+            description: Claude model to use (e.g., claude-3-opus)
+            required: false
+      - name: use_tool
+        description: Have Claude use a tool
+        accessType: read_write
+        parameters:
+          - name: tool_name
+            type: string
+            description: Name of the tool
+            required: true
+          - name: parameters
+            type: object
+            description: Tool parameters
+            required: true
+    customProperties:
+      ai:
+        metadataType: MetadataStringValue
+        string_value: ""
+      claude:
+        metadataType: MetadataStringValue
+        string_value: ""
+      anthropic:
+        metadataType: MetadataStringValue
+        string_value: ""
+      remote:
+        metadataType: MetadataStringValue
+        string_value: ""
+      verifiedSource:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      secureEndpoint:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      sast:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      readOnlyTools:
+        metadataType: MetadataBoolValue
+        bool_value: false
+    createTimeSinceEpoch: "1737216000000"
+    lastUpdateTimeSinceEpoch: "1737216000000"
+
+  - name: google-gemini-mcp
+    provider: Google
+    license: apache-2.0
+    license_link: https://www.apache.org/licenses/LICENSE-2.0
+    description: >-
+      Google Gemini AI integration through a managed remote MCP server.
+      Access multimodal capabilities, code generation, and reasoning.
+    readme: |-
+      # Google Gemini MCP Server
+
+      **MCP Server Summary:**
+      Remote MCP server for Google Gemini AI.
+
+      ## Features
+      - Multimodal input (text, images, video)
+      - Code generation and execution
+      - Advanced reasoning capabilities
+
+      ## Note
+      Hosted on Google Cloud. API key required.
+    deploymentMode: remote
+    endpoints:
+      http: https://generativelanguage.googleapis.com/v1/mcp
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzOCIgaGVpZ2h0PSIzOCIgdmlld0JveD0iMCAwIDM4IDM4Ij4KICA8dGl0bGU+TUNQIFNlcnZlciBpY29uPC90aXRsZT4KICA8ZGVmcz4KICAgIDxzdHlsZT4KICAgICAgLmJne2ZpbGw6I2ZmZjt9CiAgICAgIC5ib3JkZXJ7ZmlsbDojZTBlMGUwO30KICAgICAgLmFjY2VudHtmaWxsOiMwMDY2Y2M7fQogICAgICAubm9kZXtmaWxsOiMwMDY2Y2M7fQogICAgPC9zdHlsZT4KICA8L2RlZnM+CiAgPHJlY3QgY2xhc3M9ImJvcmRlciIgeD0iMCIgeT0iMCIgd2lkdGg9IjM4IiBoZWlnaHQ9IjM4IiByeD0iNCIgcnk9IjQiLz4KICA8cmVjdCBjbGFzcz0iYmciIHg9IjEiIHk9IjEiIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgcng9IjMiIHJ5PSIzIi8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjE5IiBjeT0iMTkiIHI9IjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMTkiIGN5PSI3IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMjkiIGN5PSIxMyIgcj0iMi41Ii8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjI5IiBjeT0iMjUiIHI9IjIuNSIvPgogIDxjaXJjbGUgY2xhc3M9Im5vZGUiIGN4PSIxOSIgY3k9IjMxIiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjI1IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjEzIiByPSIyLjUiLz4KICA8bGluZSB4MT0iMTkiIHkxPSIxNCIgeDI9IjE5IiB5Mj0iOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjE2IiB4Mj0iMjciIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjIyIiB4Mj0iMjciIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxOSIgeTE9IjI0IiB4Mj0iMTkiIHkyPSIyOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjIyIiB4Mj0iMTEiIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjE2IiB4Mj0iMTEiIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgo8L3N2Zz4K
+    documentationUrl: https://ai.google.dev/docs
+    repositoryUrl: https://github.com/google/gemini-mcp
+    sourceCode: google/gemini-mcp
+    publishedDate: "2025-01-15"
+    tools:
+      - name: generate
+        description: Generate content with Gemini
+        accessType: read_only
+        parameters:
+          - name: prompt
+            type: string
+            description: Text prompt
+            required: true
+          - name: model
+            type: string
+            description: Model version (gemini-pro, gemini-ultra)
+            required: false
+      - name: analyze_image
+        description: Analyze an image with Gemini Vision
+        accessType: read_only
+        parameters:
+          - name: image_url
+            type: string
+            description: URL of the image to analyze
+            required: true
+          - name: prompt
+            type: string
+            description: Question about the image
+            required: true
+    customProperties:
+      ai:
+        metadataType: MetadataStringValue
+        string_value: ""
+      gemini:
+        metadataType: MetadataStringValue
+        string_value: ""
+      google:
+        metadataType: MetadataStringValue
+        string_value: ""
+      multimodal:
+        metadataType: MetadataStringValue
+        string_value: ""
+      remote:
+        metadataType: MetadataStringValue
+        string_value: ""
+      verifiedSource:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      secureEndpoint:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      sast:
+        metadataType: MetadataBoolValue
+        bool_value: true
+      readOnlyTools:
+        metadataType: MetadataBoolValue
+        bool_value: true
+    createTimeSinceEpoch: "1736956800000"
+    lastUpdateTimeSinceEpoch: "1736956800000"
