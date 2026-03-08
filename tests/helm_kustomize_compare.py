@@ -227,7 +227,8 @@ def compare_manifests(
     scenario: str,
     namespace: str = "",
     verbose: bool = False,
-) -> bool:    """Compare Kustomize and Helm manifests."""
+) -> bool:
+    """Compare Kustomize and Helm manifests."""
     kustomize_manifests = load_manifests(kustomize_file)
     helm_manifests = load_manifests(helm_file)
     
