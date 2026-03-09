@@ -187,8 +187,8 @@ READY=$(kubectl get isvc sklearn-iris -n ${NAMESPACE} -o jsonpath='{.status.cond
 kubectl delete inferenceservice sklearn-iris -n ${NAMESPACE} || exit 1
 
 # Test unauthorized access to models web application
-UNAUTH_TOKEN="$(kubectl -n default create token default)"
-RESPONSE=$(curl -s -w "\n%{http_code}" "${BASE_URL}/api/namespaces/${NAMESPACE}/inferenceservices" -H "Authorization: Bearer ${UNAUTH_TOKEN}")
+UNAUTHORIZED_TOKEN="$(kubectl -n default create token default)"
+RESPONSE=$(curl -s -w "\n%{http_code}" "${BASE_URL}/api/namespaces/${NAMESPACE}/inferenceservices" -H "Authorization: Bearer ${UNAUTHORIZED_TOKEN}")
 BODY=$(echo "$RESPONSE" | head -n -1)
 HTTP_CODE=$(echo "$RESPONSE" | tail -1)
 echo "Test 3 models web application (unauth): HTTP $HTTP_CODE | ${BODY:0:200}"
@@ -419,9 +419,9 @@ sleep 2
 kill -9 $PF_PID 2>/dev/null || true
 wait $PF_PID 2>/dev/null || true
 
-kubectl delete namespace ${ATTACKER_NAMESPACE} --ignore-not-found=true --wait=false
-kubectl delete ksvc secure-model-predictor -n ${NAMESPACE} --ignore-not-found=true --wait=false
-kubectl delete inferenceservice isvc-sklearn -n ${NAMESPACE} --ignore-not-found=true --wait=false
-kubectl delete inferenceservice isvc-sklearn-raw -n ${NAMESPACE} --ignore-not-found=true --wait=false
-kubectl delete authorizationpolicy allow-isvc-sklearn -n ${NAMESPACE} --ignore-not-found=true --wait=false
-kubectl delete authorizationpolicy allow-isvc-sklearn-raw -n ${NAMESPACE} --ignore-not-found=true --wait=false
+kubectl delete namespace ${ATTACKER_NAMESPACE} --ignore-not-found=true
+kubectl delete ksvc secure-model-predictor -n ${NAMESPACE} --ignore-not-found=true
+kubectl delete inferenceservice isvc-sklearn -n ${NAMESPACE} --ignore-not-found=true
+kubectl delete inferenceservice isvc-sklearn-raw -n ${NAMESPACE} --ignore-not-found=true
+kubectl delete authorizationpolicy allow-isvc-sklearn -n ${NAMESPACE} --ignore-not-found=true
+kubectl delete authorizationpolicy allow-isvc-sklearn-raw -n ${NAMESPACE} --ignore-not-found=true
