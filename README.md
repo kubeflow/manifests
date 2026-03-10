@@ -10,7 +10,7 @@ You can also install the master branch of [`kubeflow/manifests`](https://github.
 
 We are planning to cut 2 releases per year, for example 26.03 and 26.10 before each KubeCon EU and NA.
 We ask each working group/component to provide non-breaking patch releases for 6 months based on the version in each date release.
-We try to BEST-EFFORT support each realease for 6 monhts as community. There is [commercial support](https://www.kubeflow.org/docs/started/support/#support-from-commercial-providers-in-the-kubeflow-ecosystem) available if needed.
+We try to BEST-EFFORT support each release for 6 months as community. There is [commercial support](https://www.kubeflow.org/docs/started/support/#support-from-commercial-providers-in-the-kubeflow-ecosystem) available if needed.
 The working groups (KFP, Katib, Trainer, ...) are allowed to release new component versions with breaking changes, but they will only be included in the master branch or the next date release.
 This should only apply to “stable” components, as “alpha/beta” components might release breaking changes in patch releases.
 
@@ -202,7 +202,7 @@ kustomize build common/istio/istio-install/overlays/gke | kubectl apply -f -
 
 #### Oauth2-proxy
 
-The oauth2-proxy extends your Istio Ingress-Gateway capabilities to function as an OIDC client. It supports user sessions as well as proper token-based machine-to-machine authentication. Authorization which is completely different form authentication is handled via Kubernetes RBAC and Istio authorizationpolicies.
+The oauth2-proxy extends your Istio Ingress-Gateway capabilities to function as an OIDC client. It supports user sessions as well as proper token-based machine-to-machine authentication. Authorization which is completely different from authentication is handled via Kubernetes RBAC and Istio authorizationpolicies.
 
 ```sh
 echo "Installing oauth2-proxy..."
@@ -579,7 +579,7 @@ For modifications and in-place upgrades of the Kubeflow platform, we provide a r
 
 To view all past security scans, head to the [Image Extracting and Security Scanning GitHub Action workflow](https://github.com/kubeflow/manifests/actions/workflows/trivy.yaml). In the logs of the workflow, you can expand the `Run image extracting and security scanning script` step to view the CVE logs. You will find a per-image CVE scan and a JSON dump of per-WorkingGroup aggregated metrics. You can run the Python script from the workflow file locally on your machine to obtain the detailed JSON files for any git commit.
 
-For more infromation please consult the [SECURITY.md](./SECURITY.md).
+For more information please consult the [SECURITY.md](./SECURITY.md).
 
 ## Pre-commit Hooks
 
@@ -619,7 +619,7 @@ pre-commit run
 - **Q:** What versions of Istio, Knative, Cert-Manager, Argo, ... are compatible with Kubeflow?
   **A:** Please refer to each individual component's documentation for a dependency compatibility range. For Istio, Knative, Dex, Cert-Manager, and OAuth2 Proxy, the versions in `common` are the ones we have validated.
 - **Q:** Can I use Kubeflow in an air-gapped environment?
-  **A:** Yes you can. You just need to to get the list of images from our [trivy CVE scanning script](https://github.com/kubeflow/manifests/blob/master/tests/trivy_scan.py), mirror them and replace the references in the manifests with kustomize components and overlays, see [Upgrading and Extending](#upgrading-and-extending). You could also use a simple kyverno policy to replace the images at runtime, which could be easier to maintain.
+  **A:** Yes you can. You just need to get the list of images from our [trivy CVE scanning script](https://github.com/kubeflow/manifests/blob/master/tests/trivy_scan.py), mirror them and replace the references in the manifests with kustomize components and overlays, see [Upgrading and Extending](#upgrading-and-extending). You could also use a simple kyverno policy to replace the images at runtime, which could be easier to maintain.
 - **Q:** Why does Kubeflow use Istio CNI instead of standard Istio?
   **A:** Istio CNI provides better security by eliminating the need for privileged init containers, making it more compatible with Pod Security Standards (PSS). It also enables native sidecars support introduced in Kubernetes 1.28, which helps address issues with init containers and application lifecycle management.
 - **Q:** Why does Istio CNI fail on Google Kubernetes Engine (GKE) with "read-only file system" errors?
