@@ -27,25 +27,104 @@ while ! curl -s localhost:8081 > /dev/null 2>&1; do
 done
 echo "Port-forwarding ready on 8081!"
 
-# Test registered models endpoint
-HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+# ---- Test 2: Create a dummy RegisteredModel ----
+echo ""
+echo "Test 2: Create a dummy RegisteredModel..."
+CREATE_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+  "http://localhost:8081/api/model_registry/v1alpha3/registered_models" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "test-model", "description": "Dummy model for CI testing"}')
+
+CREATE_HTTP_CODE=$(echo "$CREATE_RESPONSE" | tail -1)
+CREATE_BODY=$(echo "$CREATE_RESPONSE" | sed '$d')
+
+if [ "$CREATE_HTTP_CODE" -eq 201 ]; then
+    echo "PASS: RegisteredModel created (HTTP $CREATE_HTTP_CODE)"
+else
+    echo "FAIL: Expected HTTP 201, got: $CREATE_HTTP_CODE"
+    echo "Response: $CREATE_BODY"
+    kill $PORT_FORWARD_PID 2>/dev/null || true
+    exit 1
+fi
+
+# Extract the model ID from response
+MODEL_ID=$(echo "$CREATE_BODY" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
+echo "Created RegisteredModel ID: $MODEL_ID"
+
+# ---- Test 3: Create a ModelVersion under the RegisteredModel ----
+echo ""
+echo "Test 3: Create a ModelVersion..."
+VERSION_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+  "http://localhost:8081/api/model_registry/v1alpha3/registered_models/${MODEL_ID}/versions" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "v1", "description": "Test version for CI"}')
+
+VERSION_HTTP_CODE=$(echo "$VERSION_RESPONSE" | tail -1)
+VERSION_BODY=$(echo "$VERSION_RESPONSE" | sed '$d')
+
+if [ "$VERSION_HTTP_CODE" -eq 201 ]; then
+    echo "PASS: ModelVersion created (HTTP $VERSION_HTTP_CODE)"
+else
+    echo "FAIL: Expected HTTP 201, got: $VERSION_HTTP_CODE"
+    echo "Response: $VERSION_BODY"
+    kill $PORT_FORWARD_PID 2>/dev/null || true
+    exit 1
+fi
+
+VERSION_ID=$(echo "$VERSION_BODY" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
+echo "Created ModelVersion ID: $VERSION_ID"
+
+# ---- Test 4: Create a ModelArtifact under the ModelVersion ----
+echo ""
+echo "Test 4: Create a ModelArtifact..."
+ARTIFACT_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+  "http://localhost:8081/api/model_registry/v1alpha3/model_versions/${VERSION_ID}/artifacts" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "test-artifact", "description": "Test artifact for CI", "uri": "s3://dummy-bucket/model.tar.gz", "modelFormatName": "sklearn", "modelFormatVersion": "1.0", "artifactType": "model-artifact"}')
+
+ARTIFACT_HTTP_CODE=$(echo "$ARTIFACT_RESPONSE" | tail -1)
+ARTIFACT_BODY=$(echo "$ARTIFACT_RESPONSE" | sed '$d')
+
+if [ "$ARTIFACT_HTTP_CODE" -eq 201 ]; then
+    echo "PASS: ModelArtifact created (HTTP $ARTIFACT_HTTP_CODE)"
+else
+    echo "FAIL: Expected HTTP 201, got: $ARTIFACT_HTTP_CODE"
+    echo "Response: $ARTIFACT_BODY"
+    kill $PORT_FORWARD_PID 2>/dev/null || true
+    exit 1
+fi
+
+# ---- Test 5: Verify model appears in listing ----
+echo ""
+echo "Test 5: Verify RegisteredModel appears in listing..."
+LIST_RESPONSE=$(curl -s -w "\n%{http_code}" \
   "http://localhost:8081/api/model_registry/v1alpha3/registered_models?pageSize=100&orderBy=ID&sortOrder=DESC")
 
-if [ "$HTTP_CODE" -eq 200 ]; then
-    echo "PASS: Model Registry API responding (HTTP $HTTP_CODE)"
-    curl -s "http://localhost:8081/api/model_registry/v1alpha3/registered_models" | head -c 500
-    echo ""
+LIST_HTTP_CODE=$(echo "$LIST_RESPONSE" | tail -1)
+LIST_BODY=$(echo "$LIST_RESPONSE" | sed '$d')
+
+if [ "$LIST_HTTP_CODE" -eq 200 ]; then
+    echo "PASS: Model listing API responding (HTTP $LIST_HTTP_CODE)"
 else
-    echo "FAIL: Model Registry API returned unexpected status: $HTTP_CODE"
+    echo "FAIL: Model listing returned unexpected status: $LIST_HTTP_CODE"
+    kill $PORT_FORWARD_PID 2>/dev/null || true
+    exit 1
+fi
+
+if echo "$LIST_BODY" | grep -q "test-model"; then
+    echo "PASS: Created model 'test-model' found in listing"
+else
+    echo "FAIL: Created model 'test-model' NOT found in listing"
+    echo "Response: $(echo "$LIST_BODY" | head -c 500)"
     kill $PORT_FORWARD_PID 2>/dev/null || true
     exit 1
 fi
 
 kill $PORT_FORWARD_PID 2>/dev/null || true
 
-# ---- Test 2: API access through Istio gateway ----
+# ---- Test 6: API access through Istio gateway ----
 echo ""
-echo "Test 2: Model Registry API via Istio gateway..."
+echo "Test 6: Model Registry API via Istio gateway..."
 INGRESS_GATEWAY_SERVICE=$(kubectl get svc --namespace istio-system \
   --selector="app=istio-ingressgateway" \
   --output jsonpath='{.items[0].metadata.name}')
