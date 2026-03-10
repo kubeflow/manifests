@@ -3,7 +3,7 @@ set -euxo pipefail
 
 # Install Model Registry server, UI, and database components
 # This script can be used for local testing without GitHub Actions
-# Usage: ./tests/model_registry_test/install.sh
+# Usage: ./tests/model_registry_install.sh
 
 echo "Installing Model Registry components..."
 

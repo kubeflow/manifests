@@ -8,7 +8,8 @@ on:
     - .github/workflows/model_registry_test.yaml
     - applications/model-registry/upstream/**
     - tests/istio*
-    - tests/model_registry_test/**
+    - tests/model_registry_install.sh
+    - tests/model_registry_test.sh
     - common/istio*/**
 
 permissions:
@@ -47,7 +48,7 @@ jobs:
       run: kustomize build common/user-namespace/base | kubectl apply -f -
 
     - name: Install Model Registry
-      run: ./tests/model_registry_test/install.sh
+      run: ./tests/model_registry_install.sh
 
     - name: Run Model Registry tests
-      run: ./tests/model_registry_test/test.sh
+      run: ./tests/model_registry_test.sh

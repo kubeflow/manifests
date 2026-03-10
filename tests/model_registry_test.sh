@@ -3,8 +3,8 @@ set -euxo pipefail
 
 # Test Model Registry API and UI integration
 # This script can be used for local testing without GitHub Actions
-# Prerequisites: Model Registry must be installed (run install.sh first)
-# Usage: ./tests/model_registry_test/test.sh
+# Prerequisites: Model Registry must be installed (run model_registry_install.sh first)
+# Usage: ./tests/model_registry_test.sh
 
 echo "=== Model Registry Integration Tests ==="
 
@@ -57,7 +57,7 @@ echo "Test 3: Create a ModelVersion..."
 VERSION_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
   "http://localhost:8081/api/model_registry/v1alpha3/registered_models/${MODEL_ID}/versions" \
   -H "Content-Type: application/json" \
-  -d '{"name": "v1", "description": "Test version for CI"}')
+  -d "{\"name\": \"v1\", \"description\": \"Test version for CI\", \"registeredModelId\": \"${MODEL_ID}\"}")
 
 VERSION_HTTP_CODE=$(echo "$VERSION_RESPONSE" | tail -1)
 VERSION_BODY=$(echo "$VERSION_RESPONSE" | sed '$d')
@@ -80,7 +80,7 @@ echo "Test 4: Create a ModelArtifact..."
 ARTIFACT_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
   "http://localhost:8081/api/model_registry/v1alpha3/model_versions/${VERSION_ID}/artifacts" \
   -H "Content-Type: application/json" \
-  -d '{"name": "test-artifact", "description": "Test artifact for CI", "uri": "s3://dummy-bucket/model.tar.gz", "modelFormatName": "sklearn", "modelFormatVersion": "1.0", "artifactType": "model-artifact"}')
+  -d "{\"name\": \"test-artifact\", \"description\": \"Test artifact for CI\", \"uri\": \"s3://dummy-bucket/model.tar.gz\", \"modelFormatName\": \"sklearn\", \"modelFormatVersion\": \"1.0\", \"artifactType\": \"model-artifact\", \"modelVersionId\": \"${VERSION_ID}\"}")
 
 ARTIFACT_HTTP_CODE=$(echo "$ARTIFACT_RESPONSE" | tail -1)
 ARTIFACT_BODY=$(echo "$ARTIFACT_RESPONSE" | sed '$d')
