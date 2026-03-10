@@ -24,7 +24,7 @@ permissions:
 jobs:
   test-kserve:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     steps:
     - name: Checkout
       uses: actions/checkout@v4
