@@ -61,7 +61,7 @@ spec:
 EOF
 
 # Wait for AuthorizationPolicy to propagate through Envoy
-sleep 60
+sleep 30
 
 # --- Test 2a: PATH-BASED routing ---
 # Path-based routing uses the native pathTemplate (/serving/<ns>/<name>/)
