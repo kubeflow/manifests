@@ -61,13 +61,15 @@ spec:
 EOF
 
 # Wait for AuthorizationPolicy to propagate through Envoy by polling
-# until an authenticated request is no longer denied by the default policy.
+# the host-based route (path-based may return 404 before the route is
+# configured, which would false-positive exit the loop).
 echo "Waiting for AuthorizationPolicy to propagate..."
 for attempt in $(seq 1 24); do
   POLL_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
     -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
+    -H "Host: isvc-sklearn.${NAMESPACE}.example.com" \
     -H "Content-Type: application/json" \
-    "http://${KSERVE_INGRESS_HOST_PORT}/serving/${NAMESPACE}/isvc-sklearn/v1/models/isvc-sklearn:predict" \
+    "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/isvc-sklearn:predict" \
     -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}')
   if [ "$POLL_CODE" != "403" ]; then
     echo "AuthorizationPolicy propagated after $((attempt * 5)) seconds (HTTP ${POLL_CODE})"
