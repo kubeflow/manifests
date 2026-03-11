@@ -455,8 +455,8 @@ if [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "404" ] && [ "$HTTP_CODE" != "
   exit 1
 fi
 
-kubectl delete inferenceservice isvc-sklearn-raw -n ${NAMESPACE} --ignore-not-found=true
-kubectl delete authorizationpolicy allow-isvc-sklearn-raw -n ${NAMESPACE} --ignore-not-found=true
+kubectl delete inferenceservice isvc-sklearn-raw -n ${NAMESPACE}
+kubectl delete authorizationpolicy allow-isvc-sklearn-raw -n ${NAMESPACE}
 
 # ============================================================
 # Cleanup
