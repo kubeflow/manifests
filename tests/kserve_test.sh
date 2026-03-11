@@ -348,7 +348,7 @@ if [ "$HTTP_CODE" == "200" ]; then
     exit 1
 fi
 
-kubectl delete ksvc secure-model-predictor -n ${NAMESPACE} --ignore-not-found=true
+kubectl delete ksvc secure-model-predictor -n ${NAMESPACE}
 kubectl delete namespace ${ATTACKER_NAMESPACE}
 
 # ============================================================
