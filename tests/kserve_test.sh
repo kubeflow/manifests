@@ -61,7 +61,7 @@ spec:
 EOF
 
 # Wait for AuthorizationPolicy to propagate through Envoy
-sleep 30
+sleep 60
 
 # --- Test 2a: PATH-BASED routing ---
 # Path-based routing uses the native pathTemplate (/serving/<ns>/<name>/)
@@ -376,7 +376,7 @@ spec:
       serving.kserve.io/inferenceservice: isvc-sklearn-raw
 EOF
 
-sleep 30
+sleep 60
 
 RAW_HOST="isvc-sklearn-raw-${NAMESPACE}.example.com"
 
