@@ -279,7 +279,7 @@ fi
 # Test 5: Cluster-local-gateway requires authentication
 # ============================================================
 kubectl port-forward -n istio-system svc/cluster-local-gateway 8081:80 &
-PF_PID=$!
+PORT_FORWARD_PID=$!
 sleep 5
 
 RESPONSE=$(curl -s -w "\n%{http_code}" \
@@ -452,15 +452,14 @@ fi
 # ============================================================
 # Cleanup
 # ============================================================
-kill $PF_PID 2>/dev/null || true
+kill $PORT_FORWARD_PID 2>/dev/null || true
 sleep 2
-kill -9 $PF_PID 2>/dev/null || true
-wait $PF_PID 2>/dev/null || true
+kill -9 $PORT_FORWARD_PID 2>/dev/null || true
+wait $PORT_FORWARD_PID 2>/dev/null || true
 
-kubectl delete namespace ${ATTACKER_NAMESPACE} --ignore-not-found=true &
-kubectl delete ksvc secure-model-predictor -n ${NAMESPACE} --ignore-not-found=true &
-kubectl delete inferenceservice isvc-sklearn -n ${NAMESPACE} --ignore-not-found=true &
-kubectl delete inferenceservice isvc-sklearn-raw -n ${NAMESPACE} --ignore-not-found=true &
-kubectl delete authorizationpolicy allow-isvc-sklearn -n ${NAMESPACE} --ignore-not-found=true &
-kubectl delete authorizationpolicy allow-isvc-sklearn-raw -n ${NAMESPACE} --ignore-not-found=true &
-wait
+kubectl delete namespace ${ATTACKER_NAMESPACE} --ignore-not-found=true
+kubectl delete ksvc secure-model-predictor -n ${NAMESPACE} --ignore-not-found=true
+kubectl delete inferenceservice isvc-sklearn -n ${NAMESPACE} --ignore-not-found=true
+kubectl delete inferenceservice isvc-sklearn-raw -n ${NAMESPACE} --ignore-not-found=true
+kubectl delete authorizationpolicy allow-isvc-sklearn -n ${NAMESPACE} --ignore-not-found=true
+kubectl delete authorizationpolicy allow-isvc-sklearn-raw -n ${NAMESPACE} --ignore-not-found=true
