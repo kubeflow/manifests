@@ -153,6 +153,9 @@ if [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "404" ] && [ "$HTTP_CODE" != "
   exit 1
 fi
 
+kubectl delete inferenceservice isvc-sklearn -n ${NAMESPACE}
+kubectl delete authorizationpolicy allow-isvc-sklearn -n ${NAMESPACE}
+
 # ============================================================
 # Test 3: KServe Models Web Application API
 # ============================================================
@@ -195,15 +198,15 @@ RESPONSE=$(curl -s --fail-with-body \
   -H "X-XSRF-TOKEN: ${XSRFTOKEN}" \
   -H "Cookie: XSRF-TOKEN=${XSRFTOKEN}")
 
-echo "$RESPONSE" | grep -q "sklearn-iris" || exit 1
-kubectl get inferenceservice sklearn-iris -n ${NAMESPACE} || exit 1
+echo "$RESPONSE" | grep -q "sklearn-iris"
+kubectl get inferenceservice sklearn-iris -n ${NAMESPACE}
 READY=$(kubectl get isvc sklearn-iris -n ${NAMESPACE} -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}')
 [[ "$READY" == "True" ]] || {
   echo "FAILURE: InferenceService sklearn-iris Ready status is: $READY"
   exit 1
 }
 
-kubectl delete inferenceservice sklearn-iris -n ${NAMESPACE} || exit 1
+kubectl delete inferenceservice sklearn-iris -n ${NAMESPACE}
 
 # Test unauthorized access to models web application
 UNAUTHORIZED_TOKEN="$(kubectl -n default create token default)"
@@ -345,6 +348,9 @@ if [ "$HTTP_CODE" == "200" ]; then
     exit 1
 fi
 
+kubectl delete ksvc secure-model-predictor -n ${NAMESPACE} --ignore-not-found=true
+kubectl delete namespace ${ATTACKER_NAMESPACE}
+
 # ============================================================
 # Test 7: Raw Deployment Mode -- host-based routing
 # ============================================================
@@ -449,6 +455,9 @@ if [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "404" ] && [ "$HTTP_CODE" != "
   exit 1
 fi
 
+kubectl delete inferenceservice isvc-sklearn-raw -n ${NAMESPACE} --ignore-not-found=true
+kubectl delete authorizationpolicy allow-isvc-sklearn-raw -n ${NAMESPACE} --ignore-not-found=true
+
 # ============================================================
 # Cleanup
 # ============================================================
@@ -456,10 +465,3 @@ kill $PORT_FORWARD_PID 2>/dev/null || true
 sleep 2
 kill -9 $PORT_FORWARD_PID 2>/dev/null || true
 wait $PORT_FORWARD_PID 2>/dev/null || true
-
-kubectl delete namespace ${ATTACKER_NAMESPACE} --ignore-not-found=true
-kubectl delete ksvc secure-model-predictor -n ${NAMESPACE} --ignore-not-found=true
-kubectl delete inferenceservice isvc-sklearn -n ${NAMESPACE} --ignore-not-found=true
-kubectl delete inferenceservice isvc-sklearn-raw -n ${NAMESPACE} --ignore-not-found=true
-kubectl delete authorizationpolicy allow-isvc-sklearn -n ${NAMESPACE} --ignore-not-found=true
-kubectl delete authorizationpolicy allow-isvc-sklearn-raw -n ${NAMESPACE} --ignore-not-found=true
