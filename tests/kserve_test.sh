@@ -60,8 +60,25 @@ spec:
       serving.knative.dev/service: isvc-sklearn-predictor
 EOF
 
-# Wait for AuthorizationPolicy to propagate through Envoy
-sleep 60
+# Wait for AuthorizationPolicy to propagate through Envoy by polling
+# until an authenticated request is no longer denied by the default policy.
+echo "Waiting for AuthorizationPolicy to propagate..."
+for attempt in $(seq 1 24); do
+  POLL_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+    -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
+    -H "Content-Type: application/json" \
+    "http://${KSERVE_INGRESS_HOST_PORT}/serving/${NAMESPACE}/isvc-sklearn/v1/models/isvc-sklearn:predict" \
+    -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}')
+  if [ "$POLL_CODE" != "403" ]; then
+    echo "AuthorizationPolicy propagated after $((attempt * 5)) seconds (HTTP ${POLL_CODE})"
+    break
+  fi
+  if [ "$attempt" -eq 24 ]; then
+    echo "FAIL: AuthorizationPolicy did not propagate within 120 seconds"
+    exit 1
+  fi
+  sleep 5
+done
 
 # --- Test 2a: PATH-BASED routing ---
 # Path-based routing uses the native pathTemplate (/serving/<ns>/<name>/)
@@ -376,9 +393,28 @@ spec:
       serving.kserve.io/inferenceservice: isvc-sklearn-raw
 EOF
 
-sleep 60
-
 RAW_HOST="isvc-sklearn-raw-${NAMESPACE}.example.com"
+
+# Wait for AuthorizationPolicy to propagate through Envoy by polling
+# until an authenticated request is no longer denied by the default policy.
+echo "Waiting for AuthorizationPolicy to propagate..."
+for attempt in $(seq 1 24); do
+  POLL_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+    -H "Authorization: Bearer ${KSERVE_M2M_TOKEN}" \
+    -H "Host: ${RAW_HOST}" \
+    -H "Content-Type: application/json" \
+    "http://${KSERVE_INGRESS_HOST_PORT}/v1/models/isvc-sklearn-raw:predict" \
+    -d '{"instances": [[6.8, 2.8, 4.8, 1.4]]}')
+  if [ "$POLL_CODE" != "403" ]; then
+    echo "AuthorizationPolicy propagated after $((attempt * 5)) seconds (HTTP ${POLL_CODE})"
+    break
+  fi
+  if [ "$attempt" -eq 24 ]; then
+    echo "FAIL: AuthorizationPolicy did not propagate within 120 seconds"
+    exit 1
+  fi
+  sleep 5
+done
 
 # 7a: Without token -- should be rejected
 RESPONSE=$(curl -s -w "\n%{http_code}" \
