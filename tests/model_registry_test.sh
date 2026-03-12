@@ -11,21 +11,7 @@ echo "=== Model Registry Integration Tests ==="
 # ---- Test 1: Direct API access via port-forward ----
 echo "Test 1: Direct Model Registry API access..."
 nohup kubectl port-forward svc/model-registry-service -n kubeflow 8081:8080 &
-PORT_FORWARD_PID=$!
-
-MAX_RETRIES=30
-RETRY_COUNT=0
-while ! curl -s localhost:8081 > /dev/null 2>&1; do
-    echo "Waiting for port-forwarding to be ready... ($RETRY_COUNT/$MAX_RETRIES)"
-    sleep 1
-    RETRY_COUNT=$((RETRY_COUNT + 1))
-    if [ $RETRY_COUNT -ge $MAX_RETRIES ]; then
-        echo "ERROR: Port-forwarding to model-registry-service failed"
-        kill $PORT_FORWARD_PID 2>/dev/null || true
-        exit 1
-    fi
-done
-echo "Port-forwarding ready on 8081!"
+timeout 30s bash -c 'until curl -s localhost:8081 > /dev/null 2>&1; do sleep 1; done'
 
 # ---- Test 2: Create a dummy RegisteredModel ----
 echo ""
@@ -43,7 +29,6 @@ if [ "$CREATE_HTTP_CODE" -eq 201 ]; then
 else
     echo "FAIL: Expected HTTP 201, got: $CREATE_HTTP_CODE"
     echo "Response: $CREATE_BODY"
-    kill $PORT_FORWARD_PID 2>/dev/null || true
     exit 1
 fi
 
@@ -67,7 +52,6 @@ if [ "$VERSION_HTTP_CODE" -eq 201 ]; then
 else
     echo "FAIL: Expected HTTP 201, got: $VERSION_HTTP_CODE"
     echo "Response: $VERSION_BODY"
-    kill $PORT_FORWARD_PID 2>/dev/null || true
     exit 1
 fi
 
@@ -90,7 +74,6 @@ if [ "$ARTIFACT_HTTP_CODE" -eq 201 ]; then
 else
     echo "FAIL: Expected HTTP 201, got: $ARTIFACT_HTTP_CODE"
     echo "Response: $ARTIFACT_BODY"
-    kill $PORT_FORWARD_PID 2>/dev/null || true
     exit 1
 fi
 
@@ -107,7 +90,6 @@ if [ "$LIST_HTTP_CODE" -eq 200 ]; then
     echo "PASS: Model listing API responding (HTTP $LIST_HTTP_CODE)"
 else
     echo "FAIL: Model listing returned unexpected status: $LIST_HTTP_CODE"
-    kill $PORT_FORWARD_PID 2>/dev/null || true
     exit 1
 fi
 
@@ -116,11 +98,9 @@ if echo "$LIST_BODY" | grep -q "test-model"; then
 else
     echo "FAIL: Created model 'test-model' NOT found in listing"
     echo "Response: $(echo "$LIST_BODY" | head -c 500)"
-    kill $PORT_FORWARD_PID 2>/dev/null || true
     exit 1
 fi
 
-kill $PORT_FORWARD_PID 2>/dev/null || true
 
 # ---- Test 6: API access through Istio gateway ----
 echo ""
@@ -130,20 +110,7 @@ INGRESS_GATEWAY_SERVICE=$(kubectl get svc --namespace istio-system \
   --output jsonpath='{.items[0].metadata.name}')
 
 nohup kubectl port-forward --namespace istio-system "svc/${INGRESS_GATEWAY_SERVICE}" 8080:80 &
-GATEWAY_PID=$!
-
-RETRY_COUNT=0
-while ! curl -s localhost:8080 > /dev/null 2>&1; do
-    echo "Waiting for gateway port-forwarding... ($RETRY_COUNT/$MAX_RETRIES)"
-    sleep 1
-    RETRY_COUNT=$((RETRY_COUNT + 1))
-    if [ $RETRY_COUNT -ge $MAX_RETRIES ]; then
-        echo "ERROR: Gateway port-forwarding failed"
-        kill $GATEWAY_PID 2>/dev/null || true
-        exit 1
-    fi
-done
-echo "Gateway port-forwarding ready on 8080!"
+timeout 30s bash -c 'until curl -s localhost:8080 > /dev/null 2>&1; do sleep 1; done'
 
 # Test authenticated access (authorized SA)
 export KF_PROFILE=kubeflow-user-example-com
@@ -157,7 +124,6 @@ if [ "$STATUS_CODE" -eq 200 ]; then
     echo "PASS: Authorized access to Model Registry via gateway (HTTP $STATUS_CODE)"
 else
     echo "FAIL: Expected HTTP 200 for authorized access, got: $STATUS_CODE"
-    kill $GATEWAY_PID 2>/dev/null || true
     exit 1
 fi
 
@@ -172,11 +138,9 @@ if [ "$STATUS_CODE" -eq 403 ]; then
     echo "PASS: Unauthorized access correctly denied (HTTP $STATUS_CODE)"
 else
     echo "FAIL: Expected HTTP 403 for unauthorized access, got: $STATUS_CODE"
-    kill $GATEWAY_PID 2>/dev/null || true
     exit 1
 fi
 
-kill $GATEWAY_PID 2>/dev/null || true
 
 echo ""
 echo "=== All Model Registry tests passed! ==="
