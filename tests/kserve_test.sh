@@ -354,8 +354,12 @@ kubectl delete namespace ${ATTACKER_NAMESPACE}
 # ============================================================
 # Test 7: Raw Deployment Mode -- host-based routing
 # ============================================================
-# Deploy an sklearn model in RawDeployment mode. KServe creates a
+# Deploy an sklearn model in Standard (raw deployment) mode. KServe creates a
 # Deployment + Service + Ingress (not Knative/VirtualService).
+# NOTE: KServe v0.16 renamed "RawDeployment" to "Standard" and
+# "Serverless" to "Knative". Using the old names causes the
+# validation webhook to reject status updates during deletion
+# (kserve/kserve#4710, kserve/kserve#4798).
 # Path-based routing for raw deployment requires ingressPathTemplate
 # (kserve/kserve#5090, not yet merged), so this test uses host-based
 # routing only.
@@ -366,7 +370,7 @@ metadata:
   name: "isvc-sklearn-raw"
   namespace: ${NAMESPACE}
   annotations:
-    serving.kserve.io/deploymentMode: RawDeployment
+    serving.kserve.io/deploymentMode: Standard
 spec:
   predictor:
     sklearn:
