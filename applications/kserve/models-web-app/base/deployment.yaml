@@ -21,6 +21,9 @@ spec:
       - image: kserve/models-web-app:latest
         imagePullPolicy: Always
         name: kserve-models-web-app
+        env:
+          - name: GUNICORN_CMD_ARGS
+            value: --limit-request-field_size 32000
         envFrom:
           - configMapRef:
               name: kserve-models-web-app-config
