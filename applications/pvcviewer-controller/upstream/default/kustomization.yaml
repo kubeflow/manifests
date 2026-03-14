@@ -39,10 +39,8 @@ patchesStrategicMerge:
 
 
 
-# Note: the kustomize version that's being used to execute integration tests currently doesn't support replacemens.
-# Thus, we're using the deprecated vars feature above.
-# Once the kustomize version is updated, we can use the following config instead of the vars feature.
-# Can be removed then: cainjection_patch.yaml, dnsnames_patch.yaml, kustomizeconfig.yaml, their references here and the vars section above.
+# Configure webhook and CustomResourceDefinition annotations using kustomize replacements.
+# Deprecated vars configuration has been removed and replaced with the replacements feature.
 replacements:
   - source: # Add cert-manager annotation to ValidatingWebhookConfiguration, MutatingWebhookConfiguration and CRDs
       kind: Certificate
@@ -110,7 +108,7 @@ replacements:
       kind: Service
       version: v1
       name: webhook-service
-      fieldPath: .metadata.name # namespace of the service
+      fieldPath: .metadata.name # name of the service
     targets:
       - select:
           kind: Certificate
