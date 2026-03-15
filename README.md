@@ -108,7 +108,7 @@ The `example` directory contains an example kustomization for the single command
 - Our Kind script below will take care of installing continuously tested Kubernetes, Kustomize and Kubectl versions for you.
 - We use Kind as default but also support Minikube, Rancher, EKS, AKS, and GKE. GKE might need tiny adjustments documented here in this file and OpenShift is also possible.
 
-#### ARM64 / aarch64 note
+### ARM64 / aarch64 note
 
 Kubeflow on ARM64/aarch64 may not be fully supported yet because some component container images might not be available for `linux/arm64`.
 If you hit image pull errors such as “no matching manifest for linux/arm64”, please track/report details in kubeflow/manifests#2745.
