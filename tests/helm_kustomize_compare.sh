@@ -207,9 +207,9 @@ cd "$ROOT_DIR"
 if [[ "$COMPONENT" == "kserve-models-web-app" ]]; then
     # KServe uses command-line arguments
     if [ -n "$HELM_VALUES_ARG" ]; then
-        eval "helm template kserve-models-web-app $CHART_DIR --namespace $NAMESPACE $HELM_VALUES_ARG > $HELM_OUTPUT"
+        eval "helm template kserve-models-web-application $CHART_DIR --namespace $NAMESPACE $HELM_VALUES_ARG > $HELM_OUTPUT"
     else
-        helm template kserve-models-web-app "$CHART_DIR" --namespace "$NAMESPACE" > "$HELM_OUTPUT"
+        helm template kserve-models-web-application "$CHART_DIR" --namespace "$NAMESPACE" > "$HELM_OUTPUT"
     fi
 else
     cd "$CHART_DIR"
