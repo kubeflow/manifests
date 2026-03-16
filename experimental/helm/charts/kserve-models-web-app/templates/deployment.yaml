@@ -57,7 +57,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
-      - name: {{ .Chart.Name }}
+      - name: {{ include "kserve-models-web-app.fullname" . }}
         image: {{ include "kserve-models-web-app.image" . }}
         imagePullPolicy: {{ include "kserve-models-web-app.imagePullPolicy" . }}
         {{- with .Values.app.securityContext }}
@@ -72,8 +72,10 @@ spec:
         - configMapRef:
             name: {{ include "kserve-models-web-app.configMapName" . }}
         {{- end }}
-        {{- if .Values.app.config.env }}
         env:
+        - name: GUNICORN_CMD_ARGS
+          value: --limit-request-field_size 32000
+        {{- if .Values.app.config.env }}
         {{- range .Values.app.config.env }}
         - name: {{ .name }}
           value: {{ .value | quote }}

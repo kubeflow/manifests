@@ -2,7 +2,7 @@
 Expand the name of the chart.
 */}}
 {{- define "kserve-models-web-app.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- default "kserve-models-web-application" .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
@@ -14,12 +14,7 @@ If release name contains chart name it will be used as a full name.
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
-{{- $name := default .Chart.Name .Values.nameOverride }}
-{{- if contains $name .Release.Name }}
-{{- .Release.Name | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
-{{- end }}
+{{- include "kserve-models-web-app.name" . }}
 {{- end }}
 {{- end }}
 
@@ -27,7 +22,7 @@ If release name contains chart name it will be used as a full name.
 Create chart name and version as used by the chart label.
 */}}
 {{- define "kserve-models-web-app.chart" -}}
-{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
+{{- printf "%s-%s" (include "kserve-models-web-app.name" .) .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
@@ -46,8 +41,8 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 Selector labels
 */}}
 {{- define "kserve-models-web-app.selectorLabels" -}}
-app.kubernetes.io/component: kserve-models-web-app
-kustomize.component: kserve-models-web-app
+app.kubernetes.io/component: kserve-models-web-application
+kustomize.component: kserve-models-web-application
 {{- if .Values.kubeflow.enabled }}
 app: kserve
 app.kubernetes.io/name: kserve
@@ -154,8 +149,8 @@ Create destination host for virtual service
 Create Kustomize component labels for backward compatibility
 */}}
 {{- define "kserve-models-web-app.kustomizeLabels" -}}
-app.kubernetes.io/component: kserve-models-web-app
-kustomize.component: kserve-models-web-app
+app.kubernetes.io/component: kserve-models-web-application
+kustomize.component: kserve-models-web-application
 {{- end }}
 
 {{/*
