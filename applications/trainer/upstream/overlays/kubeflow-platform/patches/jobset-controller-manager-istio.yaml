@@ -6,4 +6,5 @@ spec:
   template:
     metadata:
       annotations:
+        sidecar.istio.io/inject: "false"
         traffic.sidecar.istio.io/excludeInboundPorts: "9443"
