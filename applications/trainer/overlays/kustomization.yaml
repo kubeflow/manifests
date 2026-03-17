@@ -21,6 +21,7 @@ patches:
       template:
         metadata:
           annotations:
+            sidecar.istio.io/inject: "false"
             traffic.sidecar.istio.io/excludeInboundPorts: "9443"
         spec:
           securityContext:
@@ -41,7 +42,8 @@ patches:
       template:
         metadata:
           annotations:
-            traffic.sidecar.istio.io/excludeInboundPorts: "9443"
+            sidecar.istio.io/inject: "false"
+            traffic.sidecar.istio.io/excludeInboundPorts: "9443,10443"
         spec:
           securityContext:
             seccompProfile:
