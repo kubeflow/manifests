@@ -5,9 +5,11 @@ This document helps you validate Kubeflow on **ARM64 / AArch64** (e.g., AWS Grav
 > Tracking issue: kubeflow/manifests#2745 (Support for the aarch64 arm64 architecture)
 
 ## Recommended versions
-ARM64 support depends on individual component images being available for `linux/arm64`. If you see missing image errors on older releases, try:
-- the `v1.9-branch`, or
-- the default branch
+ARM64 support depends on individual component images being available for `linux/arm64`.
+
+For best results:
+- Use the **latest Kubeflow manifests release**.
+- If you are testing fixes or validating ongoing work, try the **repository default branch**.
 
 ## Prerequisites
 - A Kubernetes cluster running on ARM64 nodes
