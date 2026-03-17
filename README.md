@@ -111,7 +111,7 @@ The `example` directory contains an example kustomization for the single command
 ### ARM64 / aarch64 note
 
 Kubeflow on ARM64/aarch64 may not be fully supported yet because some component container images might not be available for `linux/arm64`.
-If you hit image pull errors such as “no matching manifest for linux/arm64”, please track/report details in kubeflow/manifests#2745.
+If you hit image pull errors such as “no matching manifest for linux/arm64”, please track/report details in kubeflow/manifests#2745 and take a look at the [Google Summer of Code project for Kubeflow on ARM64](https://www.kubeflow.org/events/upcoming-events/gsoc-2026/#project--end-to-end-arm64-support--validation-on-kubeflow).
 
 ---
 **NOTE**
