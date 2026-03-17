@@ -1,13 +1,13 @@
 apiVersion: trainer.kubeflow.org/v1alpha1
 kind: ClusterTrainingRuntime
 metadata:
-  name: torch-distributed
+  name: xgboost-distributed
   labels:
-    trainer.kubeflow.org/framework: torch
+    trainer.kubeflow.org/framework: xgboost
 spec:
   mlPolicy:
     numNodes: 1
-    torch: {}
+    xgboost: {}
   template:
     spec:
       replicatedJobs:
@@ -21,4 +21,4 @@ spec:
                 spec:
                   containers:
                     - name: node
-                      image: pytorch/pytorch:2.10.0-cuda12.8-cudnn9-runtime
+                      image: ghcr.io/kubeflow/trainer/xgboost-runtime:latest

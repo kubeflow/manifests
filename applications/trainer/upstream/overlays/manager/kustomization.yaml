@@ -15,11 +15,19 @@ resources:
 # Update the Kubeflow Trainer controller manager image tag.
 images:
   - name: ghcr.io/kubeflow/trainer/trainer-controller-manager
-    newTag: v2.1.0
+    newTag: v2.2.0-rc.0
 
 # Secret for the Kubeflow Training webhook.
 secretGenerator:
   - name: kubeflow-trainer-webhook-cert
     namespace: kubeflow-system
+    options:
+      disableNameSuffixHash: true
+
+# Public ConfigMap for the Trainer SDK.
+configMapGenerator:
+  - name: kubeflow-trainer-public
+    literals:
+      - kubeflow_trainer_version=v2.2.0-rc.0
     options:
       disableNameSuffixHash: true
