@@ -628,4 +628,4 @@ pre-commit run
 
 ## Documentation
 
-- ARM64/AArch64 install validation & troubleshooting: `docs/arm64.md`
+- ARM64/AArch64 install validation \& troubleshooting: [docs/arm64\.md](docs/arm64\.md)
