@@ -66,7 +66,7 @@ nodes:
   image: kindest/node:v1.34.0@sha256:7416a61b42b1662ca6ca89f02028ac133a309a2a30ba309614e8ec94d976dc5a
 - role: worker
   image: kindest/node:v1.34.0@sha256:7416a61b42b1662ca6ca89f02028ac133a309a2a30ba309614e8ec94d976dc5a
-" | kind create cluster --config - --wait 120s
+" | kind create cluster --name kubeflow --config - --wait 120s
 
 echo "Install kubectl ..."
 {
