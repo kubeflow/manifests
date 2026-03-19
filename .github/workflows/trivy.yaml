@@ -3,11 +3,26 @@ name: Image Extracting and Security Scanning
 on:
   push:
     branches:
-    - master
+      - master
+    paths:
+    - 'applications/**'
+    - 'common/**'
+    - 'example/**'
+    - 'experimental/**'
+    - 'tests/**'
+    - 'scripts/**'
+    - 'releases/**'
+    - '.github/workflows/trivy.yaml'
   pull_request:
     paths:
+    - 'applications/**'
+    - 'common/**'
+    - 'example/**'
+    - 'experimental/**'
+    - 'tests/**'
+    - 'scripts/**'
+    - 'releases/**'
     - '.github/workflows/trivy.yaml'
-    - 'tests/trivy_scan.py'
 
 permissions:
   contents: read
