@@ -6,36 +6,8 @@ resources:
 - authorization-policy.yaml
 - destination-rule.yaml
 namespace: kubeflow
-labels:
-- includeSelectors: true
-  pairs:
-    app: jupyter-web-app
-    kustomize.component: jupyter-web-app
+commonLabels:
+  app: jupyter-web-app
+  kustomize.component: jupyter-web-app
 configurations:
 - params.yaml
-
-replacements:
-- source:
-    kind: Service
-    name: service
-    fieldPath: metadata.namespace
-  targets:
-  - select:
-      kind: VirtualService
-    fieldPaths:
-    - spec.http.0.route.0.destination.host
-    options:
-      delimiter: "."
-      index: 1
-- source:
-    kind: ConfigMap
-    name: parameters
-    fieldPath: data.JWA_CLUSTER_DOMAIN
-  targets:
-  - select:
-      kind: VirtualService
-    fieldPaths:
-    - spec.http.0.route.0.destination.host
-    options:
-      delimiter: "."
-      index: 3

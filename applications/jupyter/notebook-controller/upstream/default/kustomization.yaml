@@ -9,14 +9,12 @@ namespace: notebook-controller-system
 namePrefix: notebook-controller-
 
 # Labels to add to all resources and selectors.
-labels:
-- includeSelectors: true
-  pairs:
-    app: notebook-controller
-    kustomize.component: notebook-controller
+commonLabels:
+  app: notebook-controller
+  kustomize.component: notebook-controller
 
 
-resources:
+bases:
 - ../rbac
 - ../manager
 - ../crd
@@ -47,7 +45,7 @@ resources:
 #- webhookcainjection_patch.yaml
 
 # the following config is for teaching kustomize how to do var substitution
-#vars:
+vars:
 # [CERTMANAGER] To enable cert-manager, uncomment all sections with 'CERTMANAGER' prefix.
 # - name: CERTIFICATE_NAMESPACE # namespace of the certificate CR
 #   objref:
