@@ -2,3 +2,7 @@ resources:
   - manager.yaml
 # TODO (andreyvelich): Move it to overlays once we copy the JobSet manifests.
 namespace: kubeflow-system
+
+images:
+  - name: kubeflow/training-operator-v2
+    newName: ghcr.io/kubeflow/training-operator-v2
