@@ -1,12 +1,3 @@
-varReference:
-- path: spec/commonName
-  kind: Certificate
-- path: spec/dnsNames
-  kind: Certificate
-- path: spec/issuerRef/name
-  kind: Certificate
-- path: metadata/annotations
-  kind: MutatingWebhookConfiguration
 nameReference:
 - kind: Issuer
   group: cert-manager.io

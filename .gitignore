@@ -14,4 +14,8 @@
 
 
 # Scanning reports of trivy
-image_lists/*
+image_lists/*# Local kustomize verification artifacts
+before_*.yaml
+after_*.yaml
+diff_*.log
+warn*.log

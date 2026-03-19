@@ -24,3 +24,49 @@ jobs:
     - name: Unit Test
       run: |
         kustomize build example
+
+    - name: Enforce Kustomize v5 and Build Verification
+      run: |
+        # Helper: build a kustomize target and fail if it produces any stderr output
+        # (deprecation warnings, errors, etc.). Stdout (the manifests) is discarded.
+        enforce_zero_warning_kustomize_build() {
+          kustomize_target_path="$1"
+          temporary_error_log_file="$(mktemp)"
+
+          echo "Running kustomize build for ${kustomize_target_path}..."
+
+          if ! kustomize build "${kustomize_target_path}" > /dev/null \
+              2> "${temporary_error_log_file}"; then
+            echo "Errors: kustomize build failed for ${kustomize_target_path}:" >&2
+            cat "${temporary_error_log_file}" >&2
+            rm -f "${temporary_error_log_file}"
+            exit 1
+          fi
+
+          if [ -s "${temporary_error_log_file}" ]; then
+            echo "Errors: kustomize build for ${kustomize_target_path} produced warnings or other standard error output:" >&2
+            cat "${temporary_error_log_file}" >&2
+            rm -f "${temporary_error_log_file}"
+            exit 1
+          fi
+
+          rm -f "${temporary_error_log_file}"
+        }
+
+        echo "Verifying Kustomize API versions..."
+        KUSTOMIZE_VERSION=$(kustomize version --short | grep -oE 'v[0-9]+' | head -1 | sed 's/v//')
+        if [ -z "$KUSTOMIZE_VERSION" ] || [ "$KUSTOMIZE_VERSION" -lt 5 ]; then
+          echo "Error: Kustomize version must be >= v5. Found $KUSTOMIZE_VERSION"
+          exit 1
+        fi
+
+        echo "Validating zero-warning, 100% successful builds on migrated templates..."
+        enforce_zero_warning_kustomize_build "applications/jupyter/notebook-controller/upstream/default"
+        enforce_zero_warning_kustomize_build "applications/admission-webhook/upstream/overlays/cert-manager"
+        enforce_zero_warning_kustomize_build "applications/pvcviewer-controller/upstream/default"
+        enforce_zero_warning_kustomize_build "applications/profiles/upstream/overlays/kubeflow"
+        enforce_zero_warning_kustomize_build "applications/volumes-web-app/upstream/overlays/istio"
+        enforce_zero_warning_kustomize_build "applications/jupyter/jupyter-web-app/upstream/overlays/istio"
+        enforce_zero_warning_kustomize_build "applications/tensorboard/tensorboard-controller/upstream/overlays/kubeflow"
+        enforce_zero_warning_kustomize_build "applications/tensorboard/tensorboards-web-app/upstream/overlays/istio"
+        echo "All components built successfully with zero deprecation warnings."

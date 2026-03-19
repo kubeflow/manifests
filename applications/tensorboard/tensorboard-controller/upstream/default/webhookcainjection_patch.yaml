@@ -1,5 +1,4 @@
-# This patch add annotation to admission webhook config and
-# the variables $(CERTIFICATE_NAMESPACE) and $(CERTIFICATE_NAME) will be substituted by kustomize.
+# This patch adds annotations to admission webhook config
 apiVersion: admissionregistration.k8s.io/v1beta1
 kind: MutatingWebhookConfiguration
 metadata:
