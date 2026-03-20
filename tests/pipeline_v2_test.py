@@ -3,14 +3,10 @@
 import kfp
 import sys
 import time
+from functools import wraps
 from kfp import dsl
 from kfp import kubernetes
 from kfp_server_api.exceptions import ApiException
-
-PIPELINE_TASK_SECURITY_RUN_AS_USER = 1000
-PIPELINE_TASK_SECURITY_RUN_AS_GROUP = 1000
-PIPELINE_TASK_SECURITY_RUN_AS_NON_ROOT = True
-
 
 @dsl.component
 def hello_world_op() -> str:
@@ -18,18 +14,29 @@ def hello_world_op() -> str:
     return "Hello World"
 
 
+def apply_default_security_context(task_factory):
+    @wraps(task_factory)
+    def wrapped_task_factory(*args, **kwargs):
+        task = task_factory(*args, **kwargs)
+        kubernetes.set_security_context(
+            task, run_as_user=100, run_as_group=0, run_as_non_root=True
+        )
+        return task
+
+    return wrapped_task_factory
+
+
+@apply_default_security_context
+def hello_world_task():
+    return hello_world_op()
+
+
 @dsl.pipeline(
     name="hello-world-v2",
     description="A very simple hello world pipeline"
 )
 def hello_world_pipeline():
-    task = hello_world_op()
-    kubernetes.set_security_context(
-        task,
-        run_as_user=PIPELINE_TASK_SECURITY_RUN_AS_USER,
-        run_as_group=PIPELINE_TASK_SECURITY_RUN_AS_GROUP,
-        run_as_non_root=PIPELINE_TASK_SECURITY_RUN_AS_NON_ROOT,
-    )
+    hello_world_task()
 
 
 def run_pipeline(token, namespace):

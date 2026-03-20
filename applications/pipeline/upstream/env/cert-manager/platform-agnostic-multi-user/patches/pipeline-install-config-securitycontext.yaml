@@ -3,6 +3,6 @@ kind: ConfigMap
 metadata:
   name: pipeline-install-config
 data:
-  defaultSecurityContextRunAsUser: "1000"
-  defaultSecurityContextRunAsGroup: "1000"
+  defaultSecurityContextRunAsUser: "100"
+  defaultSecurityContextRunAsGroup: "0"
   defaultSecurityContextRunAsNonRoot: "true"
