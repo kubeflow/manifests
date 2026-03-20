@@ -5,6 +5,7 @@ import sys
 import time
 from kfp import dsl
 from kfp_server_api.exceptions import ApiException
+from kfp import kubernetes
 
 
 @dsl.component
@@ -18,7 +19,13 @@ def hello_world_op() -> str:
     description="A very simple hello world pipeline"
 )
 def hello_world_pipeline():
-    hello_world_op()
+    task = hello_world_op()
+    kubernetes.set_security_context(
+        task,
+        run_as_user=1000,
+        run_as_group=1000,
+        run_as_non_root=True,
+    )
 
 
 def run_pipeline(token, namespace):

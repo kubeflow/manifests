@@ -15,6 +15,7 @@ patches:
 - path: patches/delete.role.cache-deployer.yaml
 - path: patches/delete.rolebinding.cache-deployer.yaml
 - path: patches/delete.sa.cache-deployer.yaml
+- path: patches/pipeline-install-config-securitycontext.yaml
 - patch: |-
     - op: add
       path: /spec/template/spec/containers/0/args/-

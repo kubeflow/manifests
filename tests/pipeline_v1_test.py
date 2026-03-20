@@ -3,6 +3,7 @@
 import kfp
 import sys
 import time
+import textwrap
 
 def hello_world_op():
     from kfp.components import func_to_container_op
@@ -15,7 +16,16 @@ def hello_world_op():
 
 def hello_world_pipeline():
     hello_op = hello_world_op()
-    hello_op()
+    task = hello_op()
+    task.container.set_security_context(
+        textwrap.dedent(
+            """
+            runAsUser: 1000
+            runAsGroup: 1000
+            runAsNonRoot: true
+            """
+        )
+    )
 
 def run_v1_pipeline(token, namespace):
     client = kfp.Client(host="http://localhost:8080/pipeline", existing_token=token)
