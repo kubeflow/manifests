@@ -5,4 +5,4 @@ metadata:
 data:
   defaultSecurityContextRunAsUser: "" # 1000
   defaultSecurityContextRunAsGroup: "" # 0
-  defaultSecurityContextRunAsNonRoot: "true"
+  defaultSecurityContextRunAsNonRoot: "" # TODO "true" for better security
