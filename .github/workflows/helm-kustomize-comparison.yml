@@ -2,13 +2,12 @@ name: Helm vs Kustomize Comparison
 
 on:
   pull_request:
-    branches: [master]
     paths:
-    - 'experimental/helm/charts/**'
-    - 'tests/helm_kustomize_compare.py'
-    - 'tests/helm_kustomize_compare.sh'
-    - 'tests/helm_kustomize_compare_all.sh'
-    - '.github/workflows/helm-kustomize-comparison.yml'
+    - experimental/helm/charts/**
+    - tests/helm_kustomize_compare.py
+    - tests/helm_kustomize_compare.sh
+    - tests/helm_kustomize_compare_all.sh
+    - .github/workflows/helm-kustomize-comparison.yml
   workflow_dispatch:
 
 permissions:
