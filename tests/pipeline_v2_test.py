@@ -14,7 +14,7 @@ def hello_world_op() -> str:
     return "Hello World"
 
 
-def apply_default_security_context(task_factory):
+def with_security_context(task_factory):
     @wraps(task_factory)
     def wrapped_task_factory(*args, **kwargs):
         task = task_factory(*args, **kwargs)
@@ -26,8 +26,9 @@ def apply_default_security_context(task_factory):
     return wrapped_task_factory
 
 
-@apply_default_security_context
+@with_security_context
 def hello_world_task():
+    """Create the hello-world task with enforced security context."""
     return hello_world_op()
 
 

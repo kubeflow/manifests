@@ -14,11 +14,11 @@ def hello_world_op():
     return func_to_container_op(hello_world)
 
 def hello_world_pipeline():
-    hello_world_operation = hello_world_op()
-    hello_world_operation()
+    hello_world_task = hello_world_op()
+    hello_world_task()
 
 
-def apply_default_security_context(operation):
+def apply_security_context(operation):
     operation.container.set_security_context(
         "runAsUser: 100\nrunAsGroup: 0\nrunAsNonRoot: true"
     )
@@ -36,7 +36,7 @@ def run_v1_pipeline(token, namespace):
         namespace=namespace,
         arguments={},
         pipeline_conf=kfp.dsl.PipelineConf().add_op_transformer(
-            apply_default_security_context
+            apply_security_context
         ),
     )
     
