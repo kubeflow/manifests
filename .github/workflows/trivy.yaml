@@ -6,8 +6,10 @@ on:
     - master
   pull_request:
     paths:
-    - '.github/workflows/trivy.yaml'
-    - 'tests/trivy_scan.py'
+    - tests/kustomize_install.sh
+    - .github/workflows/trivy.yaml
+    - tests/trivy_scan.py
+    - tests/trivy_install.sh
 
 permissions:
   contents: read
