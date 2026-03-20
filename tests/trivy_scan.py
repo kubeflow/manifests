@@ -17,6 +17,14 @@ import json
 import glob
 from prettytable import PrettyTable
 
+def get_trivy_binary():
+    # Check both GitHub Actions and local installation directories
+    for directory in ["/tmp/usr/local/bin", os.path.expandvars("$HOME/.local/bin")]:
+        trivy_path = os.path.join(directory, "trivy")
+        if os.path.isfile(trivy_path):
+            return trivy_path
+    return "trivy"
+
 # Dictionary mapping Kubeflow workgroups to directories containing kustomization files
 wg_dirs = {
     "katib": "../applications/katib/upstream/installs",
@@ -176,7 +184,7 @@ for file in files:
         try:
             result = subprocess.run(
                 [
-                    "trivy",
+                    get_trivy_binary(),
                     "image",
                     "--format",
                     "json",
