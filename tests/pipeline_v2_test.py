@@ -4,8 +4,12 @@ import kfp
 import sys
 import time
 from kfp import dsl
-from kfp_server_api.exceptions import ApiException
 from kfp import kubernetes
+from kfp_server_api.exceptions import ApiException
+
+PIPELINE_TASK_SECURITY_RUN_AS_USER = 1000
+PIPELINE_TASK_SECURITY_RUN_AS_GROUP = 1000
+PIPELINE_TASK_SECURITY_RUN_AS_NON_ROOT = True
 
 
 @dsl.component
@@ -22,9 +26,9 @@ def hello_world_pipeline():
     task = hello_world_op()
     kubernetes.set_security_context(
         task,
-        run_as_user=1000,
-        run_as_group=1000,
-        run_as_non_root=True,
+        run_as_user=PIPELINE_TASK_SECURITY_RUN_AS_USER,
+        run_as_group=PIPELINE_TASK_SECURITY_RUN_AS_GROUP,
+        run_as_non_root=PIPELINE_TASK_SECURITY_RUN_AS_NON_ROOT,
     )
 
 
