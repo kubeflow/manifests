@@ -3,6 +3,7 @@
 import kfp
 import sys
 import time
+from kubernetes.client.models import V1SecurityContext
 
 def hello_world_operation():
     from kfp.components import func_to_container_op
@@ -20,7 +21,11 @@ def hello_world_pipeline():
 
 def apply_security_context(operation):
     operation.container.set_security_context(
-        "runAsUser: 1000\nrunAsGroup: 0\nrunAsNonRoot: true"
+        V1SecurityContext(
+            run_as_user=1000,
+            run_as_group=0,
+            run_as_non_root=True,
+        )
     )
     return operation
 
