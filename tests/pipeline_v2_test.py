@@ -7,28 +7,23 @@ from kfp import dsl
 from kfp import kubernetes
 from kfp_server_api.exceptions import ApiException
 
-@dsl.component
-def hello_world_operation() -> str:
-    print("Hello World from Kubeflow Pipelines V2!")
-    return "Hello World"
-
-
 def with_security_context(task_factory):
     """Apply the pipeline test security context to a task factory result."""
-    def decorated_task(*args, **kwargs):
+    def task_with_security_context(*args, **kwargs):
         task = task_factory(*args, **kwargs)
         kubernetes.set_security_context(
             task, run_as_user=1000, run_as_group=0, run_as_non_root=True
         )
         return task
 
-    return decorated_task
+    return task_with_security_context
 
 
 @with_security_context
-def hello_world_task():
-    """Create the hello-world task with enforced security context."""
-    return hello_world_operation()
+@dsl.component
+def hello_world_operation() -> str:
+    print("Hello World from Kubeflow Pipelines V2!")
+    return "Hello World"
 
 
 @dsl.pipeline(
@@ -36,7 +31,7 @@ def hello_world_task():
     description="A very simple hello world pipeline"
 )
 def hello_world_pipeline():
-    hello_world_task()
+    hello_world_operation()
 
 
 def run_pipeline(token, namespace):
