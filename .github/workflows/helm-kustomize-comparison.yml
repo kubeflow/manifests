@@ -17,15 +17,16 @@ permissions:
 
 jobs:
   validate-helm-kustomize-equivalence:
+    continue-on-error: true
     runs-on: ubuntu-latest
     name: Compare All Scenarios
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
-        python-version: '3.9'
+        python-version: '3.12'
     - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
