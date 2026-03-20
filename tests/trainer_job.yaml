@@ -6,7 +6,7 @@ spec:
   runtimeRef:
     name: torch-distributed
   trainer:
-    image: ghcr.io/kubeflow/katib/pytorch-mnist-cpu:v1beta1-9caa8bc
+    image: docker.io/kubeflowkatib/pytorch-mnist:v1beta1-45c5727
     command:
     - "python3"
     - "/opt/pytorch-mnist/mnist.py"
@@ -16,15 +16,4 @@ spec:
       requests:
         memory: "500Mi"
         cpu: "500m"
-    securityContext:
-      runAsNonRoot: true
-      runAsUser: 1000
-      runAsGroup: 0
-      allowPrivilegeEscalation: false
-      readOnlyRootFilesystem: false
-      capabilities:
-        drop:
-        - ALL
-      seccompProfile:
-        type: RuntimeDefault
   suspend: false
