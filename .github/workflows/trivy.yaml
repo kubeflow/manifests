@@ -6,8 +6,10 @@ on:
     - master
   pull_request:
     paths:
-    - '.github/workflows/trivy.yaml'
-    - 'tests/trivy_scan.py'
+    - tests/kustomize_install.sh
+    - .github/workflows/trivy.yaml
+    - tests/trivy_scan.py
+    - tests/trivy_install.sh
 
 permissions:
   contents: read
@@ -19,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     # Install kustomize
     - name: Install kustomize
