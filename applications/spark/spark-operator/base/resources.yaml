@@ -25710,10 +25710,10 @@ metadata:
   name: spark-operator-controller
   namespace: kubeflow
   labels:
-    helm.sh/chart: spark-operator-2.5.0-rc.0
+    helm.sh/chart: spark-operator-2.5.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.5.0-rc.0"
+    app.kubernetes.io/version: "2.5.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
 ---
@@ -25725,10 +25725,10 @@ metadata:
   name: spark-operator-webhook
   namespace: kubeflow
   labels:
-    helm.sh/chart: spark-operator-2.5.0-rc.0
+    helm.sh/chart: spark-operator-2.5.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.5.0-rc.0"
+    app.kubernetes.io/version: "2.5.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: webhook
 ---
@@ -25739,10 +25739,10 @@ metadata:
   name: spark-operator-controller
   namespace: kubeflow
   labels:
-    helm.sh/chart: spark-operator-2.5.0-rc.0
+    helm.sh/chart: spark-operator-2.5.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.5.0-rc.0"
+    app.kubernetes.io/version: "2.5.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
 rules:
@@ -25866,10 +25866,10 @@ metadata:
   name: spark-operator-webhook
   namespace: kubeflow
   labels:
-    helm.sh/chart: spark-operator-2.5.0-rc.0
+    helm.sh/chart: spark-operator-2.5.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.5.0-rc.0"
+    app.kubernetes.io/version: "2.5.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: webhook
 rules:
@@ -25940,10 +25940,10 @@ metadata:
   name: spark-operator-controller
   namespace: kubeflow
   labels:
-    helm.sh/chart: spark-operator-2.5.0-rc.0
+    helm.sh/chart: spark-operator-2.5.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.5.0-rc.0"
+    app.kubernetes.io/version: "2.5.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
 subjects:
@@ -25962,10 +25962,10 @@ metadata:
   name: spark-operator-webhook
   namespace: kubeflow
   labels:
-    helm.sh/chart: spark-operator-2.5.0-rc.0
+    helm.sh/chart: spark-operator-2.5.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.5.0-rc.0"
+    app.kubernetes.io/version: "2.5.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: webhook
 subjects:
@@ -25984,10 +25984,10 @@ metadata:
   name: spark-operator-controller
   namespace: kubeflow
   labels:
-    helm.sh/chart: spark-operator-2.5.0-rc.0
+    helm.sh/chart: spark-operator-2.5.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.5.0-rc.0"
+    app.kubernetes.io/version: "2.5.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
 rules:
@@ -26022,10 +26022,10 @@ metadata:
   name: spark-operator-webhook
   namespace: kubeflow
   labels:
-    helm.sh/chart: spark-operator-2.5.0-rc.0
+    helm.sh/chart: spark-operator-2.5.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.5.0-rc.0"
+    app.kubernetes.io/version: "2.5.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: webhook
 rules:
@@ -26067,10 +26067,10 @@ metadata:
   name: spark-operator-controller
   namespace: kubeflow
   labels:
-    helm.sh/chart: spark-operator-2.5.0-rc.0
+    helm.sh/chart: spark-operator-2.5.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.5.0-rc.0"
+    app.kubernetes.io/version: "2.5.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
 subjects:
@@ -26089,10 +26089,10 @@ metadata:
   name: spark-operator-webhook
   namespace: kubeflow
   labels:
-    helm.sh/chart: spark-operator-2.5.0-rc.0
+    helm.sh/chart: spark-operator-2.5.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.5.0-rc.0"
+    app.kubernetes.io/version: "2.5.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: webhook
 subjects:
@@ -26110,10 +26110,10 @@ kind: Service
 metadata:
   name: spark-operator-webhook-svc
   labels:
-    helm.sh/chart: spark-operator-2.5.0-rc.0
+    helm.sh/chart: spark-operator-2.5.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.5.0-rc.0"
+    app.kubernetes.io/version: "2.5.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: webhook
 spec:
@@ -26132,10 +26132,10 @@ kind: Deployment
 metadata:
   name: spark-operator-controller
   labels:
-    helm.sh/chart: spark-operator-2.5.0-rc.0
+    helm.sh/chart: spark-operator-2.5.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.5.0-rc.0"
+    app.kubernetes.io/version: "2.5.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: controller
 spec:
@@ -26159,7 +26159,7 @@ spec:
     spec:
       containers:
       - name: spark-operator-controller
-        image: ghcr.io/kubeflow/spark-operator/controller:2.5.0-rc.0
+        image: ghcr.io/kubeflow/spark-operator/controller:2.5.0
         imagePullPolicy: IfNotPresent
         args:
         - controller
@@ -26231,10 +26231,10 @@ kind: Deployment
 metadata:
   name: spark-operator-webhook
   labels:
-    helm.sh/chart: spark-operator-2.5.0-rc.0
+    helm.sh/chart: spark-operator-2.5.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.5.0-rc.0"
+    app.kubernetes.io/version: "2.5.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: webhook
 spec:
@@ -26254,7 +26254,7 @@ spec:
     spec:
       containers:
       - name: spark-operator-webhook
-        image: ghcr.io/kubeflow/spark-operator/controller:2.5.0-rc.0
+        image: ghcr.io/kubeflow/spark-operator/controller:2.5.0
         imagePullPolicy: IfNotPresent
         args:
         - webhook
@@ -26323,10 +26323,10 @@ kind: MutatingWebhookConfiguration
 metadata:
   name: spark-operator-webhook
   labels:
-    helm.sh/chart: spark-operator-2.5.0-rc.0
+    helm.sh/chart: spark-operator-2.5.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.5.0-rc.0"
+    app.kubernetes.io/version: "2.5.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: webhook
 webhooks:
@@ -26381,6 +26381,22 @@ webhooks:
     resources: ["scheduledsparkapplications"]
     operations: ["CREATE", "UPDATE"]
   timeoutSeconds: 10
+- name: mutate-sparkoperator-k8s-io-v1alpha1-sparkconnect.sparkoperator.k8s.io
+  admissionReviewVersions: ["v1"]
+  clientConfig:
+    service:
+      name: spark-operator-webhook-svc
+      namespace: kubeflow
+      port: 9443
+      path: /mutate-sparkoperator-k8s-io-v1alpha1-sparkconnect
+  sideEffects: NoneOnDryRun
+  failurePolicy: Fail
+  rules:
+  - apiGroups: ["sparkoperator.k8s.io"]
+    apiVersions: ["v1alpha1"]
+    resources: ["sparkconnects"]
+    operations: ["CREATE", "UPDATE"]
+  timeoutSeconds: 10
 ---
 # Source: spark-operator/templates/webhook/validatingwebhookconfiguration.yaml
 apiVersion: admissionregistration.k8s.io/v1
@@ -26388,10 +26404,10 @@ kind: ValidatingWebhookConfiguration
 metadata:
   name: spark-operator-webhook
   labels:
-    helm.sh/chart: spark-operator-2.5.0-rc.0
+    helm.sh/chart: spark-operator-2.5.0
     app.kubernetes.io/name: spark-operator
     app.kubernetes.io/instance: spark-operator
-    app.kubernetes.io/version: "2.5.0-rc.0"
+    app.kubernetes.io/version: "2.5.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: webhook
 webhooks:
@@ -26425,5 +26441,21 @@ webhooks:
   - apiGroups: ["sparkoperator.k8s.io"]
     apiVersions: ["v1beta2"]
     resources: ["scheduledsparkapplications"]
+    operations: ["CREATE", "UPDATE"]
+  timeoutSeconds: 10
+- name: validate-sparkoperator-k8s-io-v1alpha1-sparkconnect.sparkoperator.k8s.io
+  admissionReviewVersions: ["v1"]
+  clientConfig:
+    service:
+      name: spark-operator-webhook-svc
+      namespace: kubeflow
+      port: 9443
+      path: /validate-sparkoperator-k8s-io-v1alpha1-sparkconnect
+  sideEffects: NoneOnDryRun
+  failurePolicy: Fail
+  rules:
+  - apiGroups: ["sparkoperator.k8s.io"]
+    apiVersions: ["v1alpha1"]
+    resources: ["sparkconnects"]
     operations: ["CREATE", "UPDATE"]
   timeoutSeconds: 10

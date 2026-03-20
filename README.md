@@ -78,7 +78,7 @@ This repository periodically synchronizes all official Kubeflow components from 
 | KServe Models Web Application | applications/kserve/models-web-app | [v0.16.0](https://github.com/kserve/models-web-app/tree/v0.16.0/config) | 6m | 259Mi  | 0GB |
 | Kubeflow Pipelines | applications/pipeline/upstream | [2.16.0](https://github.com/kubeflow/pipelines/tree/2.16.0/manifests/kustomize) | 970m | 3552Mi | 35GB |
 | Kubeflow Model Registry | applications/model-registry/upstream | [v0.3.7](https://github.com/kubeflow/model-registry/tree/v0.3.7/manifests/kustomize) | 510m | 2112Mi | 20GB |
-| Spark Operator	|	applications/spark/spark-operator	|	[2.5.0-rc.0](https://github.com/kubeflow/spark-operator/tree/v2.5.0-rc.0) | 9m | 41Mi | 0GB |
+| Spark Operator	|	applications/spark/spark-operator	|	[2.5.0](https://github.com/kubeflow/spark-operator/tree/v2.5.0) | 9m | 41Mi | 0GB |
 | Istio | common/istio | [1.29.0](https://github.com/istio/istio/releases/tag/1.29.0) | 750m | 2364Mi | 0GB |
 | Knative | common/knative/knative-serving <br /> common/knative/knative-eventing | [v1.21.1](https://github.com/knative/serving/releases/tag/knative-v1.21.1) <br /> [v1.21.0](https://github.com/knative/eventing/releases/tag/knative-v1.21.0) | 1450m | 1038Mi | 0GB |
 | Cert Manager | common/cert-manager | [1.19.4](https://github.com/cert-manager/cert-manager/releases/tag/v1.19.4) | 3m | 128Mi | 0GB |
