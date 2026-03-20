@@ -14,6 +14,7 @@ def hello_world_op() -> str:
 
 
 def with_security_context(task_factory):
+    """Apply the pipeline test security context to a task factory result."""
     def decorated_task(*args, **kwargs):
         task = task_factory(*args, **kwargs)
         kubernetes.set_security_context(
