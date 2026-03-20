@@ -103,9 +103,3 @@ resources:
 # Here is the documentation for Ray: https://docs.ray.io/en/latest/
 # Here is the internal documentation for Ray: - ../experimental/ray/README.md
 # - ../experimental/ray/kuberay-operator/overlays/kubeflow
-
-components:
-# https://kubernetes.io/docs/concepts/security/pod-security-standards/
-# For all static namespaces we already enforce PSS restricted
-# This should be used together with Kubernetes 1.33+ user namespaces to block root user exploits
-- ../common/security/PSS
