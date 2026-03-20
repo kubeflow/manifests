@@ -15,28 +15,19 @@ def hello_world_operation():
     return func_to_container_op(hello_world)
 
 def hello_world_pipeline():
-    hello_world_task = hello_world_operation()
-    hello_world_task()
-
-
-def apply_security_context(operation):
-    operation.container.set_security_context(
+    hello_world_task = hello_world_operation()()
+    hello_world_task.container.set_security_context(
         V1SecurityContext(
             run_as_user=1000,
             run_as_group=0,
             run_as_non_root=True,
         )
     )
-    return operation
 
 def run_v1_pipeline(token, namespace):
     client = kfp.Client(host="http://localhost:8080/pipeline", existing_token=token)
     
     experiment = client.create_experiment("v1-pipeline-test", namespace=namespace)
-    
-    pipeline_configuration = kfp.dsl.PipelineConf().add_op_transformer(
-        apply_security_context
-    )
 
     pipeline_run = client.create_run_from_pipeline_func(
         hello_world_pipeline,
@@ -44,7 +35,6 @@ def run_v1_pipeline(token, namespace):
         run_name="v1-hello-world",
         namespace=namespace,
         arguments={},
-        pipeline_conf=pipeline_configuration,
     )
     
     for iteration in range(15):
