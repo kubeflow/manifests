@@ -4,7 +4,7 @@ import kfp
 import sys
 import time
 
-def hello_world_op():
+def hello_world_operation():
     from kfp.components import func_to_container_op
     
     def hello_world():
@@ -14,7 +14,7 @@ def hello_world_op():
     return func_to_container_op(hello_world)
 
 def hello_world_pipeline():
-    hello_world_task = hello_world_op()
+    hello_world_task = hello_world_operation()
     hello_world_task()
 
 

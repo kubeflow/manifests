@@ -8,7 +8,7 @@ from kfp import kubernetes
 from kfp_server_api.exceptions import ApiException
 
 @dsl.component
-def hello_world_op() -> str:
+def hello_world_operation() -> str:
     print("Hello World from Kubeflow Pipelines V2!")
     return "Hello World"
 
@@ -28,7 +28,7 @@ def with_security_context(task_factory):
 @with_security_context
 def hello_world_task():
     """Create the hello-world task with enforced security context."""
-    return hello_world_op()
+    return hello_world_operation()
 
 
 @dsl.pipeline(
