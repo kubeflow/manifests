@@ -20,7 +20,7 @@ def hello_world_pipeline():
 
 def apply_security_context(operation):
     operation.container.set_security_context(
-        "runAsUser: 100\nrunAsGroup: 0\nrunAsNonRoot: true"
+        "runAsUser: 1000\nrunAsGroup: 0\nrunAsNonRoot: true"
     )
     return operation
 
@@ -29,15 +29,17 @@ def run_v1_pipeline(token, namespace):
     
     experiment = client.create_experiment("v1-pipeline-test", namespace=namespace)
     
+    pipeline_configuration = kfp.dsl.PipelineConf().add_op_transformer(
+        apply_security_context
+    )
+
     pipeline_run = client.create_run_from_pipeline_func(
         hello_world_pipeline,
         experiment_name=experiment.name,
         run_name="v1-hello-world",
         namespace=namespace,
         arguments={},
-        pipeline_conf=kfp.dsl.PipelineConf().add_op_transformer(
-            apply_security_context
-        ),
+        pipeline_conf=pipeline_configuration,
     )
     
     for iteration in range(15):

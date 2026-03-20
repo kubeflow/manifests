@@ -3,7 +3,6 @@
 import kfp
 import sys
 import time
-from functools import wraps
 from kfp import dsl
 from kfp import kubernetes
 from kfp_server_api.exceptions import ApiException
@@ -15,15 +14,14 @@ def hello_world_op() -> str:
 
 
 def with_security_context(task_factory):
-    @wraps(task_factory)
-    def wrapped_task_factory(*args, **kwargs):
+    def decorated_task(*args, **kwargs):
         task = task_factory(*args, **kwargs)
         kubernetes.set_security_context(
-            task, run_as_user=100, run_as_group=0, run_as_non_root=True
+            task, run_as_user=1000, run_as_group=0, run_as_non_root=True
         )
         return task
 
-    return wrapped_task_factory
+    return decorated_task
 
 
 @with_security_context
