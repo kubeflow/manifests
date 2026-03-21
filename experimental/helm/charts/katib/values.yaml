@@ -16,7 +16,7 @@ global:
   # -- Image registry for Katib images
   imageRegistry: ghcr.io/kubeflow/katib
   # -- Global image tag for all Katib components
-  imageTag: v0.18.0
+  imageTag: v0.19.0
   # -- Global image pull policy
   imagePullPolicy: IfNotPresent
   # -- Global image pull secrets
@@ -186,7 +186,7 @@ database:
       # -- MySQL image repository
       repository: mysql
       # -- MySQL image tag
-      tag: "8.0.29"
+      tag: "8.0"
       # -- MySQL image pull policy
       pullPolicy: IfNotPresent
     
@@ -223,11 +223,6 @@ database:
         periodSeconds: 5
         # -- Liveness probe failure threshold
         failureThreshold: 10
-      startup:
-        # -- Startup probe period
-        periodSeconds: 15
-        # -- Startup probe failure threshold
-        failureThreshold: 60
     
     # Security context
     podSecurityContext:
@@ -536,16 +531,16 @@ ui:
   # -- Affinity rules for UI pods
   affinity: {}
   
-    # -- Security context for UI pods
-  podSecurityContext:
-    seccompProfile:
-      type: RuntimeDefault
+  # -- Security context for UI pods
+  podSecurityContext: {}
 
   # -- Security context for UI containers
   securityContext:
     runAsNonRoot: true
     allowPrivilegeEscalation: false
     runAsUser: 1000
+    seccompProfile:
+      type: RuntimeDefault
     capabilities:
       drop:
       - ALL
@@ -771,6 +766,7 @@ config:
       controller:
         webhookPort: 8443
         trialResources:
+          - TrainJob.v1alpha1.trainer.kubeflow.org
           - Job.v1.batch
           - TFJob.v1.kubeflow.org
           - PyTorchJob.v1.kubeflow.org
@@ -779,40 +775,40 @@ config:
     runtime:
       metricsCollectors:
         - kind: StdOut
-          image: ghcr.io/kubeflow/katib/file-metrics-collector:v0.18.0
+          image: ghcr.io/kubeflow/katib/file-metrics-collector:v0.19.0
         - kind: File
-          image: ghcr.io/kubeflow/katib/file-metrics-collector:v0.18.0
+          image: ghcr.io/kubeflow/katib/file-metrics-collector:v0.19.0
         - kind: TensorFlowEvent
-          image: ghcr.io/kubeflow/katib/tfevent-metrics-collector:v0.18.0
+          image: ghcr.io/kubeflow/katib/tfevent-metrics-collector:v0.19.0
           resources:
             limits:
               memory: 1Gi
       suggestions:
         - algorithmName: random
-          image: ghcr.io/kubeflow/katib/suggestion-hyperopt:v0.18.0
+          image: ghcr.io/kubeflow/katib/suggestion-hyperopt:v0.19.0
         - algorithmName: tpe
-          image: ghcr.io/kubeflow/katib/suggestion-hyperopt:v0.18.0
+          image: ghcr.io/kubeflow/katib/suggestion-hyperopt:v0.19.0
         - algorithmName: grid
-          image: ghcr.io/kubeflow/katib/suggestion-optuna:v0.18.0
+          image: ghcr.io/kubeflow/katib/suggestion-optuna:v0.19.0
         - algorithmName: hyperband
-          image: ghcr.io/kubeflow/katib/suggestion-hyperband:v0.18.0
+          image: ghcr.io/kubeflow/katib/suggestion-hyperband:v0.19.0
         - algorithmName: bayesianoptimization
-          image: ghcr.io/kubeflow/katib/suggestion-skopt:v0.18.0
+          image: ghcr.io/kubeflow/katib/suggestion-skopt:v0.19.0
         - algorithmName: cmaes
-          image: ghcr.io/kubeflow/katib/suggestion-goptuna:v0.18.0
+          image: ghcr.io/kubeflow/katib/suggestion-goptuna:v0.19.0
         - algorithmName: sobol
-          image: ghcr.io/kubeflow/katib/suggestion-goptuna:v0.18.0
+          image: ghcr.io/kubeflow/katib/suggestion-goptuna:v0.19.0
         - algorithmName: multivariate-tpe
-          image: ghcr.io/kubeflow/katib/suggestion-optuna:v0.18.0
+          image: ghcr.io/kubeflow/katib/suggestion-optuna:v0.19.0
         - algorithmName: enas
-          image: ghcr.io/kubeflow/katib/suggestion-enas:v0.18.0
+          image: ghcr.io/kubeflow/katib/suggestion-enas:v0.19.0
           resources:
             limits:
               memory: 400Mi
         - algorithmName: darts
-          image: ghcr.io/kubeflow/katib/suggestion-darts:v0.18.0
+          image: ghcr.io/kubeflow/katib/suggestion-darts:v0.19.0
         - algorithmName: pbt
-          image: ghcr.io/kubeflow/katib/suggestion-pbt:v0.18.0
+          image: ghcr.io/kubeflow/katib/suggestion-pbt:v0.19.0
           persistentVolumeClaimSpec:
             accessModes:
               - ReadWriteMany
@@ -821,24 +817,24 @@ config:
                 storage: 5Gi
       earlyStoppings:
         - algorithmName: medianstop
-          image: ghcr.io/kubeflow/katib/earlystopping-medianstop:v0.18.0
+          image: ghcr.io/kubeflow/katib/earlystopping-medianstop:v0.19.0
 
   # Trial templates configuration
   trialTemplates:
     # Default trial template configuration
     defaultTrialTemplate:
       # -- Default trial template container image
-      image: "ghcr.io/kubeflow/katib/pytorch-mnist-cpu:v0.18.0"
+      image: "ghcr.io/kubeflow/katib/pytorch-mnist-cpu:v0.19.0"
     
     # ENAS CPU template configuration
     enasCPUTemplate:
       # -- ENAS CPU template container image
-      image: "ghcr.io/kubeflow/katib/enas-cnn-cifar10-cpu:v0.18.0"
+      image: "ghcr.io/kubeflow/katib/enas-cnn-cifar10-cpu:v0.19.0"
     
     # PyTorch Job template configuration
     pytorchJobTemplate:
       # -- PyTorch Job template container image
-      image: "ghcr.io/kubeflow/katib/pytorch-mnist-cpu:v0.18.0"
+      image: "ghcr.io/kubeflow/katib/pytorch-mnist-cpu:v0.19.0"
       # -- Number of worker replicas for PyTorch Job
       workerReplicas: 2
     
