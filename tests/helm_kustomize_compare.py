@@ -318,8 +318,6 @@ if __name__ == "__main__":
         print(f"ERROR: Unknown component: {component}")
         print("Supported components: katib, model-registry, kserve-models-web-app, notebook-controller")
         sys.exit(1)
-    
-    success = compare_manifests(kustomize_file, helm_file, component, scenario, namespace)
-    sys.exit(0 if success else 1) 
+
     success = compare_manifests(kustomize_file, helm_file, component, scenario, namespace, args.verbose)
     sys.exit(0 if success else 1)
