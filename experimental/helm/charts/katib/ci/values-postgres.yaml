@@ -3,7 +3,7 @@
 
 global:
   namespace: kubeflow
-  imageTag: v0.18.0
+  imageTag: v0.19.0
   
   # Enable kustomize compatibility mode
   kustomizeMode:
@@ -96,3 +96,11 @@ autoscaling:
 # Namespace creation
 namespaceCreate:
   enabled: true 
+# Override trialResources
+config:
+  trialResources:
+    - Job.v1.batch
+    - TFJob.v1.kubeflow.org
+    - PyTorchJob.v1.kubeflow.org
+    - MPIJob.v1.kubeflow.org
+    - XGBoostJob.v1.kubeflow.org
