@@ -7,3 +7,4 @@ spec:
     metadata:
       annotations:
         traffic.sidecar.istio.io/excludeInboundPorts: "9443"
+        traffic.sidecar.istio.io/excludeOutboundPorts: "443"
