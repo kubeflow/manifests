@@ -6,7 +6,8 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      service.istio.io/canonical-name: jobset-controller-manager
+      app.kubernetes.io/name: jobset
+      control-plane: controller-manager
   policyTypes:
   - Ingress
   ingress:
