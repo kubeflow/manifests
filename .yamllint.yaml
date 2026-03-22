@@ -5,7 +5,7 @@ ignore: |
   common/istio/cluster-local-gateway/base/cluster-local-gateway.yaml
   common/istio/istio-crds/base/crd.yaml
   common/istio/istio-install/base/install.yaml
-  */upstream/
+  **/upstream/**
 
 rules:
   document-start: disable
@@ -17,7 +17,7 @@ rules:
     max: 800
   truthy:
     allowed-values: ['on', 'off', 'true', 'false']
-  empty-lines: 
+  empty-lines:
     level: warning
   comments:
     require-starting-space: false
