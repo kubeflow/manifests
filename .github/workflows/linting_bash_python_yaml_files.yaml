@@ -54,20 +54,7 @@ jobs:
         https://yamllint.readthedocs.io/en/stable/rules.html#
 
         Search for the keyword inside the brackets [] in the error message. In this example, it's 'indentation'.
-        Note: Some rules have been customized in the '.yamllint.yaml' file. Below is the content of that file:
-
-        extends: default
-
-        rules:
-          document-start:
-            present: false
-          document-end:
-            present: false
-          indentation:
-            indent-sequences: false
-          line-length:
-            max: 400
-        "
+        Note: Some rules have been customized in the '.yamllint.yaml' file.
 
     - name: Fetch master branch
       run: git fetch origin master
@@ -75,11 +62,7 @@ jobs:
     - name: Set up changed files
       id: changed_files
       run: |
-        git diff --name-only --diff-filter=AM origin/master...HEAD \
-        | grep -v 'upstream' \
-        | grep -v 'knative' \
-        | grep -E '^common/.*\.ya?ml$|^example/.*\.ya?ml$|^hack/.*\.ya?ml$|^tests/.*\.ya?ml$|^.github/.*\.ya?ml$' \
-        > changed_files_in_PR.txt || true
+        git diff --name-only origin/master...HEAD | grep -E '^[AM].*\.yaml$' > changed_files_in_PR.txt || true
         if [ ! -s changed_files_in_PR.txt ]; then
           echo "No YAML files have changed in this PR." > changed_files_in_PR.txt
         fi
@@ -93,7 +76,7 @@ jobs:
         if grep -q 'No YAML files have changed in this PR.' changed_files_in_PR.txt; then
           echo "No YAML files have changed in this PR."
         else
-          cat changed_files_in_PR.txt | xargs -I {} yamllint {} || exit 1
+          cat changed_files_in_PR.txt | xargs -I {} yamllint --config-file .yamllint.yaml {} || exit 1
         fi
       shell: bash
 
