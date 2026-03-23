@@ -16,4 +16,3 @@ spec:
         app.kubernetes.io/part-of: kubeflow
       annotations:
         traffic.sidecar.istio.io/excludeInboundPorts: "9443"
-        traffic.sidecar.istio.io/excludeOutboundPorts: "443"
