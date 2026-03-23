@@ -575,6 +575,7 @@ For modifications and in-place upgrades of the Kubeflow platform, we provide a r
 - Sometimes there are major changes; for example, in the 1.9 release, we switched to oauth2-proxy, which needs additional attention (cleanup istio-system once); or 1.9.1 -> 1.10 `kubectl delete clusterrolebinding meta-controller-cluster-role-binding`
 - Nevertheless, with a bit of Kubernetes knowledge, one should be able to upgrade.
 - 1.10.2 -> 1.11.0 migrates from minio to seaweedfs, so you should delete minio and maybe migrate your data via S3 commands to seaweedfs.
+- KServe 0.16.x -> 0.17.0 restructures llmisvc role bindings, requiring a manual cleanup: `kubectl delete clusterrolebinding llmisvc-manager-rolebinding --ignore-not-found`
 
 ## Release Process
 
