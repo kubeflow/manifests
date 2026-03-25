@@ -195,7 +195,7 @@ istio:
     
   virtualService:
     # -- Enable VirtualService
-    enabled: false
+    enabled: true
     # -- VirtualService name
     name: ""
     # -- VirtualService gateways

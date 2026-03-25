@@ -1,4 +1,4 @@
-{{- if and .Values.app.enabled (or .Values.kubeflow.enabled .Values.istio.virtualService.enabled) }}
+{{- if and .Values.app.enabled .Values.istio.virtualService.enabled }}
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:

@@ -46,8 +46,8 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 Selector labels
 */}}
 {{- define "kserve-models-web-app.selectorLabels" -}}
-app.kubernetes.io/component: kserve-models-web-application
-kustomize.component: kserve-models-web-application
+app.kubernetes.io/component: kserve-models-web-app
+kustomize.component: kserve-models-web-app
 {{- if .Values.kubeflow.enabled }}
 app: kserve
 app.kubernetes.io/name: kserve
@@ -154,8 +154,8 @@ Create destination host for virtual service
 Create Kustomize component labels for backward compatibility
 */}}
 {{- define "kserve-models-web-app.kustomizeLabels" -}}
-app.kubernetes.io/component: kserve-models-web-application
-kustomize.component: kserve-models-web-application
+app.kubernetes.io/component: kserve-models-web-app
+kustomize.component: kserve-models-web-app
 {{- end }}
 
 {{/*
