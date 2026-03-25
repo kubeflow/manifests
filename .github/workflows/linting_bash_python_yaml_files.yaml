@@ -40,7 +40,7 @@ jobs:
         fetch-depth: 0
 
     - name: Install yamllint
-      run: python3 -m venv myenv && source myenv/bin/activate && pip install yamllint==1.38.0
+      run: python3 -m pip install --upgrade pip && python3 -m pip install yamllint==1.38.0
 
     - name: YAML Formatting Guidelines
       run: |
