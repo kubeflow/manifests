@@ -18,40 +18,40 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       containers:
-        - image: kserve/models-web-app:latest
-          imagePullPolicy: Always
-          name: kserve-models-web-application
-          env:
-            - name: GUNICORN_CMD_ARGS
-              value: --limit-request-field_size 32000
-          envFrom:
-            - configMapRef:
-                name: kserve-models-web-application-config
-          ports:
-            - containerPort: 5000
-              name: http
-          livenessProbe:
-            httpGet:
-              path: /healthz/liveness
-              port: http
-            initialDelaySeconds: 0
-            periodSeconds: 10
-            timeoutSeconds: 1
-            failureThreshold: 3
-            successThreshold: 1
-          readinessProbe:
-            httpGet:
-              path: /healthz/readiness
-              port: http
-            initialDelaySeconds: 0
-            periodSeconds: 10
-            timeoutSeconds: 1
-            failureThreshold: 3
-            successThreshold: 1
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-            runAsUser: 1000
+      - image: kserve/models-web-app:latest
+        imagePullPolicy: Always
+        name: kserve-models-web-application
+        env:
+          - name: GUNICORN_CMD_ARGS
+            value: --limit-request-field_size 32000
+        envFrom:
+          - configMapRef:
+              name: kserve-models-web-application-config
+        ports:
+        - containerPort: 5000
+          name: http
+        livenessProbe:
+          httpGet:
+            path: /healthz/liveness
+            port: http
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          timeoutSeconds: 1
+          failureThreshold: 3
+          successThreshold: 1
+        readinessProbe:
+          httpGet:
+            path: /healthz/readiness
+            port: http
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          timeoutSeconds: 1
+          failureThreshold: 3
+          successThreshold: 1
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          runAsUser: 1000
       serviceAccountName: kserve-models-web-application
