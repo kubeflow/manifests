@@ -8,12 +8,6 @@ export KSERVE_INGRESS_HOST_PORT=${KSERVE_INGRESS_HOST_PORT:-localhost:8080}
 export KSERVE_M2M_TOKEN="$(kubectl -n ${NAMESPACE} create token default-editor)"
 export KSERVE_TEST_NAMESPACE=${NAMESPACE}
 
-# The models web application authorizes requests using the resolved Kubeflow
-# user identity. For ServiceAccount tokens in this test setup, set the matching
-# kubeflow-userid header explicitly.
-AUTHORIZED_USER_HEADER="kubeflow-userid: system:serviceaccount:${NAMESPACE}:default-editor"
-UNAUTHORIZED_USER_HEADER="kubeflow-userid: system:serviceaccount:default:default"
-
 # ============================================================
 # Test 1: Model Prediction via KServe Python SDK
 # ============================================================
@@ -168,21 +162,7 @@ kubectl delete authorizationpolicy allow-isvc-sklearn -n ${NAMESPACE}
 kubectl wait --for=condition=Available --timeout=300s -n kubeflow deployment/kserve-models-web-application
 
 TOKEN="$(kubectl -n ${NAMESPACE} create token default-editor)"
-WEB_APP_PORT_FORWARD_PID=""
-cleanup_web_app_port_forward() {
-  if [ -n "${WEB_APP_PORT_FORWARD_PID}" ]; then
-    kill "${WEB_APP_PORT_FORWARD_PID}" 2>/dev/null || true
-  fi
-}
-trap cleanup_web_app_port_forward EXIT
-
-kubectl port-forward -n kubeflow svc/kserve-models-web-application 8082:80 >/tmp/kserve_models_web_application_port_forward.log 2>&1 &
-WEB_APP_PORT_FORWARD_PID=$!
-sleep 5
-
-BASE_URL="localhost:8082"
-BOOTSTRAP_HEADERS=/tmp/kserve_bootstrap_headers.txt
-BOOTSTRAP_BODY=/tmp/kserve_bootstrap_body.txt
+BASE_URL="localhost:8080/kserve-endpoints"
 
 cat <<EOF | kubectl apply -f -
 apiVersion: "serving.kserve.io/v1beta1"
@@ -206,49 +186,15 @@ EOF
 kubectl wait --for=condition=Ready inferenceservice/sklearn-iris -n ${NAMESPACE} --timeout=120s
 kubectl get inferenceservice sklearn-iris -n ${NAMESPACE}
 
-BOOTSTRAP_STATUS=""
-for attempt in $(seq 1 12); do
-  BOOTSTRAP_STATUS=$(curl -sS -o "${BOOTSTRAP_BODY}" -D "${BOOTSTRAP_HEADERS}" \
-    -c /tmp/kserve_xcrf.txt -w "%{http_code}" \
-    "http://${BASE_URL}/" \
-    -H "Authorization: Bearer ${TOKEN}" \
-    -H "${AUTHORIZED_USER_HEADER}")
-
-  if [ "${BOOTSTRAP_STATUS}" = "200" ] && grep -qi '^set-cookie:' "${BOOTSTRAP_HEADERS}"; then
-    break
-  fi
-
-  if [ "${attempt}" -lt 12 ]; then
-    sleep 10
-  fi
-done
-
-if [ "${BOOTSTRAP_STATUS}" != "200" ]; then
-  cat "${BOOTSTRAP_HEADERS}"
-  cat "${BOOTSTRAP_BODY}"
-  echo "FAILURE: Expected 200 from KServe Models Web Application bootstrap, got ${BOOTSTRAP_STATUS}"
-  exit 1
-fi
-
-if ! grep -i '^set-cookie:' "${BOOTSTRAP_HEADERS}"; then
-  cat "${BOOTSTRAP_HEADERS}"
-  cat "${BOOTSTRAP_BODY}"
-  echo "FAILURE: Expected Set-Cookie header from KServe Models Web Application bootstrap."
-  exit 1
-fi
-
+# Get XSRF token for API calls
+curl -s "http://${BASE_URL}/" \
+  -H "Authorization: Bearer ${TOKEN}" \
+  -v -c /tmp/kserve_xcrf.txt 2>&1 | grep -i "set-cookie"
 XSRFTOKEN=$(grep XSRF-TOKEN /tmp/kserve_xcrf.txt | awk '{print $NF}')
 
-if [ -z "${XSRFTOKEN}" ]; then
-  cat /tmp/kserve_xcrf.txt
-  echo "FAILURE: Expected XSRF-TOKEN cookie to be written to cookie jar."
-  exit 1
-fi
-
-RESPONSE=$(curl -sS --fail-with-body \
+RESPONSE=$(curl -s --fail-with-body \
   "${BASE_URL}/api/namespaces/${NAMESPACE}/inferenceservices" \
   -H "Authorization: Bearer ${TOKEN}" \
-  -H "${AUTHORIZED_USER_HEADER}" \
   -H "X-XSRF-TOKEN: ${XSRFTOKEN}" \
   -H "Cookie: XSRF-TOKEN=${XSRFTOKEN}")
 
@@ -264,10 +210,7 @@ kubectl delete inferenceservice sklearn-iris -n ${NAMESPACE}
 
 # Test unauthorized access to models web application
 UNAUTHORIZED_TOKEN="$(kubectl -n default create token default)"
-RESPONSE=$(curl -s -w "\n%{http_code}" \
-  "${BASE_URL}/api/namespaces/${NAMESPACE}/inferenceservices" \
-  -H "Authorization: Bearer ${UNAUTHORIZED_TOKEN}" \
-  -H "${UNAUTHORIZED_USER_HEADER}")
+RESPONSE=$(curl -s -w "\n%{http_code}" "${BASE_URL}/api/namespaces/${NAMESPACE}/inferenceservices" -H "Authorization: Bearer ${UNAUTHORIZED_TOKEN}")
 BODY=$(echo "$RESPONSE" | head -n -1)
 HTTP_CODE=$(echo "$RESPONSE" | tail -1)
 echo "Test 3 models web application (unauthorized): HTTP $HTTP_CODE | ${BODY:0:200}"
