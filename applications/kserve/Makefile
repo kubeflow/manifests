@@ -34,7 +34,7 @@ clean-models-webapp-manifests:
 upgrade-models-webapp-manifests: clean-models-webapp-manifests
 	git clone https://github.com/kserve/models-web-app.git kserve-models-web-app-src
 	cd kserve-models-web-app-src && git checkout release-${MODELS_WEBAPP_RELEASE_VERSION}
-	cp -r kserve-models-web-app-src/config ./models-web-app
+	cp -r kserve-models-web-app-src/manifests/kustomize ./models-web-app
 	# cleanup
 	rm -rf kserve-models-web-app-src
 
@@ -50,7 +50,7 @@ uninstall-models-webapp:
 
 .PHONY: test-models-webapp
 test-models-webapp: install-models-webapp
-	kubectl wait --for=condition=Available --timeout=300s -n kubeflow deployment/kserve-models-web-app
+	kubectl wait --for=condition=Available --timeout=10s -n kubeflow deployment/kserve-models-web-application
 	@echo "Test Passed"
 	@echo "cleaning up ..."
 	kubectl delete -k models-web-app/overlays/kubeflow
