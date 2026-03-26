@@ -162,6 +162,8 @@ kubectl delete authorizationpolicy allow-isvc-sklearn -n ${NAMESPACE}
 kubectl wait --for=condition=Available --timeout=300s -n kubeflow deployment/kserve-models-web-application
 
 TOKEN="$(kubectl -n ${NAMESPACE} create token default-editor)"
+AUTHORIZED_USER_HEADER="kubeflow-userid: system:serviceaccount:${NAMESPACE}:default-editor"
+UNAUTHORIZED_USER_HEADER="kubeflow-userid: system:serviceaccount:default:default"
 BASE_URL="localhost:8080/kserve-endpoints"
 
 cat <<EOF | kubectl apply -f -
@@ -189,12 +191,14 @@ kubectl get inferenceservice sklearn-iris -n ${NAMESPACE}
 # Get XSRF token for API calls
 curl -s "http://${BASE_URL}/" \
   -H "Authorization: Bearer ${TOKEN}" \
+  -H "${AUTHORIZED_USER_HEADER}" \
   -v -c /tmp/kserve_xcrf.txt 2>&1 | grep -i "set-cookie"
 XSRFTOKEN=$(grep XSRF-TOKEN /tmp/kserve_xcrf.txt | awk '{print $NF}')
 
 RESPONSE=$(curl -s --fail-with-body \
   "${BASE_URL}/api/namespaces/${NAMESPACE}/inferenceservices" \
   -H "Authorization: Bearer ${TOKEN}" \
+  -H "${AUTHORIZED_USER_HEADER}" \
   -H "X-XSRF-TOKEN: ${XSRFTOKEN}" \
   -H "Cookie: XSRF-TOKEN=${XSRFTOKEN}")
 
@@ -210,7 +214,7 @@ kubectl delete inferenceservice sklearn-iris -n ${NAMESPACE}
 
 # Test unauthorized access to models web application
 UNAUTHORIZED_TOKEN="$(kubectl -n default create token default)"
-RESPONSE=$(curl -s -w "\n%{http_code}" "${BASE_URL}/api/namespaces/${NAMESPACE}/inferenceservices" -H "Authorization: Bearer ${UNAUTHORIZED_TOKEN}")
+RESPONSE=$(curl -s -w "\n%{http_code}" "${BASE_URL}/api/namespaces/${NAMESPACE}/inferenceservices" -H "Authorization: Bearer ${UNAUTHORIZED_TOKEN}" -H "${UNAUTHORIZED_USER_HEADER}")
 BODY=$(echo "$RESPONSE" | head -n -1)
 HTTP_CODE=$(echo "$RESPONSE" | tail -1)
 echo "Test 3 models web application (unauthorized): HTTP $HTTP_CODE | ${BODY:0:200}"
