@@ -16,8 +16,8 @@ spec:
     spec:
       serviceAccountName: kepler-sa
       # hostPID and hostNetwork are required by Kepler to access host-level
-      # energy and kernel metrics. Ensure the kubeflow-monitoring-system namespace
-      # has the appropriate Pod Security exemptions (e.g., privileged policy).
+      # energy and kernel metrics. The kepler namespace must have privileged
+      # Pod Security Standards to allow this access.
       hostPID: true
       hostNetwork: true
       containers:

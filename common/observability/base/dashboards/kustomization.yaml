@@ -4,6 +4,3 @@ resources:
 - gpu-cluster-usage-dashboard.yaml
 - gpu-namespace-usage-dashboard.yaml
 - gpu-availability-allocation-dashboard.yaml
-- gpu-cluster-usage-dashboard-cr.yaml
-- gpu-namespace-usage-dashboard-cr.yaml
-- gpu-availability-allocation-dashboard-cr.yaml

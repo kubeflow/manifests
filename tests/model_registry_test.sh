@@ -1,22 +1,36 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# FIX 14: Track port-forward PIDs for cleanup
+# Track port-forward PIDs so they are always killed on exit.
 PF_PIDS=()
 
 cleanup() {
-  echo "Cleaning up port-forwarding processes: ${PF_PIDS[*]}"
-  for pid in "${PF_PIDS[@]}"; do
+  echo "Cleaning up port-forwarding processes..."
+  for pid in "${PF_PIDS[@]:-}"; do
     kill "$pid" 2>/dev/null || true
   done
 }
 
 trap cleanup EXIT
 
+wait_or_dump() {
+  local ns="$1"
+  local deploy="$2"
+  local timeout="${3:-60s}"
+
+  if ! kubectl wait --for=condition=available -n "$ns" "deployment/$deploy" --timeout="$timeout"; then
+    echo "ERROR: deployment $deploy in namespace $ns did not become available"
+    kubectl events -n "$ns"
+    kubectl describe "deployment/$deploy" -n "$ns"
+    kubectl logs "deployment/$deploy" -n "$ns" --all-containers --tail=50 || true
+    exit 1
+  fi
+}
+
 echo "Waiting for all Model Registry Pods to become ready..."
-kubectl wait --for=condition=available -n kubeflow deployment/model-registry-db --timeout=60s
-kubectl wait --for=condition=available -n kubeflow deployment/model-registry-deployment --timeout=60s
-kubectl wait --for=condition=available -n kubeflow deployment/model-registry-ui --timeout=60s
+wait_or_dump kubeflow model-registry-db
+wait_or_dump kubeflow model-registry-deployment
+wait_or_dump kubeflow model-registry-ui
 
 echo "Dry-run KF Model Registry API directly..."
 nohup kubectl port-forward svc/model-registry-service -n kubeflow 8081:8080 &
@@ -32,7 +46,6 @@ curl -v -X 'GET' \
   'http://localhost:8081/api/model_registry/v1alpha3/registered_models?pageSize=100&orderBy=ID&sortOrder=DESC' \
   -H 'accept: application/json'
 
-# FIX 14: Wrap Istio gateway port-forward in a guard
 if ! lsof -i:8080 -t >/dev/null; then
   echo "Port 8080 not in use, starting Istio gateway port-forward..."
   INGRESS_GATEWAY_SERVICE=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')

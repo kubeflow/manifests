@@ -15,6 +15,18 @@ spec:
     spec:
       template:
         spec:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 472
+            runAsGroup: 472
+            fsGroup: 472
+            seccompProfile:
+              type: RuntimeDefault
           containers:
           - name: grafana
             image: grafana/grafana:10.2.3
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
