@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gpu-cluster-usage-dashboard
+  namespace: kubeflow-monitoring-system
+  labels:
+    grafana_dashboard: "1"
+data:
+  gpu-cluster-usage.json: |
+    {
+      "title": "GPU Cluster Usage",
+      "panels": [
+        {
+          "title": "Cluster-wide GPU Utilization %",
+          "type": "timeseries",
+          "targets": [
+            { "expr": "avg(DCGM_FI_DEV_GPU_UTIL) or avg(amd_gpu_utilization)", "legendFormat": "GPU Utilization" }
+          ]
+        },
+        {
+          "title": "GPU Memory Used vs Total per Node",
+          "type": "timeseries",
+          "targets": [
+            { "expr": "sum(DCGM_FI_DEV_FB_USED) by (node)", "legendFormat": "{{node}} Used" },
+            { "expr": "sum(DCGM_FI_DEV_FB_FREE + DCGM_FI_DEV_FB_USED) by (node)", "legendFormat": "{{node}} Total" }
+          ]
+        }
+      ],
+      "datasource": { "uid": "prometheus" }
+    }

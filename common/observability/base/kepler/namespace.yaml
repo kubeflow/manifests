@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kubeflow-monitoring-system
+  labels:
+    # Kepler requires a privileged PSS profile since it runs with hostPID, hostNetwork, and a privileged container.
+    pod-security.kubernetes.io/enforce: privileged

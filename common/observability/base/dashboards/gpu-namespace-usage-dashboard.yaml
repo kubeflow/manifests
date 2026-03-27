@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gpu-namespace-usage-dashboard
+  namespace: kubeflow-monitoring-system
+  labels:
+    grafana_dashboard: "1"
+data:
+  gpu-namespace-usage.json: |
+    {
+      "title": "GPU Namespace Usage",
+      "description": "This dashboard depends on kube-state-metrics providing the kube_pod_info series. Ensure kube-state-metrics is installed and scraped by Prometheus.",
+      "panels": [
+        {
+          "title": "Per-Workload-Namespace GPU Utilization over time",
+          "description": "Requires kube-state-metrics with kube_pod_info being scraped by the Prometheus datasource.",
+          "type": "timeseries",
+          "targets": [
+            { "expr": "sum by (exported_namespace) (label_replace(DCGM_FI_DEV_GPU_UTIL * on(pod) group_left(namespace) kube_pod_info{}, \"exported_namespace\", \"$1\", \"namespace\", \"(.*)\"))", "legendFormat": "{{exported_namespace}}" }
+          ]
+        }
+      ],
+      "datasource": { "uid": "prometheus" }
+    }

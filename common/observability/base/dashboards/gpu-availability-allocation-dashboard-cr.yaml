@@ -1,0 +1,12 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: gpu-availability-allocation
+  namespace: kubeflow-monitoring-system
+spec:
+  configMapRef:
+    name: gpu-availability-allocation-dashboard
+    key: gpu-availability-allocation.json
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"

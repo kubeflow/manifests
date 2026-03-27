@@ -1,0 +1,12 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: gpu-namespace-usage
+  namespace: kubeflow-monitoring-system
+spec:
+  configMapRef:
+    name: gpu-namespace-usage-dashboard
+    key: gpu-namespace-usage.json
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"

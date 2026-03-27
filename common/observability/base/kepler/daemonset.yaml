@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: kepler
+  namespace: kubeflow-monitoring-system
+  labels:
+    app.kubernetes.io/name: kepler
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kepler
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: kepler
+    spec:
+      serviceAccountName: kepler-sa
+      # hostPID and hostNetwork are required by Kepler to access host-level
+      # energy and kernel metrics. Ensure the kubeflow-monitoring-system namespace
+      # has the appropriate Pod Security exemptions (e.g., privileged policy).
+      hostPID: true
+      hostNetwork: true
+      containers:
+      - name: kepler
+        image: quay.io/sustainable_computing_io/kepler:v0.7.11
+        ports:
+        - name: http
+          containerPort: 9102
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        securityContext:
+          # Kepler requires privileged mode to access /proc, /sys, and the container
+          # runtime socket for per-pod energy metrics.
+          privileged: true
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+              - "ALL"
+        volumeMounts:
+        - name: proc
+          mountPath: /proc
+          readOnly: true
+        - name: sys
+          mountPath: /sys
+          readOnly: true
+        - name: containerd
+          mountPath: /var/run/containerd
+          readOnly: true
+      volumes:
+      - name: proc
+        hostPath:
+          path: /proc
+      - name: sys
+        hostPath:
+          path: /sys
+      - name: containerd
+        hostPath:
+          path: /var/run/containerd

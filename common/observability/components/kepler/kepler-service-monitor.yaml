@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: kepler
+  namespace: kubeflow-monitoring-system
+  labels:
+    app.kubernetes.io/name: kepler
+spec:
+  endpoints:
+  - interval: 15s
+    port: http
+  namespaceSelector:
+    matchNames:
+    - kubeflow-monitoring-system
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kepler
