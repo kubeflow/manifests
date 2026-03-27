@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: kserve-models-web-app
+  name: kserve-models-web-application
   namespace: kserve
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: kserve-models-web-app-cluster-role
+  name: kserve-models-web-application-cluster-role
 rules:
 - apiGroups:
   - authorization.k8s.io
@@ -59,12 +59,12 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: kserve-models-web-app-binding
+  name: kserve-models-web-application-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: kserve-models-web-app-cluster-role
+  name: kserve-models-web-application-cluster-role
 subjects:
 - kind: ServiceAccount
-  name: kserve-models-web-app
+  name: kserve-models-web-application
   namespace: kserve

@@ -6,12 +6,12 @@ setup_error_handling
 COMPONENT_NAME="models-web-app"
 REPOSITORY_NAME="kserve/models-web-app"
 REPOSITORY_URL="https://github.com/kserve/models-web-app.git"
-COMMIT="v0.16.1"
+COMMIT="c71ee4309f0335159d9fdfd4559a538b5c782c92"
 REPOSITORY_DIRECTORY="models-web-app"
 SOURCE_DIRECTORY=${SOURCE_DIRECTORY:=/tmp/kserve-${COMPONENT_NAME}}
 BRANCH_NAME=${BRANCH_NAME:=synchronize-kserve-${COMPONENT_NAME}-manifests-${COMMIT?}}
 MANIFESTS_DIRECTORY=$(dirname $SCRIPT_DIRECTORY)
-SOURCE_MANIFESTS_PATH="config"
+SOURCE_MANIFESTS_PATH="manifests/kustomize"
 DESTINATION_MANIFESTS_PATH="applications/kserve/${COMPONENT_NAME}"
 SOURCE_TEXT="\[.*\](https://github.com/${REPOSITORY_NAME}/tree/.*)"
 DESTINATION_TEXT="\[${COMMIT}\](https://github.com/${REPOSITORY_NAME}/tree/${COMMIT}/${SOURCE_MANIFESTS_PATH})"
