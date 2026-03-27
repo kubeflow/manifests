@@ -4,7 +4,7 @@ metadata:
   name: nvidia-dcgm-exporter
   namespace: gpu-operator
   labels:
-    app.kubernetes.io/name: prometheus-operator
+    app.kubernetes.io/name: nvidia-dcgm-exporter
 spec:
   endpoints:
   - interval: 15s

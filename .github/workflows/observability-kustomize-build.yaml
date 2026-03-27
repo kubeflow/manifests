@@ -1,0 +1,22 @@
+name: observability-kustomize-build
+
+on:
+  pull_request:
+    paths:
+      - 'common/observability/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install kustomize
+        run: |
+          curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+          sudo mv kustomize /usr/local/bin/
+      - name: Build base
+        run: kustomize build common/observability/base
+      - name: Build overlay
+        run: kustomize build common/observability/overlays/kubeflow
+      - name: Build kepler component
+        run: kustomize build common/observability/components/kepler

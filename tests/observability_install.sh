@@ -1,12 +1,23 @@
-#!/bin/bash
-set -euxo pipefail
-echo "Installing observability stack..."
-# The base component now includes everything needed, including CRDs and Operators.
-# We apply the overlay which includes the base.
-cd common/observability
-kustomize build overlays/kubeflow | kubectl apply --server-side --force-conflicts -f -
+#!/usr/bin/env bash
+set -euo pipefail
 
-echo "Waiting for operators to be ready..."
-kubectl wait --for=condition=Ready pod -l 'app.kubernetes.io/name=prometheus-operator' --timeout=180s -n kubeflow-monitoring-system
-kubectl wait --for=condition=Ready pod -l 'control-plane=controller-manager' --timeout=180s -n kubeflow-monitoring-system
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "${SCRIPT_DIR}/.."
+
+echo "Applying observability stack (server-side)..."
+kustomize build common/observability/overlays/kubeflow \
+  | kubectl apply --server-side --force-conflicts -f -
+
+echo "Waiting for Prometheus Operator to be ready..."
+kubectl wait --for=condition=Available deployment \
+  -l app.kubernetes.io/name=prometheus-operator \
+  -n kubeflow-monitoring-system \
+  --timeout=180s
+
+echo "Waiting for Grafana Operator to be ready..."
+kubectl wait --for=condition=Available deployment \
+  -l control-plane=controller-manager \
+  -n kubeflow-monitoring-system \
+  --timeout=180s
+
 echo "Observability stack installed successfully."

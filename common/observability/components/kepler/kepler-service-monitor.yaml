@@ -11,7 +11,7 @@ spec:
     port: http
   namespaceSelector:
     matchNames:
-    - kubeflow-monitoring-system
+    - kepler
   selector:
     matchLabels:
       app.kubernetes.io/name: kepler

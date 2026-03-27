@@ -75,7 +75,7 @@ This repository periodically synchronizes all official Kubeflow components from 
 | Volumes Web Application | applications/volumes-web-app/upstream | [v1.10.0](https://github.com/kubeflow/kubeflow/tree/v1.10.0/components/crud-web-apps/volumes/manifests) | 4m | 226Mi | 0GB |
 | Katib | applications/katib/upstream | [v0.19.0](https://github.com/kubeflow/katib/tree/v0.19.0/manifests/v1beta1) | 13m | 476Mi | 10GB |
 | KServe | applications/kserve/kserve | [v0.16.0](https://github.com/kserve/kserve/releases/tag/v0.16.0/install/v0.16.0) | 600m | 1200Mi | 0GB |
-| KServe Models Web Application | applications/kserve/models-web-app | [c71ee4309f0335159d9fdfd4559a538b5c782c92](https://github.com/kserve/models-web-app/tree/c71ee4309f0335159d9fdfd4559a538b5c782c92/manifests/kustomize) | 6m | 259Mi  | 0GB |
+| KServe Models Web Application | applications/kserve/models-web-app | [v0.16.1](https://github.com/kserve/models-web-app/tree/v0.16.1/config) | 6m | 259Mi  | 0GB |
 | Kubeflow Pipelines | applications/pipeline/upstream | [2.16.0](https://github.com/kubeflow/pipelines/tree/2.16.0/manifests/kustomize) | 970m | 3552Mi | 35GB |
 | Kubeflow Model Registry | applications/model-registry/upstream | [v0.3.7](https://github.com/kubeflow/model-registry/tree/v0.3.7/manifests/kustomize) | 510m | 2112Mi | 20GB |
 | Spark Operator	|	applications/spark/spark-operator	|	[2.5.0](https://github.com/kubeflow/spark-operator/tree/v2.5.0) | 9m | 41Mi | 0GB |
@@ -185,7 +185,7 @@ kustomize build common/kubeflow-namespace/base | kubectl apply -f -
 
 #### Observability Stack (Optional)
 
-This component provides an optional monitoring stack for GPU metrics (NVIDIA/AMD), along with Grafana dashboards. It includes Prometheus and Grafana operators and is deployed in the `kubeflow-monitoring-system` namespace. Support for energy consumption metrics via Kepler is an additional, opt-in component and is **not** installed by default; see the Kepler section below to enable it.
+This component provides an optional monitoring stack for GPU metrics (NVIDIA/AMD) along with Grafana dashboards. It includes Prometheus and Grafana operators deployed in the `kubeflow-monitoring-system` namespace. Energy consumption metrics via Kepler are available as a separate opt-in component and are NOT installed by default — see the Kepler section below.
 
 Install the observability base component (GPU metrics, Prometheus, and Grafana, without Kepler):
 
@@ -196,7 +196,7 @@ Install the observability base component (GPU metrics, Prometheus, and Grafana, 
 To opt into Kepler for energy metrics:
 
 ```sh
-kustomize build common/observability/components/kepler | kubectl apply -f -
+kustomize build common/observability/components/kepler | kubectl apply --server-side -f -
 ```
 
 #### Cert-manager

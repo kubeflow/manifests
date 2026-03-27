@@ -9,4 +9,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: kepler-sa
-  namespace: kubeflow-monitoring-system
+  namespace: kepler

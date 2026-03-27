@@ -1,18 +1,37 @@
-apiVersion: v1
-kind: ConfigMap
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
 metadata:
   name: gpu-cluster-usage-dashboard
   namespace: kubeflow-monitoring-system
   labels:
-    grafana_dashboard: "1"
-data:
-  gpu-cluster-usage.json: |
+    app.kubernetes.io/part-of: kubeflow-observability
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  json: |
     {
+      "__requires": [
+        { "type": "grafana", "id": "grafana", "name": "Grafana", "version": "9.0.0" },
+        { "type": "datasource", "id": "prometheus", "name": "Prometheus", "version": "1.0.0" }
+      ],
+      "templating": {
+        "list": [
+          {
+            "name": "datasource",
+            "type": "datasource",
+            "query": "prometheus",
+            "label": "Datasource",
+            "hide": 0
+          }
+        ]
+      },
       "title": "GPU Cluster Usage",
       "panels": [
         {
           "title": "Cluster-wide GPU Utilization %",
           "type": "timeseries",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
           "targets": [
             { "expr": "avg(DCGM_FI_DEV_GPU_UTIL) or avg(amd_gpu_utilization)", "legendFormat": "GPU Utilization" }
           ]
@@ -20,11 +39,11 @@ data:
         {
           "title": "GPU Memory Used vs Total per Node",
           "type": "timeseries",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
           "targets": [
             { "expr": "sum(DCGM_FI_DEV_FB_USED) by (node)", "legendFormat": "{{node}} Used" },
             { "expr": "sum(DCGM_FI_DEV_FB_FREE + DCGM_FI_DEV_FB_USED) by (node)", "legendFormat": "{{node}} Total" }
           ]
         }
-      ],
-      "datasource": { "uid": "prometheus" }
+      ]
     }

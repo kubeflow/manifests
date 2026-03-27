@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: kepler
-  namespace: kubeflow-monitoring-system
+  namespace: kepler
   labels:
     app.kubernetes.io/name: kepler
 spec:
@@ -34,14 +34,14 @@ spec:
             cpu: 500m
             memory: 512Mi
         securityContext:
-          # Kepler requires privileged mode to access /proc, /sys, and the container
-          # runtime socket for per-pod energy metrics.
+          # Kepler requires privileged mode to access host-level energy/kernel metrics
+          # via /proc, /sys, and the container runtime socket.
           privileged: true
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true
           capabilities:
             drop:
-              - "ALL"
+              - ALL
         volumeMounts:
         - name: proc
           mountPath: /proc

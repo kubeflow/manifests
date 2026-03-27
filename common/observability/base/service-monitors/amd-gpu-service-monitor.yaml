@@ -4,7 +4,7 @@ metadata:
   name: amd-gpu-metrics-exporter
   namespace: kube-amd-gpu
   labels:
-    app.kubernetes.io/name: prometheus-operator
+    app.kubernetes.io/name: amd-gpu-metrics-exporter
 spec:
   endpoints:
   - interval: 15s

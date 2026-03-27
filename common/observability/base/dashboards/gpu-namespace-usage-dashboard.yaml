@@ -1,24 +1,50 @@
-apiVersion: v1
-kind: ConfigMap
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
 metadata:
   name: gpu-namespace-usage-dashboard
   namespace: kubeflow-monitoring-system
   labels:
-    grafana_dashboard: "1"
-data:
-  gpu-namespace-usage.json: |
+    app.kubernetes.io/part-of: kubeflow-observability
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "grafana"
+  json: |
     {
+      "__requires": [
+        { "type": "grafana", "id": "grafana", "name": "Grafana", "version": "9.0.0" },
+        { "type": "datasource", "id": "prometheus", "name": "Prometheus", "version": "1.0.0" }
+      ],
+      "templating": {
+        "list": [
+          {
+            "name": "datasource",
+            "type": "datasource",
+            "query": "prometheus",
+            "label": "Datasource",
+            "hide": 0
+          },
+          {
+            "name": "namespace",
+            "type": "query",
+            "datasource": { "uid": "prometheus" },
+            "query": "label_values(kube_pod_info, namespace)",
+            "label": "Namespace",
+            "hide": 0
+          }
+        ]
+      },
       "title": "GPU Namespace Usage",
-      "description": "This dashboard depends on kube-state-metrics providing the kube_pod_info series. Ensure kube-state-metrics is installed and scraped by Prometheus.",
+      "description": "Requires kube-state-metrics for namespace-level GPU attribution via kube_pod_info.",
       "panels": [
         {
           "title": "Per-Workload-Namespace GPU Utilization over time",
           "description": "Requires kube-state-metrics with kube_pod_info being scraped by the Prometheus datasource.",
           "type": "timeseries",
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
           "targets": [
-            { "expr": "sum by (exported_namespace) (label_replace(DCGM_FI_DEV_GPU_UTIL * on(pod) group_left(namespace) kube_pod_info{}, \"exported_namespace\", \"$1\", \"namespace\", \"(.*)\"))", "legendFormat": "{{exported_namespace}}" }
+            { "expr": "sum by (namespace) (DCGM_FI_DEV_GPU_UTIL * on (pod) group_left(namespace) kube_pod_info)", "legendFormat": "{{namespace}}" }
           ]
         }
-      ],
-      "datasource": { "uid": "prometheus" }
+      ]
     }
