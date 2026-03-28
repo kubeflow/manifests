@@ -8,18 +8,24 @@ set -euxo pipefail
 
 echo "=== Model Registry Integration Tests ==="
 
+# Generate a ServiceAccount token for authenticated port-forward tests.
+# The hardened AuthorizationPolicy requires either ingress-gateway identity
+# or a valid Authorization header (without kubeflow-userid spoofing).
+KUBEFLOW_SERVICE_ACCOUNT_TOKEN="$(kubectl -n kubeflow create token default-editor 2>/dev/null || kubectl -n kubeflow-user-example-com create token default-editor)"
+
 # ---- Test 1: Direct API access via port-forward ----
 echo "Test 1: Direct Model Registry API access..."
 nohup kubectl port-forward svc/model-registry-service -n kubeflow 8081:8080 &
 timeout 30s bash -c 'until curl -s localhost:8081 > /dev/null 2>&1; do sleep 1; done'
 
-# ---- Test 2: Create a dummy RegisteredModel ----
+# ---- Test 2: Create a RegisteredModel ----
 echo ""
-echo "Test 2: Create a dummy RegisteredModel..."
+echo "Test 2: Create a RegisteredModel..."
 CREATE_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
   "http://localhost:8081/api/model_registry/v1alpha3/registered_models" \
   -H "Content-Type: application/json" \
-  -d '{"name": "test-model", "description": "Dummy model for CI testing"}')
+  -H "Authorization: Bearer ${KUBEFLOW_SERVICE_ACCOUNT_TOKEN}" \
+  -d '{"name": "test-model", "description": "Model for CI testing"}')
 
 CREATE_HTTP_CODE=$(echo "$CREATE_RESPONSE" | tail -1)
 CREATE_BODY=$(echo "$CREATE_RESPONSE" | sed '$d')
@@ -42,6 +48,7 @@ echo "Test 3: Create a ModelVersion..."
 VERSION_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
   "http://localhost:8081/api/model_registry/v1alpha3/registered_models/${MODEL_ID}/versions" \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ${KUBEFLOW_SERVICE_ACCOUNT_TOKEN}" \
   -d "{\"name\": \"v1\", \"description\": \"Test version for CI\", \"registeredModelId\": \"${MODEL_ID}\"}")
 
 VERSION_HTTP_CODE=$(echo "$VERSION_RESPONSE" | tail -1)
@@ -64,6 +71,7 @@ echo "Test 4: Create a ModelArtifact..."
 ARTIFACT_RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
   "http://localhost:8081/api/model_registry/v1alpha3/model_versions/${VERSION_ID}/artifacts" \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ${KUBEFLOW_SERVICE_ACCOUNT_TOKEN}" \
   -d "{\"name\": \"test-artifact\", \"description\": \"Test artifact for CI\", \"uri\": \"s3://dummy-bucket/model.tar.gz\", \"modelFormatName\": \"sklearn\", \"modelFormatVersion\": \"1.0\", \"artifactType\": \"model-artifact\", \"modelVersionId\": \"${VERSION_ID}\"}")
 
 ARTIFACT_HTTP_CODE=$(echo "$ARTIFACT_RESPONSE" | tail -1)
@@ -81,7 +89,8 @@ fi
 echo ""
 echo "Test 5: Verify RegisteredModel appears in listing..."
 LIST_RESPONSE=$(curl -s -w "\n%{http_code}" \
-  "http://localhost:8081/api/model_registry/v1alpha3/registered_models?pageSize=100&orderBy=ID&sortOrder=DESC")
+  "http://localhost:8081/api/model_registry/v1alpha3/registered_models?pageSize=100&orderBy=ID&sortOrder=DESC" \
+  -H "Authorization: Bearer ${KUBEFLOW_SERVICE_ACCOUNT_TOKEN}")
 
 LIST_HTTP_CODE=$(echo "$LIST_RESPONSE" | tail -1)
 LIST_BODY=$(echo "$LIST_RESPONSE" | sed '$d')
@@ -138,6 +147,36 @@ if [ "$STATUS_CODE" -eq 403 ]; then
     echo "PASS: Unauthorized access correctly denied (HTTP $STATUS_CODE)"
 else
     echo "FAIL: Expected HTTP 403 for unauthorized access, got: $STATUS_CODE"
+    exit 1
+fi
+
+
+# ---- Test 7: Unauthenticated internal access must be blocked ----
+echo ""
+echo "Test 7: Unauthenticated internal access must be blocked..."
+UNAUTHENTICATED_STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+  "http://localhost:8081/api/model_registry/v1alpha3/registered_models")
+
+if [ "$UNAUTHENTICATED_STATUS_CODE" -eq 403 ]; then
+    echo "PASS: Unauthenticated internal access correctly denied (HTTP $UNAUTHENTICATED_STATUS_CODE)"
+else
+    echo "FAIL: Expected HTTP 403 for unauthenticated access, got: $UNAUTHENTICATED_STATUS_CODE"
+    exit 1
+fi
+
+
+# ---- Test 8: Identity spoofing via kubeflow-userid header must be blocked ----
+echo ""
+echo "Test 8: Identity spoofing via kubeflow-userid header must be blocked..."
+SPOOFED_IDENTITY_STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+  -H "Authorization: Bearer ${KUBEFLOW_SERVICE_ACCOUNT_TOKEN}" \
+  -H "kubeflow-userid: admin@kubeflow.org" \
+  "http://localhost:8081/api/model_registry/v1alpha3/registered_models")
+
+if [ "$SPOOFED_IDENTITY_STATUS_CODE" -eq 403 ]; then
+    echo "PASS: Identity spoofing correctly denied (HTTP $SPOOFED_IDENTITY_STATUS_CODE)"
+else
+    echo "FAIL: Expected HTTP 403 for spoofed identity, got: $SPOOFED_IDENTITY_STATUS_CODE"
     exit 1
 fi
 
