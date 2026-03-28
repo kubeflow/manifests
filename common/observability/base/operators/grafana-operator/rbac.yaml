@@ -5,9 +5,10 @@ metadata:
   namespace: kubeflow-monitoring-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
+kind: Role
 metadata:
   name: kubeflow-grafana-operator
+  namespace: kubeflow-monitoring-system
 rules:
 - apiGroups: [""]
   resources: ["configmaps", "secrets", "services", "serviceaccounts"]
@@ -23,12 +24,13 @@ rules:
   verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+kind: RoleBinding
 metadata:
   name: kubeflow-grafana-operator
+  namespace: kubeflow-monitoring-system
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
+  kind: Role
   name: kubeflow-grafana-operator
 subjects:
 - kind: ServiceAccount

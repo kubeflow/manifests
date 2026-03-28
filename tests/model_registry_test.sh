@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Track port-forward PIDs so they are always killed on exit.
-PF_PIDS=()
+# Track port-forward process IDs so they are always killed on exit.
+PORT_FORWARD_PIDS=()
 
 cleanup() {
   echo "Cleaning up port-forwarding processes..."
-  for pid in "${PF_PIDS[@]:-}"; do
+  for pid in "${PORT_FORWARD_PIDS[@]:-}"; do
     kill "$pid" 2>/dev/null || true
   done
 }
@@ -21,7 +21,7 @@ wait_or_dump() {
   if ! kubectl wait --for=condition=available -n "$ns" "deployment/$deploy" --timeout="$timeout"; then
     echo "ERROR: deployment $deploy in namespace $ns did not become available"
     kubectl get events -n "$ns" --sort-by='.lastTimestamp' || true
-    kubectl describe "deployment/$deploy" -n "$ns"
+    kubectl describe "deployment/$deploy" -n "$ns" || true
     kubectl logs "deployment/$deploy" -n "$ns" --all-containers --tail=50 || true
     exit 1
   fi
@@ -56,10 +56,10 @@ wait_or_dump kubeflow model-registry-ui
 
 echo "Dry-run KF Model Registry API directly..."
 nohup kubectl port-forward svc/model-registry-service -n kubeflow 8081:8080 &
-PF_PID_8081=$!
-PF_PIDS+=($PF_PID_8081)
+PORT_FORWARD_PID_8081=$!
+PORT_FORWARD_PIDS+=($PORT_FORWARD_PID_8081)
 
-if ! wait_for_port 8081 "$PF_PID_8081"; then
+if ! wait_for_port 8081 "$PORT_FORWARD_PID_8081"; then
   exit 1
 fi
 
@@ -71,10 +71,10 @@ if ! lsof -i:8080 -t >/dev/null; then
   echo "Port 8080 not in use, starting Istio gateway port-forward..."
   INGRESS_GATEWAY_SERVICE=$(kubectl get svc --namespace istio-system --selector="app=istio-ingressgateway" --output jsonpath='{.items[0].metadata.name}')
   nohup kubectl port-forward --namespace istio-system svc/${INGRESS_GATEWAY_SERVICE} 8080:80 &
-  PF_PID_8080=$!
-  PF_PIDS+=($PF_PID_8080)
+  PORT_FORWARD_PID_8080=$!
+  PORT_FORWARD_PIDS+=($PORT_FORWARD_PID_8080)
 
-  if ! wait_for_port 8080 "$PF_PID_8080"; then
+  if ! wait_for_port 8080 "$PORT_FORWARD_PID_8080"; then
     exit 1
   fi
 fi
