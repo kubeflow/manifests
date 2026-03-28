@@ -44,7 +44,7 @@ wait_for_port() {
     fi
     echo "waiting for port-forwarding $port..."
     sleep 1
-    ((count++))
+    count=$((count+1))
   done
   echo "port-forwarding $port ready"
 }

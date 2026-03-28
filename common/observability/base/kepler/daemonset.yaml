@@ -49,8 +49,8 @@ spec:
         - name: sys
           mountPath: /sys
           readOnly: true
-        - name: containerd
-          mountPath: /var/run/containerd
+        - name: runtime-dir
+          mountPath: /var/run
           readOnly: true
       volumes:
       - name: proc
@@ -59,6 +59,6 @@ spec:
       - name: sys
         hostPath:
           path: /sys
-      - name: containerd
+      - name: runtime-dir
         hostPath:
-          path: /var/run/containerd
+          path: /var/run

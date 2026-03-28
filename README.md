@@ -195,6 +195,8 @@ Install the observability base component (GPU metrics, Prometheus, and Grafana, 
 
 To opt into Kepler for energy metrics:
 
+> **Note on Container Runtimes:** The Kepler component mounts the generic `/var/run` host path to automatically pick up the container runtime socket (which supports containerd, CRI-O, and other standard runtimes). 
+
 ```sh
 kustomize build common/observability/components/kepler | kubectl apply --server-side -f -
 ```

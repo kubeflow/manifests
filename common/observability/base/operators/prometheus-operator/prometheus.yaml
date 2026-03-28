@@ -10,6 +10,17 @@ spec:
   resources:
     requests:
       memory: 400Mi
+  securityContext:
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+  - name: prometheus
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
 ---
 apiVersion: v1
 kind: ServiceAccount
