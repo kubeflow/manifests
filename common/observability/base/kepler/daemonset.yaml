@@ -39,9 +39,6 @@ spec:
           privileged: true
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true
-          capabilities:
-            drop:
-              - ALL
         volumeMounts:
         - name: proc
           mountPath: /proc

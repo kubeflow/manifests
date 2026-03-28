@@ -25,6 +25,17 @@ spec:
           containers:
           - name: grafana
             image: grafana/grafana:10.2.3
+            env:
+            - name: GF_SECURITY_ADMIN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-admin-credentials
+                  key: admin-user
+            - name: GF_SECURITY_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-admin-credentials
+                  key: admin-password
             securityContext:
               allowPrivilegeEscalation: false
               capabilities:

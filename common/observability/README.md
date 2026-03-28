@@ -50,9 +50,9 @@ kustomize build common/observability/components/kepler | kubectl apply --server-
 ```sh
 kubectl port-forward svc/grafana-service -n kubeflow-monitoring-system 3000:3000
 ```
-Open http://localhost:3000 — default credentials are `admin` / `admin` on first login.
+Open http://localhost:3000 — default credentials are `admin` / `admin` (managed via `grafana-admin-credentials` Secret).
 
-> **Security warning:** These default credentials are insecure and must not be used beyond local testing. Immediately after first login, rotate the admin password via `Configuration → Users → admin`. For shared or production clusters, configure credentials via a Kubernetes Secret and the Grafana Operator before exposing Grafana externally.
+> **Security warning:** These default credentials are provided for ease of initial access and must be rotated immediately for production use by updating the `grafana-admin-credentials` Secret or via the Grafana UI.
 
 ## Kepler (opt-in)
 Kepler deploys to its own `kepler` namespace (PSS: privileged) to avoid impacting the PSS restricted posture of `kubeflow-monitoring-system`. It requires `privileged: true` to access `/proc`, `/sys`, and the container runtime socket for energy metrics.

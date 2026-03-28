@@ -4,5 +4,6 @@ resources:
 - crds.yaml
 - deployment.yaml
 - rbac.yaml
+- admin-credentials.yaml
 - grafana.yaml
 - datasource.yaml
