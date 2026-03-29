@@ -1,5 +1,5 @@
 ## Overview
-An opt-in kustomize component providing a complete monitoring foundation for Kubeflow clusters with GPU workloads. Installs Prometheus Operator, Grafana Operator, GPU ServiceMonitors for NVIDIA DCGM and AMD ROCm, and three Grafana dashboards. Kepler energy metrics are available as a separate opt-in sub-component.
+An opt-in kustomize component providing a complete monitoring foundation for Kubeflow clusters. The base component focuses on GPU workloads (NVIDIA DCGM + AMD ROCm) and installs Prometheus Operator, Grafana Operator, GPU ServiceMonitors, and three Grafana dashboards. Energy metrics via **Kepler** are available as a separate, optional sub-component and are not part of the default installation.
 
 > **Note:** All ServiceMonitor resources are created in the `kubeflow-monitoring-system` namespace (forced by the base kustomization). The `spec.namespaceSelector` field on each ServiceMonitor controls which target namespaces are scraped. If the target namespace (e.g. `gpu-operator`) does not exist, Prometheus will simply find no matching endpoints — no error is raised.
 
@@ -12,15 +12,24 @@ An opt-in kustomize component providing a complete monitoring foundation for Kub
 | AMD GPU Operator | AMD ServiceMonitor | Runs in `kube-amd-gpu` ns — ServiceMonitor scrapes it via `spec.namespaceSelector`; silent if absent |
 | kube-state-metrics | GPU Namespace Usage + Availability dashboards | **Without it 2/3 dashboards render blank with no error** — install via kube-prometheus-stack or standalone |
 
+### Architecture Support
+| Component | x86_64 | ARM64 |
+|---|:---:|:---:|
+| Core Stack (Prometheus, Grafana) | ✅ | ✅ |
+| NVIDIA DCGM Exporter | ✅ | ⚠️ (Requires specific image) |
+| AMD GPU Exporter | ✅ | ❌ |
+| Kepler | ✅ | ✅ |
+
 ## Installation
 ```sh
-# Main stack (Prometheus + Grafana + ServiceMonitors + dashboards)
+# Main stack (Prometheus + Grafana + GPU ServiceMonitors + dashboards)
 kustomize build common/observability/overlays/kubeflow | kubectl apply --server-side -f -
 
 # Or via script
 ./tests/observability_install.sh
 
-# Kepler energy metrics (opt-in — separate step)
+# Kepler energy metrics (OPTIONAL — separate step)
+# Note: Kepler requires privileged access. See section below.
 kustomize build common/observability/components/kepler | kubectl apply --server-side -f -
 ```
 > `--server-side` is required — CRD bundles exceed client-side annotation size limits.

@@ -5,6 +5,7 @@ metadata:
   namespace: kubeflow-monitoring-system
   labels:
     app.kubernetes.io/name: kepler
+    app.kubernetes.io/part-of: kubeflow-observability
 spec:
   endpoints:
   - interval: 15s

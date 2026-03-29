@@ -5,7 +5,9 @@ metadata:
   namespace: kubeflow-monitoring-system
 spec:
   serviceAccountName: prometheus
-  serviceMonitorSelector: {}
+  serviceMonitorSelector:
+    matchLabels:
+      app.kubernetes.io/part-of: kubeflow-observability
   serviceMonitorNamespaceSelector: {}
   resources:
     requests:
