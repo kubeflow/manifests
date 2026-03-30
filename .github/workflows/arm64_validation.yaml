@@ -1,0 +1,69 @@
+name: ARM64/AArch64 Image Validation
+
+on:
+  pull_request:
+    paths:
+      - "example/**"
+      - "common/**"
+      - "tests/**"
+      - "docs/arm64.md"
+      - ".github/workflows/arm64_validation.yaml"
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  arm64-image-validation:
+    if: ${{ github.repository == 'kubeflow/manifests' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install kustomize
+        run: |
+          bash tests/kustomize_install.sh
+          kustomize version
+
+      - name: Validate images support linux/arm64
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y skopeo jq
+
+          kustomize build example > /tmp/kubeflow.yaml
+
+          grep -E '^[[:space:]]*image:[[:space:]]*' /tmp/kubeflow.yaml \
+            | sed -E 's/^[[:space:]]*image:[[:space:]]*//' \
+            | sed -E 's/[[:space:]]+$//' \
+            | sort -u \
+            > /tmp/kubeflow-images.txt
+
+          test -s /tmp/kubeflow-images.txt
+
+          missing=0
+          while IFS= read -r image; do
+            [ -z "${image}" ] && continue
+            echo "Checking ${image}"
+
+            raw="$(skopeo inspect --raw "docker://${image}" 2>/dev/null || true)"
+            if [ -z "${raw}" ]; then
+              echo "WARNING: cannot inspect ${image} (registry/auth error). Skipping."
+              continue
+            fi
+
+            if echo "${raw}" | jq -e '.manifests' >/dev/null 2>&1; then
+              if echo "${raw}" | jq -e \
+                '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "arm64")' >/dev/null; then
+                echo "OK: ${image} supports linux/arm64"
+              else
+                echo "FAIL: ${image} does not advertise linux/arm64"
+                missing=$((missing+1))
+              fi
+            else
+              echo "WARNING: ${image} is not a manifest list; cannot confirm linux/arm64 from metadata."
+            fi
+          done < /tmp/kubeflow-images.txt
+
+          test "${missing}" -eq 0

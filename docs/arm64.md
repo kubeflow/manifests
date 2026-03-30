@@ -11,6 +11,9 @@ For best results:
 - Use the **latest Kubeflow manifests release**.
 - If you are testing fixes or validating ongoing work, try the **repository default branch**.
 
+## Automation (continuous validation)
+This repository includes a GitHub Actions workflow that renders `kustomize build example` and verifies that referenced images publish a `linux/arm64` platform.
+
 ## Prerequisites
 - A Kubernetes cluster running on ARM64 nodes
 - `kubectl`
@@ -98,7 +101,7 @@ Attach `/tmp/kubeflow-images.txt` (or a subset of relevant failing images) when 
 ## Suggested report template for kubeflow/manifests#2745
 When commenting on #2745, include:
 
-- **Manifests ref**: (e.g., `v1.9-branch` commit SHA or release tag)
+- **Manifests ref**: (release tag, or commit SHA from the default branch)
 - **Cluster**: (provider, Kubernetes version)
 - **Node arch**: output of `kubectl get nodes ... architecture`
 - **Failing pods**: `kubectl get pods -A | grep -E "ImagePullBackOff|ErrImagePull|CrashLoopBackOff|Error"`
