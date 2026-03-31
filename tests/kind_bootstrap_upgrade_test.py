@@ -31,3 +31,5 @@ def test_kind_bootstrap_targets_kind_031_and_kubernetes_135():
     assert "apiVersion: kubeadm.k8s.io/v1beta3" in script
     assert script.count('image: ${KIND_NODE_IMAGE}') == 3
     assert '--name kubeflow' in script
+    assert "containerdConfigPatches:" not in script
+    assert "registry.mirrors" not in script
