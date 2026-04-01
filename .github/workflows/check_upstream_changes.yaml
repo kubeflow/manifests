@@ -1,0 +1,66 @@
+name: Check Upstream Changes
+
+on:
+  pull_request_target:
+    paths:
+    - '**/upstream/**'
+
+permissions:
+  contents: read
+  actions: read
+  pull-requests: write
+
+jobs:
+  check-upstream-changes:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v5
+      with:
+        fetch-depth: 0
+        ref: ${{ github.event.pull_request.head.sha }}
+
+    - name: Fetch master branch
+      run: git fetch origin master
+
+    - name: Detect changed upstream paths
+      id: upstream_changes
+      run: |
+        changed=$(git diff-tree -r --no-commit-id --name-only origin/master..HEAD | grep '/upstream/' || true)
+        if [ -z "$changed" ]; then
+          echo "No upstream folders were modified."
+          echo "has_changes=false" >> "$GITHUB_OUTPUT"
+        else
+          echo "The following files inside upstream folders were modified:"
+          echo "$changed"
+          echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          echo "changed_files<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$changed" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Post PR comment
+      if: steps.upstream_changes.outputs.has_changes == 'true'
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        marker="<!-- upstream-changes-warning -->"
+        body="${marker}
+        ⚠️ **Upstream folder changes detected**
+
+        This PR modifies files inside one or more \`upstream\` folders. Changes to upstream manifests are usually wrong and should be reviewed carefully.
+
+        **Changed upstream files:**
+        \`\`\`
+        ${{ steps.upstream_changes.outputs.changed_files }}
+        \`\`\`"
+
+        existing=$(gh api "repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" \
+          --jq ".[] | select(.body | contains(\"$marker\")) | .id" | head -1)
+
+        if [ -n "$existing" ]; then
+          gh api "repos/${{ github.repository }}/issues/comments/$existing" \
+            -X PATCH -f body="$body"
+        else
+          gh pr comment "${{ github.event.pull_request.number }}" --body "$body"
+        fi
