@@ -294,4 +294,4 @@ if __name__ == "__main__":
         sys.exit(1)
     
     success = compare_manifests(kustomize_file, helm_file, component, scenario, namespace)
-    sys.exit(0 if success else 1) 
+    sys.exit(0 if success else 1)

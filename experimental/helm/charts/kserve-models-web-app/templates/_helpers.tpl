@@ -164,4 +164,4 @@ Create KServe common labels
 {{- define "kserve-models-web-app.kserveLabels" -}}
 app: kserve
 app.kubernetes.io/name: kserve
-{{- end }} 
+{{- end }}
