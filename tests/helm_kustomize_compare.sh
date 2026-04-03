@@ -122,8 +122,8 @@ case "$COMPONENT" in
         )
         
         declare -A HELM_VALUES=(
-            ["base"]=""  
-            ["kubeflow"]="--set kubeflow.enabled=true --set global.namespace=kubeflow"
+            ["base"]="$CHART_DIR/ci/base-values.yaml"
+            ["kubeflow"]="$CHART_DIR/ci/kubeflow-values.yaml"
         )
         
         declare -A NAMESPACES=(
@@ -191,7 +191,7 @@ if [ ! -d "$CHART_DIR" ]; then
     exit 1
 fi
 
-if [[ "$COMPONENT" != "kserve-models-web-app" ]] && [ ! -f "$HELM_VALUES_ARG" ]; then
+if [ -n "$HELM_VALUES_ARG" ] && [ ! -f "$HELM_VALUES_ARG" ]; then
     echo "ERROR: Helm values file does not exist: $HELM_VALUES_ARG"
     exit 1
 fi
@@ -205,11 +205,14 @@ kustomize build "$KUSTOMIZE_PATH" > "$KUSTOMIZE_OUTPUT"
 # Generate Helm manifests (different approach for KServe Models Web App)
 cd "$ROOT_DIR"
 if [[ "$COMPONENT" == "kserve-models-web-app" ]]; then
-    # KServe uses command-line arguments
+    # KServe uses chart-local CI values files, but still templates from the repo root.
     if [ -n "$HELM_VALUES_ARG" ]; then
-        eval "helm template kserve-models-web-app $CHART_DIR --namespace $NAMESPACE $HELM_VALUES_ARG > $HELM_OUTPUT"
+        helm template kserve-models-web-application "$CHART_DIR" \
+            --namespace "$NAMESPACE" \
+            --values "$HELM_VALUES_ARG" > "$HELM_OUTPUT"
     else
-        helm template kserve-models-web-app "$CHART_DIR" --namespace "$NAMESPACE" > "$HELM_OUTPUT"
+        helm template kserve-models-web-application "$CHART_DIR" \
+            --namespace "$NAMESPACE" > "$HELM_OUTPUT"
     fi
 else
     cd "$CHART_DIR"

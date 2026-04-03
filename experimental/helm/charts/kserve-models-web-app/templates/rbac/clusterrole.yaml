@@ -31,6 +31,8 @@ rules:
   resources:
   - inferenceservices
   - inferenceservices/status
+  - inferencegraphs
+  - inferencegraphs/status
   verbs:
   - get
   - list
