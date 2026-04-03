@@ -1,0 +1,9 @@
+mcp_catalogs:
+  - name: "Red Hat MCP Servers"
+    id: rh_mcp_servers
+    type: yaml
+    enabled: true
+    properties:
+      yamlCatalogPath: mcp-servers.yaml
+    labels:
+      - Red Hat MCP

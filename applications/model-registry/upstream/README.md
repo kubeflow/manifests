@@ -35,6 +35,12 @@ kubectl wait --for=condition=available-n $PROFILE_NAME deployment/model-registry
 kubectl logs -n $PROFILE_NAME deployment/model-registry-deployment
 ```
 
+### CSI multi-profile setup
+
+If you want to use the CSI storage initializer with Model Registry in profile namespaces, you only need to deploy the standard `ClusterStorageContainer` once globally. Workloads in specific namespaces can then append the `?namespace=<namespace>` query parameter to their `storageUri` to force the CSI initializer to route the request to the correct Model Registry in that namespace.
+
+See [cmd/csi/GET_STARTED.md](../../cmd/csi/GET_STARTED.md) for the full multi-profile CSI workflow and examples.
+
 Now, to install the Model Registry UI as a Kubeflow component, you need first to deploy the Model Registry UI:
 
 ```bash

@@ -10,7 +10,7 @@ models:
       # Falcon-Mini-2B
 
       **Model Summary:**
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. This is a community-contributed model designed for efficient inference.
+      This is a community-contributed model designed for efficient inference.
 
       - **Developers:** Open Models Foundation Community
       - **Release Date**: October 5th, 2024
@@ -22,7 +22,6 @@ models:
       * Edge-optimized
       * Multilingual support
 
-      Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.
     language: ["en", "es", "fr"]
     license: mit
     licenseLink: https://opensource.org/licenses/MIT
@@ -66,7 +65,6 @@ models:
       * Social media analysis
       * Customer feedback processing
 
-      Sunt in culpa qui officia deserunt mollit anim id est laborum.
     language: ["en"]
     license: apache-2.0
     licenseLink: https://www.apache.org/licenses/LICENSE-2.0.txt
@@ -111,8 +109,6 @@ models:
       * Creative writing assistance
       * Character development
       * Plot ideation
-
-      Itaque earum rerum hic tenetur a sapiente delectus.
 
       **Note:** This is an experimental community model and outputs should be reviewed for quality.
     language: ["en"]
@@ -161,7 +157,6 @@ models:
       * Optimized for short text
       * API-friendly
 
-      Omnis voluptas assumenda est, omnis dolor repellendus.
 
       **Limitations:**
       Best suited for short texts (< 512 tokens). For longer documents, consider using larger models.
@@ -185,3 +180,58 @@ models:
           architecture:
             metadataType: MetadataStringValue
             string_value: '["amd64", "arm64"]'
+
+  - name: neural-systems/universal-embedder-v2
+    provider: Neural Systems Research
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImJsdWUiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMyOTYzRkY7c3RvcC1vcGFjaXR5OjEiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMxRTRFQkI7c3RvcC1vcGFjaXR5OjEiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSIzNSIgZmlsbD0idXJsKCNibHVlKSIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNTAiIHI9IjIwIiBmaWxsPSJ3aGl0ZSIgb3BhY2l0eT0iMC40Ii8+PC9zdmc+
+    description: |-
+      (DEMO) Universal-Embedder-V2 is a high-performance text embedding model that converts text
+      into dense vector representations for semantic search, clustering, and similarity tasks.
+    readme: |-
+      # Universal-Embedder-V2
+
+      **Model Summary:**
+      Universal-Embedder-V2 is a state-of-the-art embedding model designed for semantic understanding
+      and vector representation of text data.
+
+      - **Developers:** Neural Systems Research
+      - **Release Date**: January 15th, 2025
+      - **License:** [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0)
+
+      **Capabilities:**
+      * Generates 768-dimensional embeddings
+      * Supports 100+ languages
+      * Optimized for semantic search
+      * Fine-tuned for RAG applications
+      * High cosine similarity accuracy
+
+      **Use Cases:**
+      - Semantic search and retrieval
+      - Document clustering
+      - Sentence similarity
+      - RAG (Retrieval-Augmented Generation)
+      - Question answering systems
+    language: ["en", "es", "fr", "de", "zh", "ja"]
+    license: apache-2.0
+    licenseLink: https://www.apache.org/licenses/LICENSE-2.0
+    libraryName: sentence-transformers
+    tasks:
+      - text-embedding
+    createTimeSinceEpoch: "1736899200000"
+    lastUpdateTimeSinceEpoch: "1736899200000"
+    customProperties:
+      model_type:
+        string_value: "embedding"
+        metadataType: MetadataStringValue
+      embedding_dimension:
+        string_value: "768"
+        metadataType: MetadataStringValue
+    artifacts:
+      - uri: oci://registry.example.com/neural-systems/universal-embedder-v2:latest
+        createTimeSinceEpoch: "1736899200000"
+        lastUpdateTimeSinceEpoch: "1736899200000"
+        customProperties:
+          architecture:
+            metadataType: MetadataStringValue
+            string_value: '["amd64", "arm64"]'
+

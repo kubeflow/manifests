@@ -1646,6 +1646,67 @@ models:
             int_value: "1"
             metadataType: MetadataIntValue
 
+  - name: openai-compatible/function-caller-7b
+    provider: Function AI Labs
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImdyZWVuIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojMTBCOTgxO3N0b3Atb3BhY2l0eToxIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojMEU5RjZFO3N0b3Atb3BhY2l0eToxIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3QgeD0iMjAiIHk9IjMwIiB3aWR0aD0iNjAiIGhlaWdodD0iNDAiIHJ4PSI1IiBmaWxsPSJ1cmwoI2dyZWVuKSIvPjxyZWN0IHg9IjM1IiB5PSI0NSIgd2lkdGg9IjMwIiBoZWlnaHQ9IjEwIiBmaWxsPSJ3aGl0ZSIgb3BhY2l0eT0iMC42Ii8+PC9zdmc+
+    description: |-
+      (DEMO) Function-Caller-7B is a specialized language model optimized for tool calling and
+      function execution with structured JSON output and parameter validation.
+    readme: |-
+      # Function-Caller-7B
+
+      **Model Summary:**
+      Function-Caller-7B is an instruction-tuned model specifically designed for function calling,
+      tool use, and API integration scenarios.
+
+      - **Developers:** Function AI Labs
+      - **Release Date**: February 1st, 2025
+      - **License:** [MIT License](https://opensource.org/licenses/MIT)
+
+      **Capabilities:**
+      * Accurate function parameter extraction
+      * Multi-turn function calling
+      * JSON schema validation
+      * Parallel function execution
+      * Error handling and retry logic
+
+      **Use Cases:**
+      - Agent frameworks and autonomous systems
+      - API orchestration
+      - Database query generation
+      - Workflow automation
+      - Tool-augmented LLM applications
+
+      **Compatible With:**
+      - OpenAI function calling API
+      - LangChain tools
+      - Custom function schemas
+    language: ["en"]
+    license: mit
+    licenseLink: https://opensource.org/licenses/MIT
+    libraryName: transformers
+    tasks:
+      - tool-calling
+      - text-generation
+    createTimeSinceEpoch: "1738368000000"
+    lastUpdateTimeSinceEpoch: "1738368000000"
+    customProperties:
+      model_type:
+        string_value: "agent"
+        metadataType: MetadataStringValue
+      max_tools:
+        string_value: "32"
+        metadataType: MetadataStringValue
+    artifacts:
+      - uri: oci://registry.example.com/function-ai/function-caller-7b:v1.2
+        createTimeSinceEpoch: "1738368000000"
+        lastUpdateTimeSinceEpoch: "1738368000000"
+        customProperties:
+          architecture:
+            metadataType: MetadataStringValue
+            string_value: '["amd64"]'
+
+
 
 
 

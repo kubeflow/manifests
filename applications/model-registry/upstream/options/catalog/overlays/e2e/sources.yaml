@@ -31,3 +31,24 @@ mcp_catalogs:
     properties:
       yamlCatalogPath: /testdata/test-mcp-servers.yaml
 
+labels:
+  - name: null
+    displayName: Community and custom
+  - name: model-label
+    assetType: models
+  - name: mcp-label
+    assetType: mcp_servers
+
+namedQueries:
+  production_ready:
+    verifiedSource:
+      operator: "="
+      value: true
+  security_focused:
+    sast:
+      operator: "="
+      value: true
+    readOnlyTools:
+      operator: "="
+      value: true
+
