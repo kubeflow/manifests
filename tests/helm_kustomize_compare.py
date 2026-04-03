@@ -213,8 +213,6 @@ def get_expected_helm_extras(component: str, scenario: str) -> set:
     elif component == "model-registry":
         return set()  # No extra resources in Helm for Model Registry
     elif component == "kserve-models-web-app":
-        if scenario == "base":
-            return {"AuthorizationPolicy/kserve-models-web-app"}
         return set()
     else:
         return set()
