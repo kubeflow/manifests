@@ -20,7 +20,7 @@ env:
   KF_PROFILE: kubeflow-user-example-com
 
 jobs:
-  build:
+  kserve_models_web_application_test:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:

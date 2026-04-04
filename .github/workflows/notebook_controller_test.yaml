@@ -16,7 +16,7 @@ permissions:
   actions: read
 
 jobs:
-  build:
+  notebook_controller_test:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout

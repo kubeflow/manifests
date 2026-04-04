@@ -17,7 +17,7 @@ permissions:
   actions: read
 
 jobs:
-  build:
+  dex_oauth2-proxy_test:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout

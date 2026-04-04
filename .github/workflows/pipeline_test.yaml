@@ -21,7 +21,7 @@ env:
   KF_PROFILE: kubeflow-user-example-com
 
 jobs:
-  build:
+  pipeline_test:
     timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:

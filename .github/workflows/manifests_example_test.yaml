@@ -9,7 +9,7 @@ permissions:
   actions: read
 
 jobs:
-  build:
+  manifests_example_test:
     name: Test
     if: ${{ github.repository == 'kubeflow/manifests' }}
     runs-on: ubuntu-latest

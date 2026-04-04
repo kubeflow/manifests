@@ -15,7 +15,7 @@ permissions:
   contents: read
   actions: read
 jobs:
-  build:
+  ray_test:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:

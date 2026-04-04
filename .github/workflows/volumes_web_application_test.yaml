@@ -21,7 +21,7 @@ env:
   KF_PROFILE: kubeflow-user-example-com
 
 jobs:
-  build:
+  volumes_web_application_test:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
