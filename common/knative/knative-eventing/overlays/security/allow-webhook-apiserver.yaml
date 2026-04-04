@@ -1,0 +1,23 @@
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: webhook-apiserver
+  namespace: knative-eventing
+spec:
+  podSelector:
+    matchExpressions:
+    - key: app
+      operator: In
+      values:
+      - eventing-webhook
+    - key: role
+      operator: In
+      values:
+      - eventing-webhook
+  # The kubernetes api server must reach the webhook
+  ingress:
+  - ports:
+    - protocol: TCP
+      port: 8443
+  policyTypes:
+  - Ingress
