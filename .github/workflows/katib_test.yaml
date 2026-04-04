@@ -19,7 +19,7 @@ env:
   KF_PROFILE: kubeflow-user-example-com
 
 jobs:
-  build:
+  katib_test:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout

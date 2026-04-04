@@ -13,7 +13,7 @@ permissions:
   actions: read
 
 jobs:
-  build:
+  jupyter_web_application_test:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout

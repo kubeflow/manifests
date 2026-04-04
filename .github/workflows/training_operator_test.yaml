@@ -21,7 +21,7 @@ env:
   KF_PROFILE: kubeflow-user-example-com
 
 jobs:
-  build:
+  training_operator_test:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout

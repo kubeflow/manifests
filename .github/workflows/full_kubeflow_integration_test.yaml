@@ -16,7 +16,7 @@ env:
   KF_PROFILE: kubeflow-user-example-com
 
 jobs:
-  kubeflow-integration:
+  full_kubeflow_integration_test:
     name: Kubeflow Installation and Testing
     if: ${{ github.repository == 'kubeflow/manifests' }}
     runs-on:

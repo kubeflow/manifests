@@ -14,7 +14,7 @@ permissions:
   actions: read
 
 jobs:
-  build:
+  admission_webhook_test:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout

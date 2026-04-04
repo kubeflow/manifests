@@ -17,7 +17,7 @@ permissions:
   actions: read
 
 jobs:
-  image-extraction-and-security-scan:
+  trivy:
     if: ${{ github.repository == 'kubeflow/manifests' }}
     runs-on: ubuntu-latest
     steps:
