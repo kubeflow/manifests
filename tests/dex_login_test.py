@@ -49,7 +49,7 @@ class DexSessionManager:
         dex_username: str,
         dex_password: str,
         dex_auth_type: str = "local",
-        skip_tls_verify: bool = True,
+        skip_tls_verify: bool = False,
     ):
         """
         Initialize the DexSessionManager
