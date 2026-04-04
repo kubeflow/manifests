@@ -205,7 +205,7 @@ kustomize build "$KUSTOMIZE_PATH" > "$KUSTOMIZE_OUTPUT"
 # Generate Helm manifests (different approach for KServe Models Web App)
 cd "$ROOT_DIR"
 if [[ "$COMPONENT" == "kserve-models-web-app" ]]; then
-    # KServe uses chart-local CI values files, but still templates from the repo root.
+    # KServe uses chart-local CI values files, but still templates from the repository root.
     if [ -n "$HELM_VALUES_ARG" ]; then
         helm template kserve-models-web-application "$CHART_DIR" \
             --namespace "$NAMESPACE" \
