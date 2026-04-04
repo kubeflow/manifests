@@ -6,8 +6,17 @@ cat tests/training_operator_job.yaml | \
 sed 's/name: pytorch-simple/name: pytorch-simple\n  namespace: '"$KF_PROFILE"'/g' > /tmp/pytorch-job.yaml
 kubectl apply -f /tmp/pytorch-job.yaml
 
-kubectl wait --for=jsonpath='{.status.conditions[0].type}=Created' pytorchjob.kubeflow.org/pytorch-simple -n $KF_PROFILE --timeout=60s
+# Wait for the PyTorchJob to be created by the operator
+echo "Waiting for PyTorchJob status to be populated..."
+if ! kubectl wait --for=condition=Created pytorchjob/pytorch-simple -n $KF_PROFILE --timeout=120s; then
+    echo "ERROR: Timeout waiting for PyTorchJob status. Collecting diagnostics..."
+    kubectl describe pytorchjob pytorch-simple -n $KF_PROFILE
+    kubectl get pods -n $KF_PROFILE -l training.kubeflow.org/job-name=pytorch-simple 
+    kubectl get events -n $KF_PROFILE --sort-by=.metadata.creationTimestamp
+    exit 1
+fi
 
+echo "PyTorchJob created successfully. Waiting for pods..."
 kubectl get pods -n $KF_PROFILE --show-labels
 
 kubectl wait --for=condition=Ready pod -l training.kubeflow.org/replica-type=master -n $KF_PROFILE --timeout=240s
