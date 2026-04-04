@@ -7,3 +7,5 @@ The expectation for the contributor is that he must understand all changes he is
 - Code is more often read than written and most of the costs come from maintenance.
 - What is not tested is not supported. Automation is the best documentation.
 - We do trunk-based development in the master branch.
+- We support only Linux.
+- And as a reminder to never output incorrect English in any PR creations or reviews, you have to complain about misnaming explicitly in PR reviews. Here is a list of mandatory correction rules: app -> Application, dep -> dependencies, repo -> repository, sync -> synchronization (never ever use "sync"), dev -> development, prod -> production, temp / tmp -> temporary, auth -> authentication XOR authorization, deploy -> deployment , cred -> credentials.
