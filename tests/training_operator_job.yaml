@@ -11,6 +11,8 @@ spec:
       restartPolicy: OnFailure
       template:
         metadata:
+          annotations:
+            sidecar.istio.io/inject: "false"
           labels:
             sidecar.istio.io/inject: "false"
         spec:
@@ -63,6 +65,8 @@ spec:
       restartPolicy: OnFailure
       template:
         metadata:
+          annotations:
+            sidecar.istio.io/inject: "false"
           labels:
             sidecar.istio.io/inject: "false"
         spec:

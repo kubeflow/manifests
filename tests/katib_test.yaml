@@ -64,6 +64,7 @@ spec:
               - "python3"
               - "/opt/pytorch-mnist/mnist.py"
               - "--epochs=1"
+              - "--no-cuda"
               - "--batch-size=16"
               - "--lr=${trialParameters.learningRate}"
               - "--momentum=${trialParameters.momentum}"
