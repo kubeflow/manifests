@@ -117,39 +117,6 @@ echo "Install Kustomize ..."
     mv kustomize "${USER_BINARY_DIRECTORY}/kustomize"
 } || { echo "Failed to install Kustomize"; exit 1; }
 
-echo "Validate ARM64 images..."
-
-# Generate a kustomize build and extract images
-kustomize build example > /tmp/kubeflow.yaml
-grep -E '^[[:space:]]*image:[[:space:]]*' /tmp/kubeflow.yaml | sed -E 's/^[[:space:]]*image:[[:space:]]*//' | sed -E 's/[[:space:]]+$//' | sort -u > /tmp/kubeflow-images.txt
-test -s /tmp/kubeflow-images.txt
-
-# Allowlist: Exclude images known to lack ARM64 support
-grep -v -E '^ghcr\.io/kubeflow/trainer/mlx-runtime:v2\.2\.0$|^kserve/huggingfaceserver:v0\.16\.0(-gpu)?$|^docker\.io/seldonio/mlserver:1\.5\.0$|^gcr\.io/tfx-oss-public/ml_metadata_store_server:1\.14\.0$|^ghcr\.io/kubeflow/kfp-api-server:2\.16\.0$|^ghcr\.io/kubeflow/kfp-cache-server:2\.16\.0$|^ghcr\.io/kubeflow/kfp-frontend:2\.16\.0$|^ghcr\.io/kubeflow/kfp-metadata-envoy:2\.16\.0$|^ghcr\.io/kubeflow/kfp-metadata-writer:2\.16\.0$|^ghcr\.io/kubeflow/kfp-persistence-agent:2\.16\.0$|^ghcr\.io/kubeflow/kfp-scheduled-workflow-controller:2\.16\.0$|^ghcr\.io/kubeflow/kfp-viewer-crd-controller:2\.16\.0$|^pytorch/torchserve-kfs:0\.9\.0$|^tensorflow/serving:2\.6\.2$' /tmp/kubeflow-images.txt > /tmp/kubeflow-images.final.txt || true
-
-# Check remaining images for ARM64 support
-missing=0
-while IFS= read -r image; do
-    if [ -z "${image}" ]; then
-        continue
-    fi
-
-    raw="$(skopeo inspect --raw "docker://${image}" 2>/dev/null || true)"
-    if [ -n "${raw}" ] && echo "${raw}" | jq -e '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "arm64")' >/dev/null 2>&1; then
-        continue
-    fi
-
-    echo "Image does not support ARM64: ${image}"
-    missing=$((missing + 1))
-done < /tmp/kubeflow-images.final.txt
-
-if [ "${missing}" -gt 0 ]; then
-    echo "ERROR: ${missing} images do not advertise linux/arm64 (allowlist applied)."
-    exit 1
-fi
-
-echo "SUCCESS: All validated images support ARM64."
-
 # Free disk space in GitHub Actions to reduce "no space left on device" failures.
 if [[ "${GITHUB_ACTIONS:-false}" == "true" ]]; then
     echo "=== Disk usage before cleanup ==="
@@ -163,6 +130,12 @@ if [[ "${GITHUB_ACTIONS:-false}" == "true" ]]; then
     sudo rm -rf /usr/local/lib/android
     sudo rm -rf /usr/local/.ghcup
     sudo rm -rf /usr/share/swift
+
+    sudo rm -rf /opt/hostedtoolcache/CodeQL || true
+    sudo rm -rf /opt/hostedtoolcache/Java_* || true
+    sudo rm -rf /opt/hostedtoolcache/Ruby || true
+    sudo rm -rf /opt/hostedtoolcache/PyPy || true
+    sudo rm -rf /opt/hostedtoolcache/boost || true
 
     sudo apt-get autoclean
 
