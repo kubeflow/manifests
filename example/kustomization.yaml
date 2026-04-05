@@ -65,7 +65,7 @@ resources:
 # Kubeflow Istio Resources
 - ../common/istio/kubeflow-istio-resources/base
 # Kubeflow Pipelines (SeaweedFS as default S3 storage)
-- ../applications/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user  # Pipeline definitions stored in the database
+- ../applications/pipeline/overlays  # Pipeline definitions stored in the database
 # - ../applications/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user-k8s-native # Pipeline Definitions Stored as Kubernetes Resources
 # Katib
 - ../applications/katib/upstream/installs/katib-with-kubeflow
@@ -103,9 +103,3 @@ resources:
 # Here is the documentation for Ray: https://docs.ray.io/en/latest/
 # Here is the internal documentation for Ray: - ../experimental/ray/README.md
 # - ../experimental/ray/kuberay-operator/overlays/kubeflow
-
-components:
-# https://kubernetes.io/docs/concepts/security/pod-security-standards/
-# For all static namespaces we already enforce PSS restricted
-# This should be used together with Kubernetes 1.33+ user namespaces to block root user exploits
-- ../common/security/PSS/dynamic/baseline

@@ -13,7 +13,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  welcome:
+  welcome-new-contributors:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/first-interaction@v3

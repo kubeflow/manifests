@@ -1,7 +1,8 @@
 #!/bin/bash
 set -euxo pipefail
 
-KIND_VERSION="v0.30.0"
+KIND_VERSION="v0.31.0"
+KIND_NODE_IMAGE="kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f"
 KUSTOMIZE_VERSION="v5.8.1" # Replace with v5.8.0 if v5.8.1 is unavailable
 USER_BINARY_DIRECTORY="$HOME/.local/bin"
 
@@ -37,16 +38,10 @@ fi
     mv kind-linux-amd64 "${USER_BINARY_DIRECTORY}/kind"
 } || { echo "Failed to install KinD"; exit 1; }
 
-
 echo "Creating KinD cluster ..."
 echo "
 apiVersion: kind.x-k8s.io/v1alpha4
 kind: Cluster
-# Configure registry for KinD.
-containerdConfigPatches:
-- |-
-  [plugins.\"io.containerd.grpc.v1.cri\".registry.mirrors.\"REGISTRY_NAME:REGISTRY_PORT\"]
-    endpoint = [\"http://REGISTRY_NAME:REGISTRY_PORT\"]
 # This is needed in order to support projected volumes with service account tokens.
 # See: https://kubernetes.slack.com/archives/CEKK1KTN2/p1600268272383600
 kubeadmConfigPatches:
@@ -61,12 +56,12 @@ kubeadmConfigPatches:
         \"service-account-signing-key-file\": \"/etc/kubernetes/pki/sa.key\"
 nodes:
 - role: control-plane
-  image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+  image: ${KIND_NODE_IMAGE}
 - role: worker
-  image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+  image: ${KIND_NODE_IMAGE}
 - role: worker
-  image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
-" | kind create cluster --config - --wait 120s
+  image: ${KIND_NODE_IMAGE}
+" | kind create cluster --name kubeflow --config - --wait 120s
 
 echo "Install kubectl ..."
 {

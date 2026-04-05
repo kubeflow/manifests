@@ -159,7 +159,7 @@ kubectl delete authorizationpolicy allow-isvc-sklearn -n ${NAMESPACE}
 # ============================================================
 # Test 3: KServe Models Web Application API
 # ============================================================
-kubectl wait --for=condition=Available --timeout=300s -n kubeflow deployment/kserve-models-web-app
+kubectl wait --for=condition=Available --timeout=10s -n kubeflow deployment/kserve-models-web-application
 
 TOKEN="$(kubectl -n ${NAMESPACE} create token default-editor)"
 BASE_URL="localhost:8080/kserve-endpoints"

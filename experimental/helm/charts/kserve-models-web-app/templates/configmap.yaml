@@ -20,6 +20,7 @@ metadata:
 data:
   {{- if .Values.kubeflow.enabled }}
   USERID_HEADER: {{ .Values.kubeflow.config.useridHeader | quote }}
+  USERID_PREFIX: {{ .Values.kubeflow.config.useridPrefix | quote }}
   APP_PREFIX: {{ .Values.kubeflow.config.appPrefix | quote }}
   {{- else }}
   APP_DISABLE_AUTH: "True"
@@ -29,8 +30,5 @@ data:
   GRAFANA_HTTP_REQUESTS_DB: {{ .Values.app.config.grafanaHttpRequestsDb | quote }}
   {{- with .Values.configMap.data }}
   {{- toYaml . | nindent 2 }}
-  {{- end }}
-  {{- range .Values.app.config.env }}
-  {{ .name }}: {{ .value | quote }}
   {{- end }}
 {{- end }} 

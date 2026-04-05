@@ -9,4 +9,22 @@ metadata:
   {{- end }}
 data:
   katib-config.yaml: |
-{{ .Values.config.katibConfig | indent 4 }} 
+{{- if .Values.config.katibConfig }}
+{{ .Values.config.katibConfig | indent 4 }}
+{{- else }}
+    apiVersion: config.kubeflow.org/v1beta1
+    kind: KatibConfig
+    init:
+{{- if .Values.config.certGenerator.enabled }}
+      certGenerator:
+        enable: true
+{{- end }}
+      controller:
+        webhookPort: {{ .Values.controller.ports.webhook }}
+        trialResources:
+{{- range .Values.config.trialResources }}
+          - {{ . }}
+{{- end }}
+    runtime:
+{{ .Values.config.runtimeConfig | indent 6 }}
+{{- end }}

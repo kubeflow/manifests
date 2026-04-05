@@ -15,7 +15,7 @@ permissions:
   actions: read
 
 jobs:
-  build-kfmr:
+  model_registry_test:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout

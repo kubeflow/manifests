@@ -1,0 +1,11 @@
+global:
+  namespace: kubeflow
+
+kubeflow:
+  enabled: true
+
+istio:
+  virtualService:
+    enabled: true
+  authorizationPolicy:
+    enabled: true

@@ -1,0 +1,11 @@
+global:
+  namespace: kserve
+
+kubeflow:
+  enabled: false
+
+istio:
+  virtualService:
+    enabled: false
+  authorizationPolicy:
+    enabled: false

@@ -24,6 +24,7 @@ spec:
         - name: manager
           image: ghcr.io/kubeflow/trainer/trainer-controller-manager
           securityContext:
+            readOnlyRootFilesystem: true
             allowPrivilegeEscalation: false
             runAsNonRoot: true
             capabilities:
@@ -31,24 +32,42 @@ spec:
                 - ALL
             seccompProfile:
               type: RuntimeDefault
+
+          ports:
+            - name: health
+              containerPort: 8081
+              protocol: TCP
+            - name: metrics
+              containerPort: 8443
+              protocol: TCP
+            - name: webhook
+              containerPort: 9443
+              protocol: TCP
+            - name: status-server
+              containerPort: 10443
+              protocol: TCP
+
           volumeMounts:
             - mountPath: /tmp/k8s-webhook-server/serving-certs
               name: cert
               readOnly: true
+
           livenessProbe:
             httpGet:
               path: /healthz
-              port: 8081
+              port: health
             initialDelaySeconds: 15
             periodSeconds: 20
             timeoutSeconds: 3
+
           readinessProbe:
             httpGet:
               path: /readyz
-              port: 8081
+              port: health
             initialDelaySeconds: 10
             periodSeconds: 15
             timeoutSeconds: 3
+
       serviceAccountName: kubeflow-trainer-controller-manager
       volumes:
         - name: cert
@@ -63,11 +82,15 @@ metadata:
 spec:
   ports:
     - name: monitoring-port
-      port: 8080
-      targetPort: 8080
+      port: 8443
+      targetPort: metrics
     - name: webhook-server
       port: 443
       protocol: TCP
-      targetPort: 9443
+      targetPort: webhook
+    - name: status-server
+      port: 10443
+      protocol: TCP
+      targetPort: status-server
   selector:
     app.kubernetes.io/component: manager

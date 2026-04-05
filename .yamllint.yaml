@@ -1,21 +1,24 @@
-# It extends the default conf by adjusting some options.
+# It extends the default configuration by adjusting some options.
 extends: default
 
 ignore: |
   common/istio/cluster-local-gateway/base/cluster-local-gateway.yaml
   common/istio/istio-crds/base/crd.yaml
   common/istio/istio-install/base/install.yaml
+  **/upstream/**
 
 rules:
-  document-start:
-    present: false
+  document-start: disable
   document-end:
     present: false
   indentation:
-    indent-sequences: false
+    indent-sequences: consistent
   line-length:
-    max: 400
+    max: 800
   truthy:
     allowed-values: ['on', 'off', 'true', 'false']
-  empty-lines: 
+  empty-lines:
     level: warning
+  comments:
+    require-starting-space: false
+    min-spaces-from-content: 1

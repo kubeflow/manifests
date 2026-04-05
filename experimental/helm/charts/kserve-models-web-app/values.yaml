@@ -1,4 +1,4 @@
-# Default values for kserve-models-web-app.
+# Default values for kserve-models-web-application.
 
 # -- String to partially override release name.
 nameOverride: ""
@@ -19,7 +19,7 @@ global:
   # -- Image registry for KServe Models Web App images
   imageRegistry: ghcr.io/kserve
   # -- Global image tag for KServe Models Web App
-  imageTag: 0.15.0
+  imageTag: 0.16.1
   # -- Global image pull policy
   imagePullPolicy: Always
   # -- Global image pull secrets
@@ -59,7 +59,9 @@ app:
     # -- Grafana HTTP requests database path
     grafanaHttpRequestsDb: "db/knative-serving-revision-http-requests"
     # -- Additional environment variables
-    env: []
+    env:
+      - name: GUNICORN_CMD_ARGS
+        value: "--limit-request-field_size 32000"
     
   # -- Application container port
   containerPort: 5000
@@ -241,6 +243,7 @@ kubeflow:
   config:
     disableAuth: false
     useridHeader: "kubeflow-userid"
+    useridPrefix: ""
     appPrefix: "/kserve-endpoints"
 
 # Monitoring configuration

@@ -213,8 +213,6 @@ def get_expected_helm_extras(component: str, scenario: str) -> set:
     elif component == "model-registry":
         return set()  # No extra resources in Helm for Model Registry
     elif component == "kserve-models-web-app":
-        if scenario == "base":
-            return {"AuthorizationPolicy/kserve-models-web-app"}
         return set()
     else:
         return set()
@@ -296,4 +294,4 @@ if __name__ == "__main__":
         sys.exit(1)
     
     success = compare_manifests(kustomize_file, helm_file, component, scenario, namespace)
-    sys.exit(0 if success else 1) 
+    sys.exit(0 if success else 1)

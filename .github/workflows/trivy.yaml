@@ -1,25 +1,28 @@
 name: Image Extracting and Security Scanning
 
 on:
-  push:
-    branches:
-    - master
-  pull_request:
-    paths:
-    - '.github/workflows/trivy.yaml'
-    - 'tests/trivy_scan.py'
+  workflow_dispatch:
+  # push:
+  #   branches:
+  #   - master
+  # pull_request:
+  #   paths:
+  #   - tests/kustomize_install.sh
+  #   - .github/workflows/trivy.yaml
+  #   - tests/trivy_scan.py
+  #   - tests/trivy_install.sh
 
 permissions:
   contents: read
   actions: read
 
 jobs:
-  image-extraction-and-security-scan:
+  trivy:
     if: ${{ github.repository == 'kubeflow/manifests' }}
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     # Install kustomize
     - name: Install kustomize

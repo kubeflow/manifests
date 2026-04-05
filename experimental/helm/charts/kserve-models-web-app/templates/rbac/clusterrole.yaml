@@ -31,6 +31,8 @@ rules:
   resources:
   - inferenceservices
   - inferenceservices/status
+  - inferencegraphs
+  - inferencegraphs/status
   verbs:
   - get
   - list
@@ -57,4 +59,4 @@ rules:
 {{- with .Values.rbac.clusterRole.rules }}
 {{- toYaml . | nindent 0 }}
 {{- end }}
-{{- end }} 
+{{- end }}
