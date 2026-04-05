@@ -31,7 +31,7 @@ spec:
                 - ALL
               runAsNonRoot: true
               runAsUser: 1000
-            image: docker.io/kubeflowkatib/pytorch-mnist-cpu:latest
+            image: ghcr.io/kubeflow/katib/pytorch-mnist-cpu:v0.19.0
             imagePullPolicy: Always
             command:
             - "python3"
@@ -85,7 +85,7 @@ spec:
                 - ALL
               runAsNonRoot: true
               runAsUser: 1000
-            image: docker.io/kubeflowkatib/pytorch-mnist-cpu:latest
+            image: ghcr.io/kubeflow/katib/pytorch-mnist-cpu:v0.19.0
             imagePullPolicy: Always
             command:
             - "python3"

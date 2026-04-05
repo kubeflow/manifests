@@ -52,7 +52,7 @@ spec:
                 type: RuntimeDefault
             containers:
             - name: training-container
-              image: docker.io/kubeflowkatib/pytorch-mnist-cpu:latest
+              image: ghcr.io/kubeflow/katib/pytorch-mnist-cpu:v0.19.0
               securityContext:
                 allowPrivilegeEscalation: false
                 capabilities:
