@@ -7,7 +7,9 @@ on:
 
   pull_request:
     paths:
-    - "docs/arm64.md"
+    - "example/**"
+    - "common/**"
+    - "tests/**"
 
 permissions:
   contents: read
@@ -48,7 +50,8 @@ jobs:
         # Filter out non-image placeholders/templates/vars.
         grep -v -E '^\{\{|\}\}$|^\$' /tmp/kubeflow-images.txt > /tmp/kubeflow-images.filtered.txt || true
 
-        # Allowlist for known upstream gaps in ARM64 support in current manifests.
+        # Allowlist: Specific upstream-known images that lack linux/arm64 support.
+        # These images are filtered out from validation to avoid blocking PRs.
         grep -v -E '^ghcr\.io/kubeflow/trainer/mlx-runtime:v2\.2\.0$|^kserve/huggingfaceserver:v0\.16\.0(-gpu)?$' \
           /tmp/kubeflow-images.filtered.txt > /tmp/kubeflow-images.final.txt || true
 
@@ -76,8 +79,8 @@ jobs:
         done < /tmp/kubeflow-images.final.txt
 
         if [ "${missing}" -gt 0 ]; then
-          echo "${missing} images do not currently support ARM64."
+          echo "ERROR: ${missing} images do not advertise linux/arm64 (allowlist applied from filtering step)."
           exit 1
         fi
 
-        echo "SUCCESS: All validated images support ARM64."
+        echo "SUCCESS: All validated images support linux/arm64."
