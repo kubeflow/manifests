@@ -1,5 +1,6 @@
 # MCP server test data for E2E tests
-# Contains servers for: listing, retrieval, tools, custom properties
+# Contains servers for: listing, retrieval, tools, custom properties,
+# remote endpoints, and deployment modes
 source: Test MCP Servers
 mcp_servers:
   - name: weather-api
@@ -7,6 +8,9 @@ mcp_servers:
     provider: "Weather Community"
     version: "1.0.0"
     license: "MIT"
+    deploymentMode: local
+    transports:
+      - stdio
     tags:
       - weather
       - api
@@ -47,16 +51,11 @@ mcp_servers:
       - math
       - calculator
       - computation
+    securityIndicators:
+      verifiedSource: true
+      sast: true
+      readOnlyTools: true
     customProperties:
-      verifiedSource:
-        metadataType: MetadataBoolValue
-        bool_value: true
-      sast:
-        metadataType: MetadataBoolValue
-        bool_value: true
-      readOnlyTools:
-        metadataType: MetadataBoolValue
-        bool_value: true
       observability:
         metadataType: MetadataStringValue
         string_value: ""
@@ -67,3 +66,68 @@ mcp_servers:
         description: "Solve mathematical equations"
     createTimeSinceEpoch: "1740091200000"
     lastUpdateTimeSinceEpoch: "1740091200000"
+
+  - name: remote-http-server
+    description: "Remote MCP server accessed via HTTP endpoint"
+    provider: "CloudMCP"
+    version: "1.0.0"
+    license: "Apache-2.0"
+    deploymentMode: remote
+    transports:
+      - http
+    endpoints:
+      http: https://mcp.cloudprovider.com/api
+    tags:
+      - remote
+      - http
+      - cloud
+    tools:
+      - name: cloud_query
+        description: "Query cloud resources"
+    createTimeSinceEpoch: "1740177600000"
+    lastUpdateTimeSinceEpoch: "1740177600000"
+
+  - name: remote-sse-server
+    description: "Remote MCP server accessed via SSE endpoint"
+    provider: "StreamCorp"
+    version: "2.1.0"
+    license: "MIT"
+    deploymentMode: remote
+    transports:
+      - sse
+    endpoints:
+      sse: https://stream.example.com/mcp/events
+    tags:
+      - remote
+      - sse
+      - streaming
+    tools:
+      - name: subscribe_events
+        description: "Subscribe to real-time events"
+      - name: stream_data
+        description: "Stream data from source"
+    createTimeSinceEpoch: "1740264000000"
+    lastUpdateTimeSinceEpoch: "1740264000000"
+
+  - name: hybrid-server
+    description: "Hybrid server with local deployment and remote HTTP endpoint"
+    provider: "HybridCorp"
+    version: "3.0.0"
+    license: "MIT"
+    deploymentMode: local
+    transports:
+      - stdio
+      - http
+    endpoints:
+      http: https://api.hybridcorp.com/mcp
+    artifacts:
+      - uri: oci://ghcr.io/hybridcorp/hybrid-mcp:3.0.0
+    tags:
+      - hybrid
+      - local
+      - remote
+    tools:
+      - name: process_data
+        description: "Process data locally or remotely"
+    createTimeSinceEpoch: "1740350400000"
+    lastUpdateTimeSinceEpoch: "1740350400000"

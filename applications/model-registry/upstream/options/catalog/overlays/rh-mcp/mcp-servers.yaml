@@ -1,0 +1,681 @@
+source: Red Hat MCP
+mcp_servers:
+  - name: kubernetes-mcp-server
+    provider: Red Hat
+    license: apache-2.0
+    license_link: https://www.apache.org/licenses/LICENSE-2.0
+    description: >-
+      Kubernetes and OpenShift cluster management via the MCP Lifecycle Operator.
+      Allows agents to list resources, inspect workloads, and read logs across
+      namespaces using a read-only service account.
+    readme: |-
+      # Kubernetes MCP Server
+
+      **MCP Server Summary:**
+      Access Kubernetes and OpenShift clusters through natural language using the
+      official `kubernetes_mcp_server` image deployed via the MCP Lifecycle Operator.
+
+      ## Features
+      - List and inspect pods, deployments, services, and namespaces
+      - Retrieve pod logs for troubleshooting
+      - Browse ConfigMaps and cluster configuration
+      - Read-only mode enforced via server configuration
+
+      ## Prerequisites
+      - MCP Lifecycle Operator installed on the cluster
+      - `mcp-viewer` ServiceAccount with read-only RBAC
+
+      ## Configuration
+      The server runs with `read_only: true` and exposes toolsets `core` and `config`.
+      See the MCP Lifecycle Operator docs for full deployment instructions.
+    version: "latest"
+    transports:
+      - http
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzOCIgaGVpZ2h0PSIzOCIgdmlld0JveD0iMCAwIDM4IDM4Ij4KICA8dGl0bGU+TUNQIFNlcnZlciBpY29uPC90aXRsZT4KICA8ZGVmcz4KICAgIDxzdHlsZT4KICAgICAgLmJne2ZpbGw6I2ZmZjt9CiAgICAgIC5ib3JkZXJ7ZmlsbDojZTBlMGUwO30KICAgICAgLmFjY2VudHtmaWxsOiMwMDY2Y2M7fQogICAgICAubm9kZXtmaWxsOiMwMDY2Y2M7fQogICAgPC9zdHlsZT4KICA8L2RlZnM+CiAgPHJlY3QgY2xhc3M9ImJvcmRlciIgeD0iMCIgeT0iMCIgd2lkdGg9IjM4IiBoZWlnaHQ9IjM4IiByeD0iNCIgcnk9IjQiLz4KICA8cmVjdCBjbGFzcz0iYmciIHg9IjEiIHk9IjEiIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgcng9IjMiIHJ5PSIzIi8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjE5IiBjeT0iMTkiIHI9IjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMTkiIGN5PSI3IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMjkiIGN5PSIxMyIgcj0iMi41Ii8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjI5IiBjeT0iMjUiIHI9IjIuNSIvPgogIDxjaXJjbGUgY2xhc3M9Im5vZGUiIGN4PSIxOSIgY3k9IjMxIiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjI1IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjEzIiByPSIyLjUiLz4KICA8bGluZSB4MT0iMTkiIHkxPSIxNCIgeDI9IjE5IiB5Mj0iOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjE2IiB4Mj0iMjciIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjIyIiB4Mj0iMjciIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxOSIgeTE9IjI0IiB4Mj0iMTkiIHkyPSIyOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjIyIiB4Mj0iMTEiIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjE2IiB4Mj0iMTEiIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgo8L3N2Zz4K
+    repositoryUrl: https://github.com/manusa/kubernetes-mcp-server
+    sourceCode: manusa/kubernetes-mcp-server
+    publishedDate: "2025-03-01T00:00:00Z"
+    tools:
+      - name: list_pods
+        description: List pods in a namespace
+        accessType: read_only
+        parameters:
+          - name: namespace
+            type: string
+            description: Kubernetes namespace (omit for all namespaces)
+            required: false
+      - name: list_deployments
+        description: List deployments in a namespace
+        accessType: read_only
+        parameters:
+          - name: namespace
+            type: string
+            description: Kubernetes namespace
+            required: true
+      - name: list_services
+        description: List services in a namespace
+        accessType: read_only
+        parameters:
+          - name: namespace
+            type: string
+            description: Kubernetes namespace
+            required: true
+      - name: get_logs
+        description: Retrieve logs from a pod
+        accessType: read_only
+        parameters:
+          - name: namespace
+            type: string
+            description: Kubernetes namespace
+            required: true
+          - name: pod_name
+            type: string
+            description: Name of the pod
+            required: true
+          - name: container
+            type: string
+            description: Container name (optional if pod has only one container)
+            required: false
+      - name: list_namespaces
+        description: List all namespaces in the cluster
+        accessType: read_only
+        parameters: []
+      - name: get_configmap
+        description: Retrieve a ConfigMap by name
+        accessType: read_only
+        parameters:
+          - name: namespace
+            type: string
+            description: Kubernetes namespace
+            required: true
+          - name: name
+            type: string
+            description: ConfigMap name
+            required: true
+    artifacts:
+      - uri: oci://quay.io/containers/kubernetes_mcp_server:latest
+        createTimeSinceEpoch: "1740787200000"
+        lastUpdateTimeSinceEpoch: "1740787200000"
+    runtimeMetadata:
+      defaultPort: 8080
+      mcpPath: /mcp
+      prerequisites:
+        serviceAccount:
+          required: true
+          hint: "Needs 'view' ClusterRole for read-only K8s access"
+          suggestedName: mcp-viewer
+        configMaps:
+          - name: kubernetes-mcp-server-config
+            description: Optional configuration for MCP server settings
+            mountAsFile: true
+            mountPath: /etc/mcp-config
+            keys:
+              - key: config.toml
+                description: Server configuration file
+                defaultContent: |
+                  log_level = 5
+                  port = "8080"
+                  read_only = true
+                  toolsets = ["core", "config"]
+                required: false
+    securityIndicators:
+      verifiedSource: true
+      secureEndpoint: true
+      sast: true
+      readOnlyTools: true
+    customProperties:
+      kubernetes:
+        metadataType: MetadataStringValue
+        string_value: ""
+      openshift:
+        metadataType: MetadataStringValue
+        string_value: ""
+      containers:
+        metadataType: MetadataStringValue
+        string_value: ""
+      infrastructure:
+        metadataType: MetadataStringValue
+        string_value: ""
+    createTimeSinceEpoch: "1740787200000"
+    lastUpdateTimeSinceEpoch: "1740787200000"
+
+  - name: aap-mcp-server
+    provider: Red Hat
+    license: apache-2.0
+    license_link: https://www.apache.org/licenses/LICENSE-2.0
+    description: >-
+      Ansible Automation Platform integration via the MCP Lifecycle Operator.
+      Allows agents to trigger job templates, query inventory, and monitor
+      automation job status using OAuth2 bearer token authentication.
+    readme: |-
+      # Ansible Automation Platform MCP Server
+
+      **MCP Server Summary:**
+      Connect AI agents to your Ansible Automation Platform instance to trigger
+      automation jobs and query inventory through the AAP Gateway API.
+
+      ## Features
+      - Launch job templates by name or ID
+      - List inventories and host groups
+      - Poll job execution status and retrieve results
+      - List available credentials (read-only)
+
+      ## Prerequisites
+      - Running Ansible Automation Platform instance
+      - OAuth2 bearer token with appropriate permissions
+      - Kubernetes secret `aap-credentials` with `base-url` and `token` keys
+
+      ## Configuration
+      ```bash
+      kubectl create secret generic aap-credentials \
+        --from-literal=base-url=https://your-aap-instance.example.com \
+        --from-literal=token=your-oauth2-bearer-token
+      ```
+    version: "latest"
+    transports:
+      - http
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzOCIgaGVpZ2h0PSIzOCIgdmlld0JveD0iMCAwIDM4IDM4Ij4KICA8dGl0bGU+TUNQIFNlcnZlciBpY29uPC90aXRsZT4KICA8ZGVmcz4KICAgIDxzdHlsZT4KICAgICAgLmJne2ZpbGw6I2ZmZjt9CiAgICAgIC5ib3JkZXJ7ZmlsbDojZTBlMGUwO30KICAgICAgLmFjY2VudHtmaWxsOiMwMDY2Y2M7fQogICAgICAubm9kZXtmaWxsOiMwMDY2Y2M7fQogICAgPC9zdHlsZT4KICA8L2RlZnM+CiAgPHJlY3QgY2xhc3M9ImJvcmRlciIgeD0iMCIgeT0iMCIgd2lkdGg9IjM4IiBoZWlnaHQ9IjM4IiByeD0iNCIgcnk9IjQiLz4KICA8cmVjdCBjbGFzcz0iYmciIHg9IjEiIHk9IjEiIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgcng9IjMiIHJ5PSIzIi8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjE5IiBjeT0iMTkiIHI9IjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMTkiIGN5PSI3IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMjkiIGN5PSIxMyIgcj0iMi41Ii8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjI5IiBjeT0iMjUiIHI9IjIuNSIvPgogIDxjaXJjbGUgY2xhc3M9Im5vZGUiIGN4PSIxOSIgY3k9IjMxIiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjI1IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjEzIiByPSIyLjUiLz4KICA8bGluZSB4MT0iMTkiIHkxPSIxNCIgeDI9IjE5IiB5Mj0iOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjE2IiB4Mj0iMjciIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjIyIiB4Mj0iMjciIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxOSIgeTE9IjI0IiB4Mj0iMTkiIHkyPSIyOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjIyIiB4Mj0iMTEiIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjE2IiB4Mj0iMTEiIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgo8L3N2Zz4K
+    documentationUrl: https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform
+    repositoryUrl: https://github.com/ansible/aap-mcp-server
+    sourceCode: ansible/aap-mcp-server
+    publishedDate: "2025-04-01T00:00:00Z"
+    tools:
+      - name: list_job_templates
+        description: List available job templates in Ansible Automation Platform
+        accessType: read_only
+        parameters:
+          - name: name
+            type: string
+            description: Filter by template name (optional)
+            required: false
+      - name: launch_job_template
+        description: Launch an Ansible job template by ID or name
+        accessType: read_write
+        parameters:
+          - name: template_id
+            type: string
+            description: Job template ID or name
+            required: true
+          - name: extra_vars
+            type: object
+            description: Extra variables to pass to the job (optional)
+            required: false
+      - name: get_job_status
+        description: Retrieve the status and output of an Ansible job
+        accessType: read_only
+        parameters:
+          - name: job_id
+            type: string
+            description: Job ID returned by launch_job_template
+            required: true
+      - name: list_inventories
+        description: List available inventories in Ansible Automation Platform
+        accessType: read_only
+        parameters: []
+      - name: list_credentials
+        description: List available credentials (names and types only, no secret values)
+        accessType: read_only
+        parameters: []
+    artifacts:
+      - uri: oci://registry.redhat.io/ansible-automation-platform-tech-preview/mcp-server-rhel9:latest
+        createTimeSinceEpoch: "1743465600000"
+        lastUpdateTimeSinceEpoch: "1743465600000"
+    runtimeMetadata:
+      defaultPort: 3000
+      mcpPath: /mcp
+      prerequisites:
+        secrets:
+          - name: aap-credentials
+            description: kubectl create secret generic aap-credentials --from-literal=base-url=https://your-aap-instance.com --from-literal=token=your-oauth2-bearer-token
+            keys:
+              - key: base-url
+                description: AAP instance URL
+                envVarName: BASE_URL
+                required: true
+              - key: token
+                description: OAuth2 bearer token for AAP Gateway API authentication
+                envVarName: BEARER_TOKEN_OAUTH2_AUTHENTICATION
+                required: true
+            mountAsFile: false
+        environmentVariables:
+          - name: BASE_URL
+            description: AAP instance URL (from secret aap-credentials)
+            required: true
+            type: string
+          - name: BEARER_TOKEN_OAUTH2_AUTHENTICATION
+            description: OAuth2 bearer token (from secret aap-credentials)
+            required: true
+            type: string
+    securityIndicators:
+      verifiedSource: true
+      secureEndpoint: true
+      sast: true
+      readOnlyTools: false
+    customProperties:
+      ansible:
+        metadataType: MetadataStringValue
+        string_value: ""
+      automation:
+        metadataType: MetadataStringValue
+        string_value: ""
+      infrastructure:
+        metadataType: MetadataStringValue
+        string_value: ""
+    createTimeSinceEpoch: "1743465600000"
+    lastUpdateTimeSinceEpoch: "1743465600000"
+
+  - name: satellite-mcp-server
+    provider: Red Hat
+    license: apache-2.0
+    license_link: https://www.apache.org/licenses/LICENSE-2.0
+    description: >-
+      Red Hat Satellite (Foreman) integration via the MCP Lifecycle Operator.
+      Enables agents to query host inventory, content views, and errata from
+      a Satellite instance using TLS-secured Foreman API calls.
+    readme: |-
+      # Red Hat Satellite MCP Server
+
+      **MCP Server Summary:**
+      Connect AI agents to Red Hat Satellite for host lifecycle and content
+      management through the Foreman API.
+
+      ## Features
+      - List managed hosts and their status
+      - Retrieve host details including OS, subscriptions, and facts
+      - Browse content views and lifecycle environments
+      - Query applicable errata for hosts
+
+      ## Prerequisites
+      - Red Hat Satellite 6.18+ instance
+      - CA bundle certificate for TLS validation
+      - Kubernetes secret `satellite-ca` with the `ca.pem` key
+
+      ## Configuration
+      ```bash
+      kubectl create secret generic satellite-ca \
+        --from-file=ca.pem=/path/to/satellite-ca.pem
+      ```
+      The server is configured with `--foreman-url https://satellite.example.com`.
+    version: "6.18"
+    transports:
+      - http
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzOCIgaGVpZ2h0PSIzOCIgdmlld0JveD0iMCAwIDM4IDM4Ij4KICA8dGl0bGU+TUNQIFNlcnZlciBpY29uPC90aXRsZT4KICA8ZGVmcz4KICAgIDxzdHlsZT4KICAgICAgLmJne2ZpbGw6I2ZmZjt9CiAgICAgIC5ib3JkZXJ7ZmlsbDojZTBlMGUwO30KICAgICAgLmFjY2VudHtmaWxsOiMwMDY2Y2M7fQogICAgICAubm9kZXtmaWxsOiMwMDY2Y2M7fQogICAgPC9zdHlsZT4KICA8L2RlZnM+CiAgPHJlY3QgY2xhc3M9ImJvcmRlciIgeD0iMCIgeT0iMCIgd2lkdGg9IjM4IiBoZWlnaHQ9IjM4IiByeD0iNCIgcnk9IjQiLz4KICA8cmVjdCBjbGFzcz0iYmciIHg9IjEiIHk9IjEiIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgcng9IjMiIHJ5PSIzIi8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjE5IiBjeT0iMTkiIHI9IjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMTkiIGN5PSI3IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMjkiIGN5PSIxMyIgcj0iMi41Ii8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjI5IiBjeT0iMjUiIHI9IjIuNSIvPgogIDxjaXJjbGUgY2xhc3M9Im5vZGUiIGN4PSIxOSIgY3k9IjMxIiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjI1IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjEzIiByPSIyLjUiLz4KICA8bGluZSB4MT0iMTkiIHkxPSIxNCIgeDI9IjE5IiB5Mj0iOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjE2IiB4Mj0iMjciIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjIyIiB4Mj0iMjciIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxOSIgeTE9IjI0IiB4Mj0iMTkiIHkyPSIyOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjIyIiB4Mj0iMTEiIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjE2IiB4Mj0iMTEiIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgo8L3N2Zz4K
+    documentationUrl: https://docs.redhat.com/en/documentation/red_hat_satellite
+    repositoryUrl: https://github.com/theforeman/foreman-mcp-server
+    sourceCode: theforeman/foreman-mcp-server
+    publishedDate: "2025-02-15T00:00:00Z"
+    tools:
+      - name: list_hosts
+        description: List managed hosts registered with Satellite
+        accessType: read_only
+        parameters:
+          - name: search
+            type: string
+            description: Foreman search query (e.g., "os=RHEL 9", "hostgroup=webservers")
+            required: false
+      - name: get_host
+        description: Retrieve detailed information about a specific host
+        accessType: read_only
+        parameters:
+          - name: hostname
+            type: string
+            description: Fully qualified domain name or ID of the host
+            required: true
+      - name: list_content_views
+        description: List content views in a Satellite organization
+        accessType: read_only
+        parameters:
+          - name: organization_id
+            type: string
+            description: Organization ID (defaults to the configured organization)
+            required: false
+      - name: list_errata
+        description: List applicable errata for a host or across the organization
+        accessType: read_only
+        parameters:
+          - name: hostname
+            type: string
+            description: Limit errata to a specific host (optional)
+            required: false
+          - name: type
+            type: string
+            description: "Errata type filter: security, bugfix, enhancement"
+            required: false
+      - name: list_activation_keys
+        description: List activation keys available in an organization
+        accessType: read_only
+        parameters:
+          - name: organization_id
+            type: string
+            description: Organization ID
+            required: false
+    artifacts:
+      - uri: oci://registry.redhat.io/satellite/foreman-mcp-server-rhel9:6.18
+        createTimeSinceEpoch: "1739577600000"
+        lastUpdateTimeSinceEpoch: "1739577600000"
+    runtimeMetadata:
+      defaultPort: 8080
+      mcpPath: /mcp
+      prerequisites:
+        secrets:
+          - name: satellite-ca
+            description: kubectl create secret generic satellite-ca --from-file=ca.pem=/path/to/satellite-ca-bundle.pem
+            keys:
+              - key: ca.pem
+                description: Satellite CA certificate bundle for TLS validation
+                required: true
+            mountAsFile: true
+            mountPath: /app
+    securityIndicators:
+      verifiedSource: true
+      secureEndpoint: true
+      sast: true
+      readOnlyTools: true
+    customProperties:
+      satellite:
+        metadataType: MetadataStringValue
+        string_value: ""
+      lifecycle:
+        metadataType: MetadataStringValue
+        string_value: ""
+      patch-management:
+        metadataType: MetadataStringValue
+        string_value: ""
+      infrastructure:
+        metadataType: MetadataStringValue
+        string_value: ""
+    createTimeSinceEpoch: "1739577600000"
+    lastUpdateTimeSinceEpoch: "1739577600000"
+
+  - name: insights-mcp-server
+    provider: Red Hat
+    license: apache-2.0
+    license_link: https://www.apache.org/licenses/LICENSE-2.0
+    description: >-
+      Red Hat Insights integration via the Lightspeed MCP server. Gives agents
+      access to proactive recommendations, vulnerability advisories, and system
+      health data from the Red Hat Insights cloud service.
+    readme: |-
+      # Red Hat Insights MCP Server
+
+      **MCP Server Summary:**
+      Access Red Hat Insights through the Lightspeed MCP server to surface
+      proactive recommendations and vulnerability data for your RHEL fleet.
+
+      ## Features
+      - Retrieve Insights recommendations for registered systems
+      - Query CVE and vulnerability advisories
+      - Get system health and compliance status
+      - Fetch patch advisories applicable to your environment
+
+      ## Prerequisites
+      - Systems registered to Red Hat Insights via `insights-client`
+      - Service account credentials from console.redhat.com
+      - Kubernetes secret `insights-credentials` with `client-id` and `client-secret`
+
+      ## Configuration
+      ```bash
+      kubectl create secret generic insights-credentials \
+        --from-literal=client-id=your-client-id \
+        --from-literal=client-secret=your-client-secret
+      ```
+      The server exposes an HTTP endpoint on port 8000.
+    version: "latest"
+    transports:
+      - http
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzOCIgaGVpZ2h0PSIzOCIgdmlld0JveD0iMCAwIDM4IDM4Ij4KICA8dGl0bGU+TUNQIFNlcnZlciBpY29uPC90aXRsZT4KICA8ZGVmcz4KICAgIDxzdHlsZT4KICAgICAgLmJne2ZpbGw6I2ZmZjt9CiAgICAgIC5ib3JkZXJ7ZmlsbDojZTBlMGUwO30KICAgICAgLmFjY2VudHtmaWxsOiMwMDY2Y2M7fQogICAgICAubm9kZXtmaWxsOiMwMDY2Y2M7fQogICAgPC9zdHlsZT4KICA8L2RlZnM+CiAgPHJlY3QgY2xhc3M9ImJvcmRlciIgeD0iMCIgeT0iMCIgd2lkdGg9IjM4IiBoZWlnaHQ9IjM4IiByeD0iNCIgcnk9IjQiLz4KICA8cmVjdCBjbGFzcz0iYmciIHg9IjEiIHk9IjEiIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgcng9IjMiIHJ5PSIzIi8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjE5IiBjeT0iMTkiIHI9IjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMTkiIGN5PSI3IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMjkiIGN5PSIxMyIgcj0iMi41Ii8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjI5IiBjeT0iMjUiIHI9IjIuNSIvPgogIDxjaXJjbGUgY2xhc3M9Im5vZGUiIGN4PSIxOSIgY3k9IjMxIiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjI1IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjEzIiByPSIyLjUiLz4KICA8bGluZSB4MT0iMTkiIHkxPSIxNCIgeDI9IjE5IiB5Mj0iOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjE2IiB4Mj0iMjciIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjIyIiB4Mj0iMjciIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxOSIgeTE9IjI0IiB4Mj0iMTkiIHkyPSIyOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjIyIiB4Mj0iMTEiIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjE2IiB4Mj0iMTEiIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgo8L3N2Zz4K
+    documentationUrl: https://docs.redhat.com/en/documentation/red_hat_insights
+    repositoryUrl: https://github.com/RedHatInsights/red-hat-lightspeed-mcp
+    sourceCode: RedHatInsights/red-hat-lightspeed-mcp
+    publishedDate: "2025-03-15T00:00:00Z"
+    tools:
+      - name: get_recommendations
+        description: Retrieve Insights recommendations for registered systems
+        accessType: read_only
+        parameters:
+          - name: system_id
+            type: string
+            description: Insights system UUID (optional, returns all if omitted)
+            required: false
+          - name: category
+            type: string
+            description: "Filter by category: Availability, Performance, Security, Stability"
+            required: false
+      - name: get_advisories
+        description: Retrieve applicable patch and security advisories
+        accessType: read_only
+        parameters:
+          - name: system_id
+            type: string
+            description: Insights system UUID (optional)
+            required: false
+          - name: advisory_type
+            type: string
+            description: "Advisory type: security, bugfix, enhancement"
+            required: false
+      - name: get_vulnerability_report
+        description: Get CVE exposure and vulnerability details for your environment
+        accessType: read_only
+        parameters:
+          - name: cve_id
+            type: string
+            description: Specific CVE identifier (optional, returns all if omitted)
+            required: false
+      - name: get_system_status
+        description: Retrieve health and compliance status for a registered system
+        accessType: read_only
+        parameters:
+          - name: system_id
+            type: string
+            description: Insights system UUID
+            required: true
+    artifacts:
+      - uri: oci://ghcr.io/redhatinsights/red-hat-lightspeed-mcp:latest
+        createTimeSinceEpoch: "1742000000000"
+        lastUpdateTimeSinceEpoch: "1742000000000"
+    runtimeMetadata:
+      defaultPort: 8000
+      mcpPath: /mcp
+      prerequisites:
+        secrets:
+          - name: insights-credentials
+            description: kubectl create secret generic insights-credentials --from-literal=client-id=<your-client-id> --from-literal=client-secret=<your-client-secret>
+            keys:
+              - key: client-id
+                description: Service account client ID from console.redhat.com
+                envVarName: LIGHTSPEED_CLIENT_ID
+                required: true
+              - key: client-secret
+                description: Service account client secret from console.redhat.com
+                envVarName: LIGHTSPEED_CLIENT_SECRET
+                required: true
+            mountAsFile: false
+        environmentVariables:
+          - name: LIGHTSPEED_CLIENT_ID
+            description: Service account client ID (from secret insights-credentials)
+            required: true
+            type: string
+          - name: LIGHTSPEED_CLIENT_SECRET
+            description: Service account client secret (from secret insights-credentials)
+            required: true
+            type: string
+    securityIndicators:
+      verifiedSource: true
+      secureEndpoint: true
+      sast: true
+      readOnlyTools: true
+    customProperties:
+      insights:
+        metadataType: MetadataStringValue
+        string_value: ""
+      security:
+        metadataType: MetadataStringValue
+        string_value: ""
+      observability:
+        metadataType: MetadataStringValue
+        string_value: ""
+    createTimeSinceEpoch: "1742000000000"
+    lastUpdateTimeSinceEpoch: "1742000000000"
+
+  # Remote MCP Server - hosted externally, accessed via network endpoint.
+  # No artifacts section; deploymentMode and endpoints fields are used instead.
+  - name: github-mcp-server
+    provider: GitHub
+    license: mit
+    license_link: https://opensource.org/licenses/MIT
+    description: >-
+      Official GitHub MCP server exposing repository, issue, pull request, and
+      Actions management. Hosted remotely by GitHub Copilot infrastructure;
+      no local deployment required. Authenticate with a GitHub Personal Access
+      Token or OAuth.
+    readme: |-
+      # GitHub MCP Server
+
+      **MCP Server Summary:**
+      Official GitHub-hosted MCP server that connects AI agents directly to
+      GitHub's platform for code search, issue management, pull request
+      operations, and Actions workflow monitoring.
+
+      ## Features
+      - Search code across repositories
+      - List, create, and comment on issues
+      - Manage pull requests and reviews
+      - Browse repository file contents
+      - Monitor GitHub Actions workflow runs
+
+      ## Prerequisites
+      - GitHub Personal Access Token (PAT) with appropriate scopes, or
+      - OAuth flow via GitHub Copilot
+
+      ## Note
+      This is a remotely hosted MCP server. Access it via the endpoint below;
+      no local container deployment is needed.
+    deploymentMode: remote
+    endpoints:
+      http: https://api.githubcopilot.com/mcp/
+    logo: data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzOCIgaGVpZ2h0PSIzOCIgdmlld0JveD0iMCAwIDM4IDM4Ij4KICA8dGl0bGU+TUNQIFNlcnZlciBpY29uPC90aXRsZT4KICA8ZGVmcz4KICAgIDxzdHlsZT4KICAgICAgLmJne2ZpbGw6I2ZmZjt9CiAgICAgIC5ib3JkZXJ7ZmlsbDojZTBlMGUwO30KICAgICAgLmFjY2VudHtmaWxsOiMwMDY2Y2M7fQogICAgICAubm9kZXtmaWxsOiMwMDY2Y2M7fQogICAgPC9zdHlsZT4KICA8L2RlZnM+CiAgPHJlY3QgY2xhc3M9ImJvcmRlciIgeD0iMCIgeT0iMCIgd2lkdGg9IjM4IiBoZWlnaHQ9IjM4IiByeD0iNCIgcnk9IjQiLz4KICA8cmVjdCBjbGFzcz0iYmciIHg9IjEiIHk9IjEiIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgcng9IjMiIHJ5PSIzIi8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjE5IiBjeT0iMTkiIHI9IjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMTkiIGN5PSI3IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iMjkiIGN5PSIxMyIgcj0iMi41Ii8+CiAgPGNpcmNsZSBjbGFzcz0ibm9kZSIgY3g9IjI5IiBjeT0iMjUiIHI9IjIuNSIvPgogIDxjaXJjbGUgY2xhc3M9Im5vZGUiIGN4PSIxOSIgY3k9IjMxIiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjI1IiByPSIyLjUiLz4KICA8Y2lyY2xlIGNsYXNzPSJub2RlIiBjeD0iOSIgY3k9IjEzIiByPSIyLjUiLz4KICA8bGluZSB4MT0iMTkiIHkxPSIxNCIgeDI9IjE5IiB5Mj0iOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjE2IiB4Mj0iMjciIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIyMyIgeTE9IjIyIiB4Mj0iMjciIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxOSIgeTE9IjI0IiB4Mj0iMTkiIHkyPSIyOSIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjIyIiB4Mj0iMTEiIHkyPSIyNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgogIDxsaW5lIHgxPSIxNSIgeTE9IjE2IiB4Mj0iMTEiIHkyPSIxNCIgc3Ryb2tlPSIjMDA2NmNjIiBzdHJva2Utd2lkdGg9IjEuNSIvPgo8L3N2Zz4K
+    documentationUrl: https://docs.github.com/en/copilot/using-github-copilot/using-github-copilot-extensions/using-the-github-mcp-server
+    repositoryUrl: https://github.com/github/github-mcp-server
+    sourceCode: github/github-mcp-server
+    publishedDate: "2025-01-10T00:00:00Z"
+    tools:
+      - name: search_code
+        description: Search for code across GitHub repositories
+        accessType: read_only
+        parameters:
+          - name: query
+            type: string
+            description: GitHub code search query
+            required: true
+          - name: repo
+            type: string
+            description: "Limit search to a specific repository (owner/repo)"
+            required: false
+      - name: list_issues
+        description: List issues for a repository
+        accessType: read_only
+        parameters:
+          - name: owner
+            type: string
+            description: Repository owner (user or organization)
+            required: true
+          - name: repo
+            type: string
+            description: Repository name
+            required: true
+          - name: state
+            type: string
+            description: "Filter by state: open, closed, all"
+            required: false
+      - name: create_issue
+        description: Create a new issue in a repository
+        accessType: read_write
+        parameters:
+          - name: owner
+            type: string
+            description: Repository owner
+            required: true
+          - name: repo
+            type: string
+            description: Repository name
+            required: true
+          - name: title
+            type: string
+            description: Issue title
+            required: true
+          - name: body
+            type: string
+            description: Issue body in Markdown
+            required: false
+      - name: list_pull_requests
+        description: List pull requests for a repository
+        accessType: read_only
+        parameters:
+          - name: owner
+            type: string
+            description: Repository owner
+            required: true
+          - name: repo
+            type: string
+            description: Repository name
+            required: true
+          - name: state
+            type: string
+            description: "Filter by state: open, closed, all"
+            required: false
+      - name: get_file_contents
+        description: Retrieve the contents of a file from a repository
+        accessType: read_only
+        parameters:
+          - name: owner
+            type: string
+            description: Repository owner
+            required: true
+          - name: repo
+            type: string
+            description: Repository name
+            required: true
+          - name: path
+            type: string
+            description: File path within the repository
+            required: true
+          - name: ref
+            type: string
+            description: Branch, tag, or commit SHA (defaults to default branch)
+            required: false
+      - name: list_workflow_runs
+        description: List GitHub Actions workflow runs for a repository
+        accessType: read_only
+        parameters:
+          - name: owner
+            type: string
+            description: Repository owner
+            required: true
+          - name: repo
+            type: string
+            description: Repository name
+            required: true
+          - name: status
+            type: string
+            description: "Filter by status: completed, in_progress, queued, failure, success"
+            required: false
+    securityIndicators:
+      verifiedSource: true
+      secureEndpoint: true
+      sast: true
+      readOnlyTools: false
+    customProperties:
+      git:
+        metadataType: MetadataStringValue
+        string_value: ""
+      version-control:
+        metadataType: MetadataStringValue
+        string_value: ""
+      ci-cd:
+        metadataType: MetadataStringValue
+        string_value: ""
+      remote:
+        metadataType: MetadataStringValue
+        string_value: ""
+    createTimeSinceEpoch: "1736467200000"
+    lastUpdateTimeSinceEpoch: "1736467200000"
