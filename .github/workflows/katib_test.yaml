@@ -9,7 +9,7 @@ on:
     - common/istio*/**
     - tests/istio*
     - common/cert-manager/**
-    - experimental/security/PSS/*
+    - applications/profiles/pss/**
 
 permissions:
   contents: read

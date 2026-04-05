@@ -11,7 +11,7 @@ on:
     - common/oauth2-proxy/**
     - common/istio*/**
     - tests/pipeline*
-    - experimental/security/PSS/*
+    - applications/profiles/pss/**
 
 permissions:
   contents: read

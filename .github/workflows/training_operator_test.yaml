@@ -11,7 +11,7 @@ on:
     - common/cert-manager/**
     - common/oauth2-proxy/**
     - common/istio*/**
-    - experimental/security/PSS/*
+    - applications/profiles/pss/**
 
 permissions:
   contents: read
