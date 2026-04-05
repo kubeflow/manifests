@@ -1,0 +1,21 @@
+apiVersion: trainer.kubeflow.org/v1alpha1
+kind: TrainJob
+metadata:
+  name: torch-simple
+spec:
+  runtimeRef:
+    name: torch-distributed
+  trainer:
+    image: pytorch/pytorch:2.10.0-cuda12.8-cudnn9-runtime
+    command:
+    - "python3"
+    - "-c"
+    - "import torch; print(f\"CUDA available: {torch.cuda.is_available()}\")"
+
+    resourcesPerNode:
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+      limits:
+        cpu: "1"
+        memory: "1Gi"

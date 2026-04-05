@@ -20,7 +20,6 @@ images:
 # Secret for the Kubeflow Training webhook.
 secretGenerator:
   - name: kubeflow-trainer-webhook-cert
-    namespace: kubeflow-system
     options:
       disableNameSuffixHash: true
 

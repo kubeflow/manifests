@@ -46,6 +46,7 @@ spec:
           spec:
             securityContext:
               runAsNonRoot: true
+              runAsUser: 1000
               runAsGroup: 1000
               fsGroup: 1000
               seccompProfile:
@@ -68,4 +69,10 @@ spec:
               - "--batch-size=16"
               - "--lr=${trialParameters.learningRate}"
               - "--momentum=${trialParameters.momentum}"
+              volumeMounts:
+              - mountPath: /opt/pytorch-mnist/data
+                name: data-dir
             restartPolicy: Never
+            volumes:
+            - name: data-dir
+              emptyDir: {}

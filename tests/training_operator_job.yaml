@@ -18,6 +18,7 @@ spec:
         spec:
           securityContext:
             runAsNonRoot: true
+            runAsUser: 1000
             runAsGroup: 1000
             fsGroup: 1000
             seccompProfile:
@@ -60,6 +61,12 @@ spec:
               limits:
                 memory: "1Gi"
                 cpu: "4000m"
+            volumeMounts:
+            - mountPath: /opt/pytorch-mnist/data
+              name: data-dir
+          volumes:
+          - name: data-dir
+            emptyDir: {}
     Worker:
       replicas: 1
       restartPolicy: OnFailure
@@ -72,6 +79,7 @@ spec:
         spec:
           securityContext:
             runAsNonRoot: true
+            runAsUser: 1000
             runAsGroup: 1000
             fsGroup: 1000
             seccompProfile:
@@ -114,3 +122,9 @@ spec:
               limits:
                 memory: "1Gi"
                 cpu: "4000m"
+            volumeMounts:
+            - mountPath: /opt/pytorch-mnist/data
+              name: data-dir
+          volumes:
+          - name: data-dir
+            emptyDir: {}
