@@ -24,58 +24,41 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Install kustomize
+    - name: Install necessary tools
       run: |
-        bash tests/kustomize_install.sh
-        kustomize version
-
-    - name: Validate images support linux/arm64
-      shell: bash
-      run: |
-        set -euxo pipefail
-
-        sudo apt-get update
+        sudo apt-get update -y
         sudo apt-get install -y skopeo jq
 
+    - name: Validate images for ARM64 support
+      shell: bash
+      run: |
+        # Generate a kustomize build and extract images
         kustomize build example > /tmp/kubeflow.yaml
-
         grep -E '^[[:space:]]*image:[[:space:]]*' /tmp/kubeflow.yaml \
           | sed -E 's/^[[:space:]]*image:[[:space:]]*//' \
           | sed -E 's/[[:space:]]+$//' \
-          | sort -u \
-          > /tmp/kubeflow-images.txt
-
+          | sort -u > /tmp/kubeflow-images.txt
         test -s /tmp/kubeflow-images.txt
 
-        # Filter out non-image placeholders/templates/vars.
-        grep -v -E '^\{\{|\}\}$|^\$' /tmp/kubeflow-images.txt > /tmp/kubeflow-images.filtered.txt || true
-
-        # Allowlist: Specific upstream-known images that lack linux/arm64 support.
-        # These images are filtered out from validation to avoid blocking PRs.
+        # Allowlist: Exclude upstream images known to lack Linux/ARM64 support
         grep -v -E '^ghcr\.io/kubeflow/trainer/mlx-runtime:v2\.2\.0$|^kserve/huggingfaceserver:v0\.16\.0(-gpu)?$' \
-          /tmp/kubeflow-images.filtered.txt > /tmp/kubeflow-images.final.txt || true
+          /tmp/kubeflow-images.txt > /tmp/kubeflow-images.final.txt || true
 
+        # Validate images for ARM64 support
         missing=0
         while IFS= read -r image; do
-          [ -z "${image}" ] && continue
-          echo "Checking ${image}"
-
-          raw="$(skopeo inspect --raw "docker://${image}" 2>/dev/null || true)"
-          if [ -z "${raw}" ]; then
-            echo "WARNING: cannot inspect ${image} (registry/auth/rate-limit error). Skipping."
+          if [ -z "${image}" ]; then
             continue
           fi
 
-          if echo "${raw}" | jq -e '.manifests' >/dev/null 2>&1; then
-            if echo "${raw}" | jq -e '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "arm64")' >/dev/null; then
-              echo "OK: ${image} supports linux/arm64"
-            else
-              echo "FAIL: ${image} does not currently support ARM64."
-              missing=$((missing+1))
-            fi
-          else
-            echo "WARNING: ${image} is not a manifest list; cannot confirm ARM64 support from metadata."
+          raw="$(skopeo inspect --raw "docker://${image}" 2>/dev/null || true)"
+          if [ -n "${raw}" ] && echo "${raw}" | jq -e '.manifests[] | select(.platform.os == "linux" and .platform.architecture == "arm64")' >/dev/null 2>&1; then
+            continue  # Image supports ARM64
           fi
+
+          # Report images that do not support ARM64
+          echo "${image}"
+          missing=$((missing + 1))
         done < /tmp/kubeflow-images.final.txt
 
         if [ "${missing}" -gt 0 ]; then
@@ -83,4 +66,4 @@ jobs:
           exit 1
         fi
 
-        echo "SUCCESS: All validated images support linux/arm64."
+        echo "SUCCESS: All validated images support ARM64."
