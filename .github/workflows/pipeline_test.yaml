@@ -10,9 +10,8 @@ on:
     - common/cert-manager/**
     - common/oauth2-proxy/**
     - common/istio*/**
-    - tests/pipeline_v1_test.py
-    - tests/pipeline_v2_test.py
-    - experimental/security/PSS/*
+    - tests/pipeline*
+    - applications/profiles/pss/**
 
 permissions:
   contents: read

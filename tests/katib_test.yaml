@@ -44,14 +44,35 @@ spec:
             annotations:
               sidecar.istio.io/inject: "false"
           spec:
+            securityContext:
+              runAsNonRoot: true
+              runAsUser: 1000
+              runAsGroup: 1000
+              fsGroup: 1000
+              seccompProfile:
+                type: RuntimeDefault
             containers:
             - name: training-container
               image: ghcr.io/kubeflow/katib/pytorch-mnist-cpu:v0.19.0
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                  - ALL
+                runAsNonRoot: true
+                runAsUser: 1000
               command:
               - "python3"
               - "/opt/pytorch-mnist/mnist.py"
               - "--epochs=1"
+              - "--no-cuda"
               - "--batch-size=16"
               - "--lr=${trialParameters.learningRate}"
               - "--momentum=${trialParameters.momentum}"
+              volumeMounts:
+              - mountPath: /opt/pytorch-mnist/data
+                name: data-dir
             restartPolicy: Never
+            volumes:
+            - name: data-dir
+              emptyDir: {}

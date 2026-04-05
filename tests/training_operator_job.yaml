@@ -11,12 +11,28 @@ spec:
       restartPolicy: OnFailure
       template:
         metadata:
+          annotations:
+            sidecar.istio.io/inject: "false"
           labels:
             sidecar.istio.io/inject: "false"
         spec:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+            seccompProfile:
+              type: RuntimeDefault
           containers:
           - name: pytorch
-            image: docker.io/kubeflowkatib/pytorch-mnist:v1beta1-45c5727
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                - ALL
+              runAsNonRoot: true
+              runAsUser: 1000
+            image: ghcr.io/kubeflow/katib/pytorch-mnist-cpu:v0.19.0
             imagePullPolicy: Always
             command:
             - "python3"
@@ -45,17 +61,39 @@ spec:
               limits:
                 memory: "1Gi"
                 cpu: "4000m"
+            volumeMounts:
+            - mountPath: /opt/pytorch-mnist/data
+              name: data-dir
+          volumes:
+          - name: data-dir
+            emptyDir: {}
     Worker:
       replicas: 1
       restartPolicy: OnFailure
       template:
         metadata:
+          annotations:
+            sidecar.istio.io/inject: "false"
           labels:
             sidecar.istio.io/inject: "false"
         spec:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+            seccompProfile:
+              type: RuntimeDefault
           containers:
           - name: pytorch
-            image: docker.io/kubeflowkatib/pytorch-mnist:v1beta1-45c5727
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                - ALL
+              runAsNonRoot: true
+              runAsUser: 1000
+            image: ghcr.io/kubeflow/katib/pytorch-mnist-cpu:v0.19.0
             imagePullPolicy: Always
             command:
             - "python3"
@@ -84,3 +122,9 @@ spec:
               limits:
                 memory: "1Gi"
                 cpu: "4000m"
+            volumeMounts:
+            - mountPath: /opt/pytorch-mnist/data
+              name: data-dir
+          volumes:
+          - name: data-dir
+            emptyDir: {}

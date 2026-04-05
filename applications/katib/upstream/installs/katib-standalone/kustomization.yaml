@@ -39,3 +39,4 @@ secretGenerator:
   - name: katib-webhook-cert
     options:
       disableNameSuffixHash: true
+    type: kubernetes.io/tls

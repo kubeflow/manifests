@@ -17,8 +17,22 @@ spec:
               labels:
                 trainer.kubeflow.org/trainjob-ancestor-step: trainer
             spec:
+              securityContext:
+                runAsNonRoot: true
+                runAsUser: 1001
+                seccompProfile:
+                  type: RuntimeDefault
               template:
                 spec:
                   containers:
                     - name: node
                       image: ghcr.io/kubeflow/trainer/xgboost-runtime:latest
+                      securityContext:
+                        allowPrivilegeEscalation: false
+                        capabilities:
+                          drop:
+                            - ALL
+                        runAsNonRoot: true
+                        runAsUser: 1001
+                        seccompProfile:
+                          type: RuntimeDefault
