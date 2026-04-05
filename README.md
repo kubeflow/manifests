@@ -450,6 +450,14 @@ kustomize build applications/tensorboard/tensorboard-controller/upstream/overlay
 ./tests/spark_install.sh
 ```
 
+#### Model Registry
+
+Install the Model Registry with its UI and database components:
+
+```sh
+./tests/model_registry_install.sh
+```
+
 #### User Namespaces
 
 Finally, create a new namespace for the default user (named `kubeflow-user-example-com`).
