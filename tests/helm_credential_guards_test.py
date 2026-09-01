@@ -87,6 +87,16 @@ class CredentialGuardTest(unittest.TestCase):
 
         self.assertEqual(result.returncode, 0, result.stderr)
 
+    def test_a_disabled_password_database_does_not_need_a_hash(self):
+        """With config.enablePasswordDB=false the hash is unused, so the
+        shipped placeholder must not block the external-connector flow."""
+        result = self.render_dex(
+            "oidcClient.secret=a-real-client-secret",
+            booleans=("config.enablePasswordDB=false",),
+        )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_incomplete_bcrypt_hash_is_rejected(self):
         """A truncated hash matches no password, so the account cannot log in."""
         for hash_value in ("$2y$12$", "$2y$12$tooshort", "notahash"):

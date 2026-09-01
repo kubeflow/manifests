@@ -14,10 +14,10 @@ CHART_DIRECTORY = ROOT_DIRECTORY / "common" / "dex" / "helm"
 HELM_BINARY = os.environ.get("HELM_BINARY", "helm")
 # Real-shaped credentials. The chart rejects the REPLACE_ME placeholders, so
 # every render in this file has to supply something valid first.
-CREDENTIALS = {
-    "secret": "pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok",
-    "hash": "$2y$12$4K/VkmDd1q1Orb3xAt82zu8gk7Ad6ReFR4LCP9UeYE90NLiN9Df72",
-}
+VALID_OIDC_CLIENT_SECRET = "pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok"
+VALID_STATIC_PASSWORD_HASH = (
+    "$2y$12$4K/VkmDd1q1Orb3xAt82zu8gk7Ad6ReFR4LCP9UeYE90NLiN9Df72"
+)
 CHECKSUM_KEYS = {
     "checksum/config",
     "checksum/oidc-client",
@@ -46,8 +46,8 @@ class DexRolloutChecksumTest(unittest.TestCase):
         # The chart refuses to render while the placeholder credentials are in
         # place, so supply real-shaped ones before any test override.
         for value in (
-            f"oidcClient.secret={CREDENTIALS['secret']}",
-            f"staticPassword.hash={CREDENTIALS['hash']}",
+            f"oidcClient.secret={VALID_OIDC_CLIENT_SECRET}",
+            f"staticPassword.hash={VALID_STATIC_PASSWORD_HASH}",
         ):
             command.extend(["--set-string", value])
         for value in values:
