@@ -121,6 +121,19 @@ jobs:
     - name: Run Trainer Test
       run: ./tests/trainer_test.sh "${KF_PROFILE}"
 
+    - name: Collect Trainer webhook diagnostics
+      if: failure()
+      continue-on-error: true
+      run: |
+        kubectl get namespace kubeflow-system -o yaml
+        kubectl -n kubeflow-system get pods --show-labels
+        kubectl -n kubeflow-system get networkpolicies
+        kubectl get mutatingwebhookconfigurations -o name
+        kubectl get mutatingwebhookconfiguration istio-sidecar-injector -o yaml | sed -n '/namespaceSelector/,/^  sideEffects/p' || true
+        kubectl -n istio-system get pods --show-labels
+        kubectl -n istio-system logs deployment/istiod --tail=100 | grep -iE "inject|kubeflow-system|error" || true
+        kubectl -n kubeflow-system describe pod -l app.kubernetes.io/name=trainer | tail -40
+
     - name: Test Dex Login
       run: |
         pip3 install -q requests
