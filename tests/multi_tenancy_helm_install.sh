@@ -4,7 +4,7 @@
 set -euxo pipefail
 echo "Installing Multitenancy Kubeflow Roles with Helm"
 # kubeflow-system already exists: the kubeflow-namespaces chart renders it
-# with its labels. Creating it here would mask a broken foundation install.
+# with its labels. Creating it here would mask a broken foundation installation.
 helm install kubeflow-platform common/kubeflow-roles/helm \
   --namespace kubeflow-system \
   --values common/kubeflow-roles/helm/ci/values-default.yaml \

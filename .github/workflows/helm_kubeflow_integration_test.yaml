@@ -1,12 +1,23 @@
 name: Test End-to-End Integration with Helm
 on:
   workflow_dispatch:
+  # Runs only when a chart, a Helm installation script, or this workflow
+  # changes, so the second full-platform job does not load every pull request
+  # or push. The in-place replacement of the Kustomize gate is a later,
+  # separate decision.
+  push:
+    branches:
+    - master
+    paths:
+    - common/*/helm/**
+    - applications/*/helm/**
+    - applications/*/*/helm/**
+    - experimental/helm/charts/**
+    - tests/*_helm_install.sh
+    - .github/workflows/helm_kubeflow_integration_test.yaml
   pull_request:
     branches:
     - master
-    # Runs only when a chart, a Helm install script, or this workflow changes,
-    # so the second full-platform job does not load every pull request. The
-    # in-place replacement of the Kustomize gate is a later, separate decision.
     paths:
     - common/*/helm/**
     - applications/*/helm/**
@@ -48,14 +59,14 @@ jobs:
     - name: Install Certificate Manager with Helm
       run: ./tests/cert_manager_helm_install.sh
 
-    - name: Install Istio CNI
-      run: ./tests/istio-cni_install.sh
+    - name: Install Istio with Helm
+      run: ./tests/istio_helm_install.sh
 
     - name: Install OAuth2 Proxy with Helm
       run: ./tests/oauth2-proxy_helm_install.sh
 
-    - name: Install Kubeflow Istio Resources
-      run: kustomize build common/istio/kubeflow-istio-resources/base | kubectl apply -f -
+    - name: Install Kubeflow Istio Resources with Helm
+      run: ./tests/kubeflow_istio_resources_helm_install.sh
 
     - name: Install Multi-Tenancy with Helm
       run: ./tests/multi_tenancy_helm_install.sh
@@ -67,6 +78,10 @@ jobs:
       run: ./tests/dashboard_helm_install.sh
 
     - name: Install Knative Serving
+      # The istio release already owns the cluster-local gateway and the
+      # Kubeflow Istio resources, so the shared script skips its Istio applies.
+      env:
+        ISTIO_MANAGED_BY_HELM: "true"
       run: ./tests/knative_serving_install.sh
 
     - name: Install Knative Eventing
