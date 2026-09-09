@@ -38,10 +38,18 @@ for name in "${CUSTOM_RESOURCE_DEFINITION_NAMES[@]}"; do
   kubectl wait --for=condition=Established "crd/${name}" --timeout=120s
 done
 
+# Helm 4 applies server-side. Once istiod is ready, its validation controller
+# (field manager pilot-discovery) sets failurePolicy: Fail on
+# ValidatingWebhookConfiguration/istio-validator-istio-system, while the payload
+# ships Ignore so the webhook fails open until istiod answers. Every later
+# upgrade therefore conflicts on that field; --force-conflicts reapplies the
+# payload value and istiod flips it back within seconds, the same trade the
+# raw installers make with kubectl apply --server-side --force-conflicts.
 helm upgrade istio common/istio/helm \
   --namespace istio-system \
   --values common/istio/helm/ci/values-oauth2-proxy.yaml \
   --set namespaces.create=false \
+  --force-conflicts \
   --wait --timeout 5m
 
 echo "Waiting for all Istio Pods to become ready..."

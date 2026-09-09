@@ -12,9 +12,12 @@
 # cluster JWKS proxy, so this runs after tests/oauth2-proxy_helm_install.sh.
 set -euxo pipefail
 echo "Installing Kubeflow Istio resources and the cluster-local gateway with Helm ..."
+# --force-conflicts: istiod owns failurePolicy on the validating webhook; see
+# tests/istio_helm_install.sh.
 helm upgrade istio common/istio/helm \
   --namespace istio-system \
   --values common/istio/helm/ci/values-platform-full.yaml \
   --set namespaces.create=false \
+  --force-conflicts \
   --wait --timeout 5m
 kubectl rollout status deployment/cluster-local-gateway -n istio-system --timeout=180s
