@@ -172,6 +172,30 @@ class IstioHelmChartTest(unittest.TestCase):
             result.stderr,
         )
 
+    def test_chart_refuses_a_foreign_namespace(self):
+        environment = os.environ.copy()
+        environment["HELM_PLUGINS"] = self.helm_plugins.name
+        result = subprocess.run(
+            [
+                HELM_BINARY,
+                "template",
+                "istio",
+                str(CHART_DIRECTORY),
+                "--namespace",
+                "not-istio-system",
+                "--values",
+                str(OAUTH2_PROXY_VALUES),
+            ],
+            capture_output=True,
+            text=True,
+            env=environment,
+        )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(
+            "must be installed into the istio-system namespace", result.stderr
+        )
+
     def test_readme_uses_canonical_synchronization_script_for_regeneration(self):
         readme = (CHART_DIRECTORY / "README.md").read_text()
         regeneration_section = readme.split("## Regenerate Static Manifests", 1)[

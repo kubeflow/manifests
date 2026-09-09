@@ -1,6 +1,16 @@
 name: Helm vs Kustomize Comparison
 
 on:
+  push:
+    branches:
+    - master
+    paths:
+    - common/**
+    - applications/**
+    - experimental/**
+    - scripts/**
+    - tests/**
+    - .github/workflows/helm-kustomize-comparison.yml
   pull_request:
     paths:
     - common/**

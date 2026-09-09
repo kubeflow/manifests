@@ -104,6 +104,28 @@ profile values files do not set it, so an upgrade that omits the flag resets
 the value to its `false` default and removes `Namespace/istio-system` from the
 release — deleting the namespace and everything inside it.
 
+## Upgrading
+
+Pass `--force-conflicts` on every `helm upgrade` of this release under Helm 4:
+
+```bash
+helm upgrade istio ./common/istio/helm \
+  --namespace istio-system \
+  --values ./common/istio/helm/ci/values-platform-full.yaml \
+  --force-conflicts \
+  --wait
+```
+
+Helm 4 applies server-side. Once istiod is ready, its validation controller
+(field manager `pilot-discovery`) sets `failurePolicy: Fail` on
+`ValidatingWebhookConfiguration/istio-validator-istio-system`; the payload
+ships `Ignore` so the webhook fails open until istiod answers. Without the
+flag the next upgrade stops with
+`conflict with "pilot-discovery" ... .webhooks[name="rev.validation.istio.io"].failurePolicy`.
+The flag reapplies the payload value and istiod sets `Fail` again within
+seconds. The Kustomize path never re-applies the webhook, so only Helm
+upgrades meet the conflict.
+
 ## Namespace names
 
 Namespace names are fixed to match the Kustomize baseline and `kubeflow-namespaces` foundation chart. Istio workloads use `istio-system`, Istio CNI resources use `kube-system`, and Kubeflow gateway resources refer to `kubeflow`. These names are not configurable.
