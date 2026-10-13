@@ -14,7 +14,9 @@ export KSERVE_TEST_NAMESPACE=${NAMESPACE}
 # Runs kserve_sklearn_test.py which independently deploys an sklearn
 # InferenceService, predicts via host-based routing, asserts the
 # output, and deletes the InferenceService.
-pip install -q pytest
+# kubernetes<37: KServe SDK is incompatible with kubernetes client 37, see #3633
+pip install -q "pytest>=7.0.0" "kserve>=0.16.0" "kubernetes>=18.20.0,<37" "requests>=2.18.4"
+
 python -m pytest "${SCRIPT_DIRECTORY}/kserve_sklearn_test.py" -vs --log-cli-level=INFO
 
 # ============================================================
