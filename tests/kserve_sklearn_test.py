@@ -36,7 +36,7 @@ import sys
 # the CI workflow calls this file via `pytest kserve_sklearn_test.py`.
 os.system(
     f"{sys.executable} -m pip install -q"
-    " pytest>=7.0.0 kserve>=0.16.0 kubernetes>=18.20.0,<37 requests>=2.18.4"
+        " 'pytest>=7.0.0' 'kserve>=0.16.0' 'kubernetes>=18.20.0,<37' 'requests>=2.18.4'"
 )
 
 import json
