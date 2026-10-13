@@ -21,7 +21,7 @@ logging.basicConfig(
 NAMESPACE = os.environ.get("KF_PROFILE", "kubeflow-user-example-com")
 
 from kubeflow.common.types import KubernetesBackendConfig  # noqa: E402
-from kubeflow.spark import Name, PodTemplateOverride, SparkClient  # noqa: E402
+from kubeflow.spark import Driver, Name, PodTemplateOverride, SparkClient  # noqa: E402
 
 SESSION_NAME = "spark-connect-workspace-test"
 
@@ -30,10 +30,12 @@ SESSION_NAME = "spark-connect-workspace-test"
 # applications/spark/sparkapplication_example.yaml already uses for its driver.
 DRIVER_SERVICE_ACCOUNT = "default-editor"
 
-# Spark's driver and executors exchange data on ports 7078 and 7079. That traffic
-# does not survive the service mesh: executors register with the driver and then
-# fail fetching broadcast blocks, so tasks never complete. Both pods are therefore
-# excluded from injection, as sparkapplication_example.yaml already does.
+# Spark's driver and executors exchange data on ports 7078 and 7079. That traffic does
+# not survive the service mesh: executors register with the driver and then fail
+# fetching broadcast blocks, so tasks never complete. This is an upstream
+# Spark-on-Kubernetes limitation (SPARK-42411), so both pods are excluded from
+# injection, as sparkapplication_example.yaml already does. Once the distribution
+# excludes Spark pods at the mesh level, the pod template overrides below go away.
 NO_SIDECAR = {"sidecar.istio.io/inject": "false"}
 
 
@@ -42,14 +44,14 @@ def main() -> None:
 
     logger.info("Creating a Spark Connect session in namespace %s", NAMESPACE)
     spark = client.connect(
+        # The ServiceAccount is a first-class field of the connect API, so set it there
+        # rather than hand-writing it into a pod template.
+        driver=Driver(service_account=DRIVER_SERVICE_ACCOUNT),
         options=[
             Name(SESSION_NAME),
             PodTemplateOverride(
                 role="driver",
-                template={
-                    "metadata": {"labels": NO_SIDECAR},
-                    "spec": {"serviceAccountName": DRIVER_SERVICE_ACCOUNT},
-                },
+                template={"metadata": {"labels": NO_SIDECAR}},
             ),
             PodTemplateOverride(
                 role="executor",
@@ -61,7 +63,7 @@ def main() -> None:
                     "spec": {"containers": [{"name": "spark-kubernetes-executor"}]},
                 },
             ),
-        ]
+        ],
     )
 
     logger.info("Connected to Spark %s (client %s)", spark.version, pyspark.__version__)

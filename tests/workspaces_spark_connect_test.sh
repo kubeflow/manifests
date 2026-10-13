@@ -20,16 +20,23 @@ kubectl auth can-i create sparkconnects \
   --as="system:serviceaccount:${KF_PROFILE}:ws-spark-test" \
   -n "${KF_PROFILE}" | grep -qx yes
 
-# The jupyter-scipy image does not ship the Kubeflow SDK. Installing it here rather
-# than baking a dedicated image keeps this test self-contained. The resolver reports
-# protobuf conflicts against the pre-installed kfp packages; they do not affect Spark.
+# The image ships the Kubeflow SDK but not its "spark" extra. Install the extra at the
+# version already present rather than letting pip resolve to the latest release, so the
+# test exercises the SDK a Workspace user actually has and needs no manual bump when the
+# image moves. The resolver reports protobuf conflicts against the pre-installed kfp
+# packages; they do not affect Spark.
+SDK_VERSION="$(kubectl -n "${KF_PROFILE}" exec "${WORKSPACE_POD}" -- \
+  python -c 'import kubeflow; print(kubeflow.__version__)')"
+echo "Workspace image SDK version: ${SDK_VERSION}"
+
 kubectl -n "${KF_PROFILE}" exec "${WORKSPACE_POD}" -- \
-  python -m pip install --quiet "kubeflow[spark]"
+  python -m pip install --quiet "kubeflow[spark]==${SDK_VERSION}"
 
 # Pin the Spark Connect client to the server version the SDK will provision. The spark
-# extra installs pyspark-connect 4.2.0 while constants.DEFAULT_SPARK_VERSION is 4.0.4, so
-# the extra alone leaves client and server mismatched. If either value moves in a future
-# SDK release the test fails here, which is the right place to find out.
+# extra and constants.DEFAULT_SPARK_VERSION can disagree -- in SDK 0.5.0 the extra pins
+# pyspark-connect 4.2.0 while the constant is 4.0.4 -- so derive the client version from
+# the constant rather than trusting the extra. If they diverge in the SDK the image ships,
+# the test fails here, which is the right place to find out.
 SPARK_VERSION="$(kubectl -n "${KF_PROFILE}" exec "${WORKSPACE_POD}" -- python -c \
   'from kubeflow.spark.backends.kubernetes import constants; print(constants.DEFAULT_SPARK_VERSION)')"
 echo "SDK default Spark version: ${SPARK_VERSION}"
