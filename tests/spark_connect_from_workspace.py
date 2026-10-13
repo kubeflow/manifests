@@ -21,7 +21,13 @@ logging.basicConfig(
 NAMESPACE = os.environ.get("KF_PROFILE", "kubeflow-user-example-com")
 
 from kubeflow.common.types import KubernetesBackendConfig  # noqa: E402
-from kubeflow.spark import Driver, Labels, Name, SparkClient  # noqa: E402
+from kubeflow.spark import (  # noqa: E402
+    Driver,
+    Labels,
+    Name,
+    PodTemplateOverride,
+    SparkClient,
+)
 
 SESSION_NAME = "spark-connect-workspace-test"
 
@@ -30,12 +36,16 @@ SESSION_NAME = "spark-connect-workspace-test"
 # applications/spark/sparkapplication_example.yaml already uses for its driver.
 DRIVER_SERVICE_ACCOUNT = "default-editor"
 
-# Spark's driver and executors exchange data on ports 7078 and 7079. That traffic does
-# not survive the service mesh: executors register with the driver and then fail
-# fetching broadcast blocks, so tasks never complete. This is an upstream
-# Spark-on-Kubernetes limitation (SPARK-42411). The operator copies the SparkConnect
-# labels onto both the driver and executor pods, so labelling the resource is enough to
-# keep both out of the mesh, as sparkapplication_example.yaml already does.
+# Spark's driver and executors exchange data on ports 7078 and 7079, and the client
+# reaches the server over gRPC. None of that survives the service mesh, so both pods are
+# excluded from injection, as sparkapplication_example.yaml already does. This is an
+# upstream Spark-on-Kubernetes limitation (SPARK-42411).
+#
+# The two pods need the label by different routes. Executors are created by spark-submit,
+# so the operator turns the SparkConnect labels into
+# "spark.kubernetes.executor.label.*" and Labels() is enough. The server pod is built by
+# the operator itself, and it takes its labels only from the server pod template
+# (internal/controller/sparkconnect/reconciler.go), so that one needs an override.
 NO_SIDECAR = {"sidecar.istio.io/inject": "false"}
 
 
@@ -44,13 +54,14 @@ def main() -> None:
 
     logger.info("Creating a Spark Connect session in namespace %s", NAMESPACE)
     spark = client.connect(
-        # Both settings use first-class API surface: the ServiceAccount on the driver,
-        # and the mesh exclusion as resource labels the operator propagates to the pods.
-        # Nothing overrides the pod templates the operator builds.
         driver=Driver(service_account=DRIVER_SERVICE_ACCOUNT),
         options=[
             Name(SESSION_NAME),
             Labels(NO_SIDECAR),
+            PodTemplateOverride(
+                role="driver",
+                template={"metadata": {"labels": NO_SIDECAR}},
+            ),
         ],
     )
 
