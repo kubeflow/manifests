@@ -34,7 +34,7 @@ kubectl auth can-i create sparkconnects \
 # than the older copy the Workspace image ships. The resolver reports protobuf conflicts
 # against the pre-installed kfp packages; they do not affect Spark.
 kubectl -n "${KF_PROFILE}" exec "${WORKSPACE_POD}" -- \
-  python -m pip install --quiet "kubeflow[spark]"
+  python -m pip install --quiet --upgrade "kubeflow[spark]"
 
 # Pin the Spark Connect client to the server version the SDK will provision. The spark
 # extra and constants.DEFAULT_SPARK_VERSION can disagree -- in SDK 0.5.0 the extra pins
