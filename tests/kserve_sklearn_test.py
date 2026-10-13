@@ -29,16 +29,6 @@ validates the JWT via RequestAuthentication before forwarding.
 """
 
 import os
-import sys
-
-# Install dependencies inline (replaces the deleted requirements.txt).
-# This ensures pytest, kserve SDK, and other dependencies are available when
-# the CI workflow calls this file via `pytest kserve_sklearn_test.py`.
-os.system(
-    f"{sys.executable} -m pip install -q"
-    " 'pytest>=7.0.0' 'kserve>=0.16.0' 'kubernetes>=18.20.0,<37' 'requests>=2.18.4'"
-)
-
 import json
 import logging
 import time
