@@ -3,6 +3,7 @@ set -euxo pipefail
 echo "Installing Kserve ..."
 cd applications/kserve
 kustomize build kserve | kubectl apply --server-side --force-conflicts -f - || true
+kubectl wait --for=condition=Available -n kserve --timeout=180s deployment/kserve-controller-manager
 kubectl wait --for=condition=Ready -n kserve --timeout=60s \
   certificate/serving-cert \
   certificate/llmisvc-serving-cert \
