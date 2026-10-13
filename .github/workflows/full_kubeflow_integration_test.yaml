@@ -17,8 +17,21 @@ env:
 
 jobs:
   full_kubeflow_integration_test:
-    name: Kubeflow Installation and Testing
+    name: E2E test for Kubernetes ${{ matrix.kubernetes-version }}
     if: ${{ github.repository == 'kubeflow/community-distribution' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # 1.38: add once a KinD release publishes a kindest/node v1.38 image (K8s 1.38 GA targeted 2026-12-16)
+        include:
+        - kubernetes-version: "1.34"
+          kind-node-image: kindest/node:v1.34.11@sha256:44e222ee2132dab25ff87301682f89eb82c7880ea3a1bf543bfe9708fd08d67d
+        - kubernetes-version: "1.35"
+          kind-node-image: kindest/node:v1.35.8@sha256:07b2536e30b803ed61d1677a79df6115f798ce64c80f9e22f6ed45afd09323c0
+        - kubernetes-version: "1.36"
+          kind-node-image: kindest/node:v1.36.4@sha256:099e049362a1526b2db71494e1947aae99bd16290d7c895f2b7ea312e3cbfaed
+        - kubernetes-version: "1.37"
+          kind-node-image: kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5
     runs-on:
       labels: cncf-ubuntu-16-64-x86
       # labels: ubuntu-latest-16-cores
@@ -27,8 +40,16 @@ jobs:
     - name: Checkout
       uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-    - name: Install KinD, Create KinD cluster and Install kustomize
+    - name: Install KinD, Create KinD cluster (Kubernetes ${{ matrix.kubernetes-version }}) and Install kustomize
+      env:
+        KIND_NODE_IMAGE: ${{ matrix.kind-node-image }}
       run: ./tests/install_KinD_create_KinD_cluster_install_kustomize.sh
+
+    - name: Verify cluster runs Kubernetes ${{ matrix.kubernetes-version }}
+      run: |
+        SERVER_VERSION="$(kubectl version -o json | jq -r '.serverVersion.major + "." + (.serverVersion.minor | sub("[^0-9]";"";"g"))')"
+        echo "Server version: ${SERVER_VERSION}"
+        test "${SERVER_VERSION}" = "${{ matrix.kubernetes-version }}"
 
     - name: Create Kubeflow Namespace
       run: kustomize build common/kubeflow-namespace/base | kubectl apply -f -
@@ -250,5 +271,5 @@ jobs:
       if: always()
       uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:
-        name: kubeflow-test-logs
+        name: kubeflow-test-logs-k8s-${{ matrix.kubernetes-version }}
         path: logs/
