@@ -26,7 +26,7 @@ jobs:
             'black {source_file_or_directory}'
             to format python files.
         "
-    - uses: psf/black@87928e6d6761a4a6d22250e1fee5601b3998086e # 26.5.1
+    - uses: psf/black@4f1883b1f15305a0e83a7c87991f46292bf09f85 # 26.10.0
       with:
         src: |
           ./common
