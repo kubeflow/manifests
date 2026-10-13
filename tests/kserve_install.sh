@@ -3,6 +3,7 @@ set -euxo pipefail
 echo "Installing Kserve ..."
 cd applications/kserve
 kustomize build kserve | kubectl apply --server-side --force-conflicts -f - || true
+kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout=60s --field-selector=status.phase!=Succeeded
 kubectl wait --for=condition=Ready -n kserve --timeout=60s \
   certificate/serving-cert \
   certificate/llmisvc-serving-cert \
@@ -11,7 +12,6 @@ kubectl wait --for=create -n kserve --timeout=60s \
   secret/kserve-webhook-server-cert \
   secret/llmisvc-webhook-server-cert \
   secret/localmodel-webhook-server-cert
-kubectl wait --for=condition=Available -n kserve --timeout=180s deployment/kserve-controller-manager
 
 kubectl wait --for condition=established --timeout=30s crd/clusterservingruntimes.serving.kserve.io
 kustomize build kserve | kubectl apply --server-side --force-conflicts -f -
