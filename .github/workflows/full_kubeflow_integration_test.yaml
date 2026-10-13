@@ -22,10 +22,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # 1.38: add once a KinD release publishes a kindest/node v1.38 image (K8s 1.38 GA targeted 2026-12-16)
+        # Test every Kubernetes minor version that is still supported upstream
+        # (https://kubernetes.io/releases/) and has a prebuilt node image in the KinD release
+        # pinned by KIND_VERSION in tests/install_KinD_create_KinD_cluster_install_kustomize.sh.
+        # Drop a version once it is close to EOL. Use the image@digest from the KinD release notes.
+        # Review this list whenever KIND_VERSION is bumped.
         include:
-        - kubernetes-version: "1.34"
-          kind-node-image: kindest/node:v1.34.11@sha256:44e222ee2132dab25ff87301682f89eb82c7880ea3a1bf543bfe9708fd08d67d
         - kubernetes-version: "1.35"
           kind-node-image: kindest/node:v1.35.8@sha256:07b2536e30b803ed61d1677a79df6115f798ce64c80f9e22f6ed45afd09323c0
         - kubernetes-version: "1.36"
