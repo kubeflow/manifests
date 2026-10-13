@@ -11,8 +11,8 @@ kubectl wait --for=create -n kserve --timeout=60s \
   secret/kserve-webhook-server-cert \
   secret/llmisvc-webhook-server-cert \
   secret/localmodel-webhook-server-cert
-
 kubectl wait --for=condition=Available -n kserve --timeout=180s deployment/kserve-controller-manager
+
 kubectl wait --for condition=established --timeout=30s crd/clusterservingruntimes.serving.kserve.io
 kustomize build kserve | kubectl apply --server-side --force-conflicts -f -
 
