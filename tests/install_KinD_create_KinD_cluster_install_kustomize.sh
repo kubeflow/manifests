@@ -4,7 +4,7 @@ set -euxo pipefail
 KIND_VERSION="v0.33.0"
 KIND_NODE_IMAGE="${KIND_NODE_IMAGE:-kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5}"
 # kubectl must stay within +/-1 minor of the API server, so derive it from the node image tag
-KUBECTL_VERSION="${KUBECTL_VERSION:-$(echo "${KIND_NODE_IMAGE}" | sed -E 's/^[^:]*:(v[0-9]+\.[0-9]+\.[0-9]+).*/\1/')}"
+KUBECTL_VERSION="${KUBECTL_VERSION:-$(echo "${KIND_NODE_IMAGE}" | sed -E 's/^.*:(v[0-9]+\.[0-9]+\.[0-9]+).*/\1/')}"
 KUSTOMIZE_VERSION="v5.8.1"
 USER_BINARY_DIRECTORY="$HOME/.local/bin"
 
