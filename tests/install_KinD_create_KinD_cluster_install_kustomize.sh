@@ -2,7 +2,9 @@
 set -euxo pipefail
 
 KIND_VERSION="v0.33.0"
-KIND_NODE_IMAGE="kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5"
+KIND_NODE_IMAGE="${KIND_NODE_IMAGE:-kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5}"
+# kubectl must stay within +/-1 minor of the API server, so derive it from the node image tag
+KUBECTL_VERSION="${KUBECTL_VERSION:-$(echo "${KIND_NODE_IMAGE}" | sed -E 's/^.*:(v[0-9]+\.[0-9]+\.[0-9]+).*/\1/')}"
 KUSTOMIZE_VERSION="v5.8.1"
 USER_BINARY_DIRECTORY="$HOME/.local/bin"
 
@@ -68,12 +70,13 @@ nodes:
 
 echo "Install kubectl ..."
 {
-    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    curl -fLO "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl"
     chmod +x ./kubectl
     mv kubectl "${USER_BINARY_DIRECTORY}/kubectl"
 } || { echo "Failed to install kubectl"; exit 1; }
 
 kubectl cluster-info
+kubectl version
 
 echo "Install Kustomize ..."
 {
