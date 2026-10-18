@@ -85,6 +85,45 @@ class IstioHelmChartTest(unittest.TestCase):
                 for name in ["kubeflow-istio-edit", "kubeflow-istio-view"]:
                     self.assertTrue(roles[name]["rules"])
 
+    def test_registry_ui_has_workload_scoped_cross_namespace_egress(self):
+        ui_deployment = yaml.safe_load(
+            (
+                REPOSITORY_ROOT
+                / "applications/hub/upstream/options/ui/base/model-registry-ui-deployment.yaml"
+            ).read_text()
+        )
+        ui_labels = ui_deployment["spec"]["template"]["metadata"]["labels"]
+        for profile in ["base", "oauth2-proxy", "gke"]:
+            source = "base" if profile == "base" else f"overlays/{profile}"
+            kustomize = subprocess.run(
+                ["kustomize", "build", str(REPOSITORY_ROOT / "common/istio/istio-install" / source)],
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            helm = self.render_chart(values=CHART_DIRECTORY / f"ci/values-{profile}.yaml")
+            self.assertEqual(helm.returncode, 0, helm.stderr)
+            for renderer, output in [("kustomize", kustomize.stdout), ("helm", helm.stdout)]:
+                with self.subTest(profile=profile, renderer=renderer):
+                    sidecars = {
+                        resource["metadata"]["name"]: resource
+                        for resource in yaml.safe_load_all(output)
+                        if resource and resource.get("kind") == "Sidecar"
+                    }
+                    exception = sidecars["model-registry-ui-exception"]
+                    self.assertEqual(exception["metadata"]["namespace"], "kubeflow")
+                    selector = exception["spec"]["workloadSelector"]["labels"]
+                    self.assertEqual(selector, {"app": "model-registry-ui"})
+                    self.assertTrue(selector.items() <= ui_labels.items())
+                    self.assertEqual(exception["spec"]["egress"], [{"hosts": ["*/*"]}])
+                    default = sidecars["default"]
+                    self.assertEqual(default["metadata"]["namespace"], "istio-system")
+                    self.assertNotIn("workloadSelector", default["spec"])
+                    self.assertEqual(
+                        default["spec"]["egress"],
+                        [{"hosts": ["./*", "kubeflow/*", "kubeflow-system/*", "knative-serving/*", "knative-eventing/*", "istio-system/*"]}],
+                    )
+
     def test_custom_oauth2_proxy_service_and_port_are_rendered(self):
         for values in SUBSTITUTED_PROFILE_VALUES:
             with self.subTest(values=values.name):
