@@ -26,6 +26,7 @@ DEFINITION_NAMES = {
 def documents(text):
     return [item for item in yaml.load_all(text, Loader=yaml.CSafeLoader) if item]
 
+
 def operator_feature_gates(manifests):
     """Return the ordered (name, enabled) pairs of the operator --feature-gates argument."""
     deployment = next(item for item in manifests if item["kind"] == "Deployment")
@@ -51,6 +52,7 @@ def upstream_feature_gates_with_network_policy_enabled():
         (name, True if name == "RayClusterNetworkPolicy" else enabled)
         for name, enabled in upstream
     ]
+
 
 class RayChartTest(unittest.TestCase):
     @classmethod
@@ -228,6 +230,7 @@ class RayChartTest(unittest.TestCase):
             "quay.io/kuberay/operator:example",
         )
 
+
 class RayNetworkPolicyFeatureGateTest(unittest.TestCase):
     """Both installation paths enable only RayClusterNetworkPolicy on top of upstream."""
 
@@ -254,7 +257,8 @@ class RayNetworkPolicyFeatureGateTest(unittest.TestCase):
             operator_feature_gates(documents(rendered)),
             upstream_feature_gates_with_network_policy_enabled(),
         )
-    
+
+
 class RaySmokeOwnershipTest(unittest.TestCase):
     def run_smoke_failure(
         self,
