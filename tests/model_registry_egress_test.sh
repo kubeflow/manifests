@@ -28,6 +28,9 @@ metadata:
 spec:
   restartPolicy: Never
   automountServiceAccountToken: false
+  # Keep probe Pods out of the shared UI Service endpoints.
+  readinessGates:
+  - conditionType: tests.kubeflow.org/egress-probe
   securityContext:
     runAsNonRoot: true
     runAsUser: 1000
@@ -49,7 +52,8 @@ spec:
         drop: ["ALL"]
 EOF
 done
-kubectl -n kubeflow wait --for=condition=Ready "pod/$ui_probe" "pod/$control_probe" --timeout=180s
+kubectl -n kubeflow wait --for=condition=ContainersReady "pod/$ui_probe" "pod/$control_probe" --timeout=180s
+kubectl -n kubeflow wait --for=condition=Ready=false "pod/$ui_probe" "pod/$control_probe" --timeout=10s
 profile_token=$(kubectl -n "$profile_namespace" create token default-editor --duration=10m)
 
 assert_response() {

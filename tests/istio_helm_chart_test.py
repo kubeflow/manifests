@@ -96,14 +96,23 @@ class IstioHelmChartTest(unittest.TestCase):
         for profile in ["base", "oauth2-proxy", "gke"]:
             source = "base" if profile == "base" else f"overlays/{profile}"
             kustomize = subprocess.run(
-                ["kustomize", "build", str(REPOSITORY_ROOT / "common/istio/istio-install" / source)],
+                [
+                    "kustomize",
+                    "build",
+                    str(REPOSITORY_ROOT / "common/istio/istio-install" / source),
+                ],
                 capture_output=True,
                 text=True,
                 check=True,
             )
-            helm = self.render_chart(values=CHART_DIRECTORY / f"ci/values-{profile}.yaml")
+            helm = self.render_chart(
+                values=CHART_DIRECTORY / f"ci/values-{profile}.yaml"
+            )
             self.assertEqual(helm.returncode, 0, helm.stderr)
-            for renderer, output in [("kustomize", kustomize.stdout), ("helm", helm.stdout)]:
+            for renderer, output in [
+                ("kustomize", kustomize.stdout),
+                ("helm", helm.stdout),
+            ]:
                 with self.subTest(profile=profile, renderer=renderer):
                     sidecars = {
                         resource["metadata"]["name"]: resource
@@ -121,7 +130,18 @@ class IstioHelmChartTest(unittest.TestCase):
                     self.assertNotIn("workloadSelector", default["spec"])
                     self.assertEqual(
                         default["spec"]["egress"],
-                        [{"hosts": ["./*", "kubeflow/*", "kubeflow-system/*", "knative-serving/*", "knative-eventing/*", "istio-system/*"]}],
+                        [
+                            {
+                                "hosts": [
+                                    "./*",
+                                    "kubeflow/*",
+                                    "kubeflow-system/*",
+                                    "knative-serving/*",
+                                    "knative-eventing/*",
+                                    "istio-system/*",
+                                ]
+                            }
+                        ],
                     )
 
     def test_custom_oauth2_proxy_service_and_port_are_rendered(self):
