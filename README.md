@@ -73,7 +73,7 @@ This repository periodically synchronizes all official Kubeflow components from 
 | Knative | common/knative/knative-serving <br /> common/knative/knative-eventing | [v1.23.0](https://github.com/knative/serving/releases/tag/knative-v1.23.0) <br /> [v1.23.0](https://github.com/knative/eventing/releases/tag/knative-v1.23.0) | 1450m | 1038Mi | 0GB |
 | Cert Manager | common/cert-manager | [1.21.2](https://github.com/cert-manager/cert-manager/releases/tag/v1.21.2) | 3m | 128Mi | 0GB |
 | Dex | common/dex | [2.46.0](https://github.com/dexidp/dex/releases/tag/v2.46.0) | 3m | 27Mi | 0GB |
-| OAuth2-Proxy | common/oauth2-proxy | [7.15.4](https://github.com/oauth2-proxy/oauth2-proxy/releases/tag/v7.15.4) | 3m | 27Mi | 0GB |
+| OAuth2-Proxy | common/oauth2-proxy | [7.15.5](https://github.com/oauth2-proxy/oauth2-proxy/releases/tag/v7.15.5) | 3m | 27Mi | 0GB |
 | **Total** | | | **4377m** | **12316Mi** | **65GB** |
 
 
