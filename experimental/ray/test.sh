@@ -11,6 +11,7 @@ FIXTURE_CREATED=false
 OPERATOR_APPLIED=false
 NAMESPACE_LABEL_ADDED=false
 PROFILE_NAMESPACE_UID=""
+PROBE_POD=ray-network-policy-probe
 case "$RAY_MANAGED_BY_HELM" in
   true|false) ;;
   *) echo "RAY_MANAGED_BY_HELM must be true or false" >&2; exit 1 ;;
@@ -25,6 +26,7 @@ cleanup() {
     wait "$PORT_FORWARD_PROCESS" 2>/dev/null || true
   fi
   if [[ "$FIXTURE_CREATED" == true ]]; then
+    kubectl -n "$NAMESPACE" delete pod "$PROBE_POD" --ignore-not-found --wait=true --timeout=120s || status=1
     kubectl -n "$NAMESPACE" delete -f raycluster_example.yaml --ignore-not-found --wait=true --timeout=120s || status=1
     local remaining=1
     for ((attempt=0; attempt<60; attempt++)); do
@@ -61,6 +63,10 @@ fi
 FIXTURE_RESOURCES=(
   authorizationpolicy.security.istio.io/allow-ray-workers-head
   service/raycluster-istio-headless-svc
+  "pod/$PROBE_POD"
+  # The operator refuses to adopt NetworkPolicies with these names.
+  networkpolicy/kubeflow-raycluster-head
+  networkpolicy/kubeflow-raycluster-workers-small-group
 )
 # The legacy path can install Ray for the first time. Without its definition,
 # no RayCluster can exist; other read failures must stop the test.
@@ -99,7 +105,8 @@ done
 kubectl -n "$NAMESPACE" wait --for=condition=Ready pod -l ray.io/cluster=kubeflow-raycluster --timeout=180s
 HEAD_POD=$(kubectl -n "$NAMESPACE" get pods -l ray.io/cluster=kubeflow-raycluster,ray.io/node-type=head -o jsonpath='{.items[0].metadata.name}')
 # Submit real distributed work and check its result, not only dashboard health.
-kubectl -n "$NAMESPACE" exec -i "$HEAD_POD" -c ray-head -- python - <<'PY'
+run_distributed_tasks() {
+  kubectl -n "$NAMESPACE" exec -i "$HEAD_POD" -c ray-head -- python - <<'PY'
 import ray
 
 ray.init(address="auto")
@@ -113,6 +120,88 @@ assert result == [value * value for value in range(10)], result
 print("Ray distributed task results verified:", result)
 ray.shutdown()
 PY
+}
+run_distributed_tasks
+
+# RayClusterNetworkPolicy: a Pod outside the RayCluster and outside the mesh
+# reaches the head before the RayCluster requests isolation and is refused
+# afterwards, while traffic inside the RayCluster keeps working.
+HEAD_POD_IP=$(kubectl -n "$NAMESPACE" get pod "$HEAD_POD" -o jsonpath='{.status.podIP}')
+[[ -n "$HEAD_POD_IP" ]] || { echo "The Ray head Pod has no IP address" >&2; exit 1; }
+kubectl -n "$NAMESPACE" apply -f - <<EOF
+apiVersion: v1
+kind: Pod
+metadata:
+  name: $PROBE_POD
+  annotations:
+    sidecar.istio.io/inject: "false"
+spec:
+  restartPolicy: Never
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+  - name: probe
+    image: rayproject/ray:${RAY_VERSION}-py311-cpu
+    command: ["sleep", "infinity"]
+    resources:
+      requests:
+        cpu: 10m
+        memory: 64Mi
+      limits:
+        cpu: 100m
+        memory: 256Mi
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop: ["ALL"]
+EOF
+kubectl -n "$NAMESPACE" wait --for=condition=Ready "pod/$PROBE_POD" --timeout=180s
+# Print reachable or refused for a TCP connection from the probe to the head
+# Global Control Service port; any other failure stops the test.
+probe_head() {
+  local status=0
+  kubectl -n "$NAMESPACE" exec "$PROBE_POD" -- python -c '
+import socket
+import sys
+
+try:
+    socket.create_connection((sys.argv[1], 6379), timeout=5).close()
+except OSError:
+    sys.exit(3)
+' "$HEAD_POD_IP" || status=$?
+  case "$status" in
+    0) echo reachable ;;
+    3) echo refused ;;
+    *) echo "The network policy probe failed with status $status" >&2; return 1 ;;
+  esac
+}
+# Wait for the expected probe result, retrying while traffic rules propagate.
+wait_for_probe_result() {
+  local expected=$1
+  local result=""
+  for ((attempt=0; attempt<20; attempt++)); do
+    result=$(probe_head)
+    [[ "$result" == "$expected" ]] && return 0
+    sleep 3
+  done
+  echo "The Ray head stayed $result for a Pod outside the RayCluster; expected $expected" >&2
+  return 1
+}
+wait_for_probe_result reachable
+kubectl -n "$NAMESPACE" patch raycluster kubeflow-raycluster --type=merge \
+  --patch '{"spec":{"networkPolicy":{"mode":"DenyAllIngress"}}}'
+for network_policy in kubeflow-raycluster-head kubeflow-raycluster-workers-small-group; do
+  kubectl -n "$NAMESPACE" wait --for=create "networkpolicy/$network_policy" --timeout=120s
+  kubectl -n "$NAMESPACE" get networkpolicy "$network_policy" -o json \
+    | jq -e '.spec.policyTypes == ["Ingress"] and .metadata.ownerReferences[0].kind == "RayCluster"' >/dev/null
+done
+wait_for_probe_result refused
+run_distributed_tasks
+echo "RayClusterNetworkPolicy isolation verified"
+
 kubectl -n "$NAMESPACE" port-forward svc/kubeflow-raycluster-head-svc 8265:8265 &
 PORT_FORWARD_PROCESS=$!
 for ((attempt=0; attempt<30; attempt++)); do

@@ -1,0 +1,11 @@
+# Enable the RayClusterNetworkPolicy feature gate. A RayCluster is isolated only
+# when it requests it through spec.networkPolicy; other RayClusters are unchanged.
+# The test operation pins the upstream argument, so a synchronization that changes
+# the upstream feature gates fails here and must update this patch deliberately.
+# Keep this list identical to kuberay-operator.featureGates in ../../helm/values.yaml.
+- op: test
+  path: /spec/template/spec/containers/0/args/9
+  value: --feature-gates=RayClusterStatusConditions=true,RayJobDeletionPolicy=true,RayMultiHostIndexing=true,RayServiceIncrementalUpgrade=true,RayCronJob=false,RayClusterMTLS=false,RayClusterNetworkPolicy=false,RayClusterHistoryServer=false
+- op: replace
+  path: /spec/template/spec/containers/0/args/9
+  value: --feature-gates=RayClusterStatusConditions=true,RayJobDeletionPolicy=true,RayMultiHostIndexing=true,RayServiceIncrementalUpgrade=true,RayCronJob=false,RayClusterMTLS=false,RayClusterNetworkPolicy=true,RayClusterHistoryServer=false

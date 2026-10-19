@@ -4,7 +4,7 @@ This wrapper installs the same upstream KubeRay operator chart that produces
 `experimental/ray/kuberay-operator/base/resources.yaml`. The dependency and
 `Chart.lock` follow the version pinned in `experimental/ray/Makefile`.
 Upstream values express the distribution's
-init-container and restricted-PSS changes; the only added objects are the three
+init-container, restricted-PSS changes and feature gate changes; the only added objects are the three
 Kubeflow RBAC roles. The `kubeflow` comparison scenario covers all 20 objects,
 including four definitions, against the distribution overlay without allowances.
 
@@ -44,15 +44,17 @@ immutable selectors; this draft does not claim an in-place adoption procedure.
 | `env` | `ENABLE_INIT_CONTAINER_INJECTION=false` | Matches the distribution's Istio overlay |
 | `podSecurityContext.seccompProfile.type` | `RuntimeDefault` | Restricted-PSS Pod default |
 | `securityContext.seccompProfile.type` | `RuntimeDefault` | Restricted-PSS container default |
+| `featureGates` | Upstream gates with `RayClusterNetworkPolicy` enabled | Opt-in RayCluster network isolation through `spec.networkPolicy` |
 | `image.repository`, `image.tag` | Pinned upstream operator image | Private mirrors and deliberate operator changes |
 | `replicas` | `1` | Operator replicas with upstream leader election |
 
 Other upstream settings remain available through the dependency; only the
 platform defaults have a Kustomize parity scenario. Upstream lists replace the
 entire list when overridden: an `env` override must preserve the platform entry
-unless a different init-container policy has been tested. Restricted-PSS fields
+unless a different init-container policy has been tested, and a `featureGates`
+override must repeat every upstream gate. Restricted-PSS fields
 inherited from upstream remain enabled. Changes to names, namespace scope,
-RBAC, scheduler integration or feature gates are not additional tested platform
+RBAC, scheduler integration or further feature gates are not additional tested platform
 scenarios merely because the upstream chart exposes those settings.
 
 `kubeflow-kuberay-admin` intentionally keeps `rules: []`: it has aggregate-to
