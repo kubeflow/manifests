@@ -43,7 +43,7 @@ yaml.safe_dump({
 }, sys.stdout)
 PY
 kubectl -n "$PROFILE_NAMESPACE" create -f "$TEMPORARY_DIRECTORY/job.yaml"
-# KubeRay 1.6.2 checks suspend before creating the RayCluster. Wait for that
+# KubeRay checks suspend before creating the RayCluster. Wait for that
 # state before recording identity; this fixture measures retention, not work.
 kubectl -n "$PROFILE_NAMESPACE" wait --for=jsonpath='{.status.jobDeploymentStatus}'=Suspended \
   rayjob/helm-lifecycle-held --timeout=120s
