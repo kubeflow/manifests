@@ -24,7 +24,3 @@ spec:
     options:
       imageConfig: "jupyter-scipy:v1.10.0"
       podConfig: "tiny_cpu"
-    podMetadata:
-      labels:
-        # selects the PodDefault that injects the projected ML pipeline service account token
-        access-ml-pipeline: "true"

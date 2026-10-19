@@ -21,6 +21,9 @@ spec:
     podMetadata:
       labels:
         my-workspace-kind-label: "my-value"
+        # selects the PodDefault that injects the projected ML pipeline service account token
+        # (Workspace-level Pod labels are rejected by the CRD, so the WorkspaceKind sets it)
+        access-ml-pipeline: "true"
       annotations:
         my-workspace-kind-annotation: "my-value"
     # Grant the per-Workspace ServiceAccount ("ws-{WORKSPACE_NAME}-{RANDOM_SUFFIX}") access to
