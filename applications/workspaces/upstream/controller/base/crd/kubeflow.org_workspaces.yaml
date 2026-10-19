@@ -113,12 +113,20 @@ spec:
                       annotations:
                         additionalProperties:
                           type: string
-                        description: annotations to be applied to the Pod resource
+                        description: |-
+                          annotations to be applied to the Pod resource
+                           - entries are currently NOT allowed, until the security model
+                             for Workspace-level Pod metadata is defined
+                        maxProperties: 0
                         type: object
                       labels:
                         additionalProperties:
                           type: string
-                        description: labels to be applied to the Pod resource
+                        description: |-
+                          labels to be applied to the Pod resource
+                           - entries are currently NOT allowed, until the security model
+                             for Workspace-level Pod metadata is defined
+                        maxProperties: 0
                         type: object
                     type: object
                   volumes:
@@ -165,7 +173,7 @@ spec:
                            - this PVC must already exist in the Namespace
                            - this PVC must be RWX (ReadWriteMany, ReadWriteOnce)
                            - the mount path is defined in the WorkspaceKind under
-                             `spec.podTemplate.volumeMounts.home`
+                             `spec.podTemplate.volumeMountPaths.home`
                         example: my-home-pvc
                         maxLength: 253
                         minLength: 1
@@ -253,7 +261,7 @@ spec:
                         description: |-
                           a human-readable message about the probe result
                            - WARNING: this field is NOT FOR MACHINE USE, subject to change without notice
-                        example: Jupyter probe succeeded
+                        example: PodExec probe succeeded
                         type: string
                       result:
                         description: the result of the last probe execution
@@ -331,7 +339,8 @@ spec:
                    - true if any `spec.podTemplate.options` have a redirect
                      and so will be patched on the next restart
                    - true if the WorkspaceKind has changed one of its common `podTemplate` fields
-                     like `podMetadata`, `probes`, `extraEnv`, or `containerSecurityContext`
+                     like `podMetadata`, `podSpec.mainContainer.livenessProbe`,
+                     `podSpec.mainContainer.extraEnv`, or `podSpec.mainContainer.securityContext`
                 type: boolean
               podTemplateOptions:
                 description: information about the current podTemplate options (only
@@ -437,9 +446,9 @@ spec:
                     description: |-
                       the name of the ServiceAccount that the Pod runs as
                        - this ServiceAccount is created and owned by the Workspace, and is stable for its lifetime
-                       - it is reported here so that Roles, RoleBindings, and Istio AuthorizationPolicies
-                         which reference the ServiceAccount do not have to recompute its name
-                    example: ws-my-workspace
+                       - the name has a random suffix, so it is reported here for Roles, RoleBindings,
+                         and Istio AuthorizationPolicies which need to reference the ServiceAccount
+                    example: ws-my-workspace-abcde
                     type: string
                 required:
                 - name
