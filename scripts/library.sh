@@ -53,17 +53,17 @@ check_uncommitted_changes() {
   fi
 }
 
-# Create a new git branch if it doesn't exist
+# Check out the synchronization branch, creating it if needed
 create_branch() {
   if [[ "${KUBEFLOW_SYNCHRONIZE_NO_COMMIT:-}" == "true" ]]; then
     return
   fi
   local branch="$1"
   check_uncommitted_changes
-  if ! git show-ref --verify --quiet refs/heads/$branch; then
+  if ! git show-ref --verify --quiet "refs/heads/$branch"; then
     git checkout -b "$branch"
   else
-    echo "Branch $branch already exists."
+    git checkout "$branch"
   fi
 }
 
