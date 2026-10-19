@@ -20,14 +20,16 @@ kubectl wait --for=jsonpath='{.status.state}'=Running \
   --timeout=600s
 
 WORKSPACE_POD="$(kubectl -n "${KF_PROFILE}" get pods \
-  -l notebooks.kubeflow.org/workspace-name=spark-test \
+  -l workspaces.kubeflow.org/workspace-name=spark-test \
   -o jsonpath='{.items[0].metadata.name}')"
 
 # The Workspace ServiceAccount is granted kubeflow-spark-edit by the WorkspaceKind,
 # so it can create SparkConnect resources. Assert that before running the session,
 # so an RBAC regression fails here with a clear message rather than inside Spark.
+WORKSPACE_SERVICE_ACCOUNT="$(kubectl -n "${KF_PROFILE}" get workspace spark-test \
+  -o jsonpath='{.status.podTemplatePod.serviceAccountName}')"
 kubectl auth can-i create sparkconnects \
-  --as="system:serviceaccount:${KF_PROFILE}:ws-spark-test" \
+  --as="system:serviceaccount:${KF_PROFILE}:${WORKSPACE_SERVICE_ACCOUNT}" \
   -n "${KF_PROFILE}" | grep -qx yes
 
 # Install the Kubeflow SDK with its "spark" extra at the latest stable release, rather
