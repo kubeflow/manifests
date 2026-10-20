@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import subprocess
 import tempfile
 import unittest
@@ -151,6 +152,113 @@ class HelmSynchronizationLibraryTest(unittest.TestCase):
         self.assertEqual(output, "original\n")
         self.assertEqual(mode, 0o640)
         self.assertEqual(temporary_files, [])
+
+
+class SynchronizationBranchTest(unittest.TestCase):
+    def setUp(self):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        self.directory = Path(directory.name)
+        self.git("init", "--initial-branch=original")
+        for key, value in (
+            ("user.name", "Synchronization Test"),
+            ("user.email", "synchronization@example.invalid"),
+            ("commit.gpgSign", "false"),
+            ("core.hooksPath", "/dev/null"),
+        ):
+            self.git("config", key, value)
+        self.component = self.directory / "component.txt"
+        self.component.write_text("original\n")
+        self.git("add", "component.txt")
+        self.git("commit", "-m", "Initial component")
+        self.original_commit = self.git("rev-parse", "HEAD")
+
+    def git(self, *arguments):
+        return subprocess.run(
+            ["git", *arguments],
+            cwd=self.directory,
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.strip()
+
+    def synchronize(self, branch, *, commit=False, no_commit=False):
+        environment = os.environ.copy()
+        environment.pop("KUBEFLOW_SYNCHRONIZE_NO_COMMIT", None)
+        if no_commit:
+            environment["KUBEFLOW_SYNCHRONIZE_NO_COMMIT"] = "true"
+        command = 'source "$1"; setup_error_handling; create_branch "$2"'
+        if commit:
+            command += (
+                "; printf 'updated\\n' > component.txt; "
+                'commit_changes "$PWD" "Synchronize component" component.txt'
+            )
+        return subprocess.run(
+            ["bash", "-c", command, "bash", str(LIBRARY_PATH), branch],
+            cwd=self.directory,
+            env=environment,
+            capture_output=True,
+            text=True,
+        )
+
+    def test_new_branch_receives_synchronization_commit(self):
+        result = self.synchronize("synchronization/new-target", commit=True)
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(
+            self.git("branch", "--show-current"), "synchronization/new-target"
+        )
+        self.assertEqual(self.git("rev-parse", "HEAD^"), self.original_commit)
+        self.assertEqual(self.git("rev-parse", "original"), self.original_commit)
+
+    def test_existing_branch_receives_commit_and_preserves_its_history(self):
+        self.git("checkout", "-b", "synchronization-target")
+        self.component.write_text("target history\n")
+        self.git("commit", "-am", "Existing target history")
+        target_commit = self.git("rev-parse", "HEAD")
+        self.git("checkout", "original")
+
+        result = self.synchronize("synchronization-target", commit=True)
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(self.git("branch", "--show-current"), "synchronization-target")
+        self.assertEqual(self.git("rev-parse", "HEAD^"), target_commit)
+        self.assertEqual(self.git("rev-parse", "original"), self.original_commit)
+
+    def test_current_target_branch_is_preserved(self):
+        result = self.synchronize("original")
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(self.git("branch", "--show-current"), "original")
+        self.assertEqual(self.git("rev-parse", "HEAD"), self.original_commit)
+
+    def test_no_commit_mode_preserves_branch_and_references(self):
+        self.git("branch", "existing-target")
+        for branch in ("existing-target", "new-target"):
+            with self.subTest(branch=branch):
+                references = self.git("show-ref")
+
+                result = self.synchronize(branch, no_commit=True)
+
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertEqual(self.git("branch", "--show-current"), "original")
+                self.assertEqual(self.git("show-ref"), references)
+
+    def test_checkout_conflict_stops_before_writing_or_committing(self):
+        self.git("checkout", "-b", "synchronization-target")
+        self.component.write_text("target history\n")
+        self.git("commit", "-am", "Existing target history")
+        target_commit = self.git("rev-parse", "HEAD")
+        self.git("checkout", "original")
+        self.component.write_text("local changes\n")
+
+        result = self.synchronize("synchronization-target", commit=True)
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(self.git("branch", "--show-current"), "original")
+        self.assertEqual(self.git("rev-parse", "original"), self.original_commit)
+        self.assertEqual(self.git("rev-parse", "synchronization-target"), target_commit)
+        self.assertEqual(self.component.read_text(), "local changes\n")
 
 
 if __name__ == "__main__":
