@@ -123,9 +123,8 @@ PY
 }
 run_distributed_tasks
 
-# RayClusterNetworkPolicy: a Pod outside the RayCluster and outside the mesh
-# reaches the head before the RayCluster requests isolation and is refused
-# afterwards, while traffic inside the RayCluster keeps working.
+# Verify denied access from an unmeshed probe and permitted access from a
+# separate Istio-injected Ray Client while RayCluster isolation remains enabled.
 HEAD_POD_IP=$(kubectl -n "$NAMESPACE" get pod "$HEAD_POD" -o jsonpath='{.status.podIP}')
 [[ -n "$HEAD_POD_IP" ]] || { echo "The Ray head Pod has no IP address" >&2; exit 1; }
 kubectl -n "$NAMESPACE" apply -f - <<EOF
@@ -159,16 +158,14 @@ spec:
         drop: ["ALL"]
 EOF
 kubectl -n "$NAMESPACE" wait --for=condition=Ready "pod/$PROBE_POD" --timeout=180s
-# Print reachable or refused for a TCP connection from the probe to the head
-# Global Control Service port; any other failure stops the test.
 probe_head() {
   local status=0
-  kubectl -n "$NAMESPACE" exec "$PROBE_POD" -- python -c '
+  kubectl -n "$NAMESPACE" exec "$PROBE_POD" -c probe -- python -c '
 import socket
 import sys
 
 try:
-    socket.create_connection((sys.argv[1], 6379), timeout=5).close()
+  socket.create_connection((sys.argv[1], 6379), timeout=5).close()
 except OSError:
     sys.exit(3)
 ' "$HEAD_POD_IP" || status=$?
@@ -178,7 +175,6 @@ except OSError:
     *) echo "The network policy probe failed with status $status" >&2; return 1 ;;
   esac
 }
-# Wait for the expected probe result, retrying while traffic rules propagate.
 wait_for_probe_result() {
   local expected=$1
   local result=""
@@ -187,7 +183,7 @@ wait_for_probe_result() {
     [[ "$result" == "$expected" ]] && return 0
     sleep 3
   done
-  echo "The Ray head stayed $result for a Pod outside the RayCluster; expected $expected" >&2
+  echo "The Ray head stayed $result for the client; expected $expected" >&2
   return 1
 }
 wait_for_probe_result reachable
@@ -199,8 +195,53 @@ for network_policy in kubeflow-raycluster-head kubeflow-raycluster-workers-small
     | jq -e '.spec.policyTypes == ["Ingress"] and .metadata.ownerReferences[0].kind == "RayCluster"' >/dev/null
 done
 wait_for_probe_result refused
+CLIENT_POD="${PROBE_POD}-client"
+kubectl -n "$NAMESPACE" get pod "$PROBE_POD" -o json \
+  | jq '{
+      apiVersion,
+      kind,
+      metadata: {
+        name: (.metadata.name + "-client"),
+        labels: {"ray-network-policy-client": "true"},
+        annotations: {"sidecar.istio.io/inject": "true"},
+        ownerReferences: [{apiVersion, kind, name: .metadata.name, uid: .metadata.uid}]
+      },
+      spec: {
+        serviceAccountName: "default-editor",
+        restartPolicy: .spec.restartPolicy,
+        securityContext: .spec.securityContext,
+        containers: [.spec.containers[] | {
+          name, image, command, resources, securityContext
+        } | .resources.limits = {cpu: "500m", memory: "512Mi"}]
+      }
+    }' \
+  | kubectl -n "$NAMESPACE" create -f -
+kubectl -n "$NAMESPACE" wait --for=condition=Ready "pod/$CLIENT_POD" --timeout=180s
+kubectl -n "$NAMESPACE" patch raycluster kubeflow-raycluster --type=merge \
+  --patch "$(jq -nc '{
+    spec: {networkPolicy: {head: {ingressRules: [{
+      from: [{podSelector: {matchLabels: {"ray-network-policy-client": "true"}}}],
+      ports: [{protocol: "TCP", port: 10001}]
+    }]}}}
+  }')"
+timeout 120s kubectl -n "$NAMESPACE" exec -i "$CLIENT_POD" -c probe \
+  -- python - <<'PY'
+import ray
+
+ray.init(address="ray://kubeflow-raycluster-head-svc:10001")
+
+@ray.remote
+def square(value):
+    return value * value
+
+result = ray.get([square.remote(value) for value in range(10)], timeout=60)
+assert result == [value * value for value in range(10)], result
+print("Ray Client task results verified:", result)
+ray.shutdown()
+PY
+wait_for_probe_result refused
 run_distributed_tasks
-echo "RayClusterNetworkPolicy isolation verified"
+echo "RayClusterNetworkPolicy isolation and permitted Ray Client access verified"
 
 kubectl -n "$NAMESPACE" port-forward svc/kubeflow-raycluster-head-svc 8265:8265 &
 PORT_FORWARD_PROCESS=$!
