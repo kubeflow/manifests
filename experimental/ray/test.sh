@@ -108,16 +108,35 @@ HEAD_POD=$(kubectl -n "$NAMESPACE" get pods -l ray.io/cluster=kubeflow-raycluste
 run_distributed_tasks() {
   kubectl -n "$NAMESPACE" exec -i "$HEAD_POD" -c ray-head -- python - <<'PY'
 import ray
+from ray.util.scheduling_strategies import NodeAffinitySchedulingStrategy
 
 ray.init(address="auto")
 
+# The driver runs in the head Pod, so every other live node is a worker Pod.
+head_node = ray.get_runtime_context().get_node_id()
+worker_nodes = [
+    node["NodeID"]
+    for node in ray.nodes()
+    if node["Alive"] and node["NodeID"] != head_node
+]
+assert worker_nodes, "No live Ray worker node is registered"
+
+
 @ray.remote
 def square(value):
-    return value * value
+    return value * value, ray.get_runtime_context().get_node_id()
 
-result = ray.get([square.remote(value) for value in range(10)], timeout=60)
-assert result == [value * value for value in range(10)], result
-print("Ray distributed task results verified:", result)
+
+# Hard node affinity forces every task onto a worker, so each task and its result
+# cross the network between the head and worker Pods; a blocked path times out.
+strategy = NodeAffinitySchedulingStrategy(node_id=worker_nodes[0], soft=False)
+results = ray.get(
+    [square.options(scheduling_strategy=strategy).remote(value) for value in range(10)],
+    timeout=60,
+)
+assert [square for square, _ in results] == [value * value for value in range(10)], results
+assert {node for _, node in results} == {worker_nodes[0]}, results
+print("Ray distributed task results verified on worker node", worker_nodes[0])
 ray.shutdown()
 PY
 }
