@@ -9,6 +9,7 @@ on:
     - applications/hub/**
     - tests/istio*
     - tests/model_registry_egress_test.sh
+    - tests/model_registry_shared_ui/**
     - tests/multi_tenancy_install.sh
     - tests/profile_controller_install.sh
     - applications/dashboard/upstream/profile-controller/**

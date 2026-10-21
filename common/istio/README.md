@@ -59,7 +59,7 @@ This can cause the following kinds of errors:
 2. Error ```rbac_access_denied_matched_policy[none]``` in the destination sidecar if [authorizationpolicies](https://istio.io/latest/docs/reference/config/security/authorization-policy/#Source-principals) use MTLS required rules
 3. Error ```upstream connect error or disconnect/reset before headers``` if MTLS is set to strict for the destination sidecar
 
-The shared Model Registry UI in `kubeflow` has a workload-selected exception so that requests to Registry servers in profile namespaces retain mTLS identity. The exception selects only `app: model-registry-ui` workloads in `kubeflow`.
+The shared Model Registry UI in `kubeflow` has a workload-selected exception so that requests to Registry servers in profile namespaces retain mTLS identity. The exception selects only `app: model-registry-ui` workloads in `kubeflow`. The maintained Hub model-registry overlay also permits the exact `cluster.local/ns/kubeflow/sa/model-registry-ui` principal at the Registry server. The default UI uses internal authentication: it authorizes each user through Kubernetes access reviews before sending a tokenless Registry request. The UI ingress remains restricted to the gateway; the default egress scope and existing gateway and controller access rules remain unchanged.
 
 You may add additional [sidecar configurations](https://istio.io/latest/docs/reference/config/networking/sidecar) to override the default configuration for affected traffic.
 
