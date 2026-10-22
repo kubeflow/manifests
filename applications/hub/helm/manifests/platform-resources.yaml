@@ -279,7 +279,7 @@ spec:
             name: model-registry-db-secrets
         - configMapRef:
             name: model-registry-db-parameters
-        image: ghcr.io/kubeflow/hub/server:v0.3.17
+        image: ghcr.io/kubeflow/hub/server:v0.3.18
         livenessProbe:
           failureThreshold: 3
           httpGet:
@@ -340,7 +340,7 @@ spec:
       - args:
         - --deployment-mode=kubeflow
         - --port=8080
-        image: ghcr.io/kubeflow/hub/ui:v0.3.17
+        image: ghcr.io/kubeflow/hub/ui:v0.3.18
         imagePullPolicy: Always
         livenessProbe:
           failureThreshold: 3
