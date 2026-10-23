@@ -21,9 +21,12 @@ spec:
     podMetadata:
       labels:
         my-workspace-kind-label: "my-value"
+        # selects the PodDefault that injects the projected ML pipeline service account token
+        # (Workspace-level Pod labels are rejected by the CRD, so the WorkspaceKind sets it)
+        access-ml-pipeline: "true"
       annotations:
         my-workspace-kind-annotation: "my-value"
-    # Grant the per-Workspace ServiceAccount ("ws-{WORKSPACE_NAME}") access to
+    # Grant the per-Workspace ServiceAccount ("ws-{WORKSPACE_NAME}-{RANDOM_SUFFIX}") access to
     # Kubeflow Pipelines. As of Workspaces v2.0.0-beta.0 this ServiceAccount is
     # no longer automatically granted the Kubeflow ClusterRoles (as the old
     # "default-editor" was), so the pipeline run test needs these bindings to
@@ -39,10 +42,13 @@ spec:
     activityProbe:
       minProbeIntervalSeconds: 300
       probeIntervalSeconds: 3600
-      jupyter:
-        lastActivity: true
-        portId: "jupyterlab"
-    volumeMounts:
+      podExec:
+        timeoutSeconds: 60
+        script: |-
+          #!/usr/bin/env bash
+          echo '{"has_activity": true}' > "$OUTPUT_JSON_PATH"
+          exit 0
+    volumeMountPaths:
       home: "/home/jovyan"
     ports:
       - id: "jupyterlab"
@@ -51,29 +57,31 @@ spec:
         httpProxy:
           removePathPrefix: false
           requestHeaders: {}
-    extraEnv:
-      - name: "NB_PREFIX"
-        value: |-
-          {{ httpPathPrefix "jupyterlab" }}
-    extraVolumeMounts:
-      - name: "dshm"
-        mountPath: "/dev/shm"
-    extraVolumes:
-      - name: "dshm"
-        emptyDir:
-          medium: "Memory"
-    securityContext:
-      fsGroup: 100
-      seccompProfile:
-        type: RuntimeDefault
-    containerSecurityContext:
-      allowPrivilegeEscalation: false
-      capabilities:
-        drop:
-          - ALL
-      runAsNonRoot: true
-      seccompProfile:
-        type: RuntimeDefault
+    podSpec:
+      securityContext:
+        fsGroup: 100
+        seccompProfile:
+          type: RuntimeDefault
+      extraVolumes:
+        - name: "dshm"
+          emptyDir:
+            medium: "Memory"
+      mainContainer:
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
+        extraEnv:
+          - name: "NB_PREFIX"
+            value: |-
+              {{ httpPathPrefix "jupyterlab" }}
+        extraVolumeMounts:
+          - name: "dshm"
+            mountPath: "/dev/shm"
     options:
       imageConfig:
         spawner:

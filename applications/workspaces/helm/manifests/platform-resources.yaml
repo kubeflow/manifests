@@ -593,7 +593,7 @@ spec:
           value: /workspaces
         - name: PORT
           value: '4000'
-        image: ghcr.io/kubeflow/notebooks/workspaces-backend:v2.0.0-beta.3
+        image: ghcr.io/kubeflow/notebooks/workspaces-backend:v2.0.0-rc.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 3
@@ -697,7 +697,7 @@ spec:
             configMapKeyRef:
               key: CLUSTER_DOMAIN
               name: kubeflow-workspaces-istio-config-696kdcdck5
-        image: ghcr.io/kubeflow/notebooks/workspaces-controller:v2.0.0-beta.3
+        image: ghcr.io/kubeflow/notebooks/workspaces-controller:v2.0.0-rc.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -783,7 +783,7 @@ spec:
       - env:
         - name: PORT
           value: '8080'
-        image: ghcr.io/kubeflow/notebooks/workspaces-frontend:v2.0.0-beta.3
+        image: ghcr.io/kubeflow/notebooks/workspaces-frontend:v2.0.0-rc.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 3

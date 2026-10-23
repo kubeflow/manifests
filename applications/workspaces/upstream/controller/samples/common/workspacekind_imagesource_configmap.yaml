@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: workspacekind-image-source
   labels:
-    notebooks.kubeflow.org/image-source: "true"
+    workspaces.kubeflow.org/image-source: "true"
 data:
   image.svg: |
     <svg width="443" height="442" viewBox="0 0 443 442" fill="none" xmlns="http://www.w3.org/2000/svg">

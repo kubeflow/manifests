@@ -29,10 +29,14 @@ spec:
       ## labels to be applied to the Pod resource
       ##  - labels are required to support integration with the PodDefault resource:
       ##    https://github.com/kubeflow/kubeflow/blob/master/components/admission-webhook/pkg/apis/settings/v1alpha1/poddefault_types.go
+      ##  - entries are currently NOT allowed, until the security model
+      ##    for Workspace-level Pod metadata is defined
       ##
       labels: {}
 
       ## annotations to be applied to the Pod resource
+      ##  - entries are currently NOT allowed, until the security model
+      ##    for Workspace-level Pod metadata is defined
       ##
       annotations: {}
 
@@ -44,7 +48,7 @@ spec:
       ##  - this PVC must already exist in the Namespace
       ##  - this PVC must be RWX (ReadWriteMany, ReadWriteOnce)
       ##  - the mount path is defined in the WorkspaceKind under
-      ##    `spec.podTemplate.volumeMounts.home`
+      ##    `spec.podTemplate.volumeMountPaths.home`
       ##
       home: "workspace-home-pvc"
 

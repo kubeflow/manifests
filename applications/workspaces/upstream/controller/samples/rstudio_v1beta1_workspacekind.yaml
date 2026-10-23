@@ -40,7 +40,7 @@ spec:
   activityRules:
     - config:
         secondsSinceActive: 7200
-      match: {}
+      match: []
       effect:
         pauseWorkspace: true
 
@@ -58,7 +58,7 @@ spec:
           # A mock probe that always reports activity (replace with real detection logic)
           echo '{"has_activity": true}' > "$OUTPUT_JSON_PATH"
           exit 0
-    volumeMounts:
+    volumeMountPaths:
       home: "/home/jovyan"
     ports:
       - id: "rstudio"
@@ -70,26 +70,28 @@ spec:
             set:
               "X-RStudio-Root-Path": |-
                 {{ httpPathPrefix "rstudio" }}
-    extraEnv: []
-    extraVolumeMounts:
-      - name: "dshm"
-        mountPath: "/dev/shm"
-    extraVolumes:
-      - name: "dshm"
-        emptyDir:
-          medium: "Memory"
-    securityContext:
-      fsGroup: 100
-      seccompProfile:
-        type: RuntimeDefault
-    containerSecurityContext:
-      allowPrivilegeEscalation: false
-      capabilities:
-        drop:
-          - ALL
-      runAsNonRoot: true
-      seccompProfile:
-        type: RuntimeDefault
+    podSpec:
+      securityContext:
+        fsGroup: 100
+        seccompProfile:
+          type: RuntimeDefault
+      extraVolumes:
+        - name: "dshm"
+          emptyDir:
+            medium: "Memory"
+      mainContainer:
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
+        extraEnv: []
+        extraVolumeMounts:
+          - name: "dshm"
+            mountPath: "/dev/shm"
     options:
       imageConfig:
         spawner:

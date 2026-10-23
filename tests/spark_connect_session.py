@@ -5,7 +5,7 @@ Shared by two tests, which copy this file into their pod and run it there:
 tests/workspaces_spark_connect_test.sh and tests/notebooks_spark_connect_test.sh.
 Creating the session is identical from either, so keep this file host-agnostic — only
 the way the pod's ServiceAccount gets "kubeflow-spark-edit" differs, and that lives in
-the shell scripts. A Workspace runs as "ws-{WORKSPACE_NAME}" and its WorkspaceKind has
+the shell scripts. A Workspace runs as "ws-{WORKSPACE_NAME}-{RANDOM_SUFFIX}" and its WorkspaceKind has
 to request the grant; a Notebook runs as "default-editor", which a Profile already binds
 to the aggregated "kubeflow-edit".
 """

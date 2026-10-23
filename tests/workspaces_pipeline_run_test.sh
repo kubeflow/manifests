@@ -10,7 +10,7 @@ kubectl wait --for=jsonpath='{.status.state}'=Running \
   --timeout=600s
 
 WORKSPACE_POD="$(kubectl -n "${KF_PROFILE}" get pods \
-  -l notebooks.kubeflow.org/workspace-name=test \
+  -l workspaces.kubeflow.org/workspace-name=test \
   -o jsonpath='{.items[0].metadata.name}')"
 
 kubectl -n "${KF_PROFILE}" cp \

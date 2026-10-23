@@ -29,7 +29,7 @@ RELEASE_NAMESPACE="kubeflow"
 WORKLOAD_NAMESPACE="kubeflow-workspaces"
 WORKSPACE_KIND="jupyterlab"
 WORKSPACE_DEFINITIONS=(workspacekinds.kubeflow.org workspaces.kubeflow.org)
-WORKSPACE_LABEL="notebooks.kubeflow.org/workspace-name"
+WORKSPACE_LABEL="workspaces.kubeflow.org/workspace-name"
 # Kinds of the objects that the controller creates for a Workspace and ties to
 # it with an owner reference.
 WORKSPACE_DEPENDENT_KINDS=(statefulset service virtualservice serviceaccount rolebinding)

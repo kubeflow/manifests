@@ -91,10 +91,10 @@ spec:
         secondsSinceActive: 7200
         minRunningSeconds: 300
       match:
-        matchNamespace:
-          selector:
-            matchLabels:
-              tier: development
+        - matchNamespace:
+            selector:
+              matchLabels:
+                tier: development
       effect:
         pauseWorkspace: true
 
@@ -106,10 +106,10 @@ spec:
     #    secondsSinceActive: 3600
     #    minRunningSeconds: 300
     #  match:
-    #    matchPodConfig:
-    #      selector:
-    #        matchLabels:
-    #          gpu: "1"
+    #    - matchPodConfig:
+    #        selector:
+    #          matchLabels:
+    #            gpu: "1"
     #  effect:
     #    pauseWorkspace: true
 
@@ -117,10 +117,10 @@ spec:
     ##  - have the namespaces with the label 'tier=production' set
     #- config:
     #  match:
-    #    matchNamespace:
-    #      selector:
-    #        matchLabels:
-    #          tier: production
+    #    - matchNamespace:
+    #        selector:
+    #          matchLabels:
+    #            tier: production
     #  effect:
     #    pauseWorkspace: false
 
@@ -129,9 +129,9 @@ spec:
     ##  - are not matched to any of the above pauseWorkspace rules
     - config:
         secondsSinceActive: 86400
-      ## empty match (`match: {}` or omitted `match`) matches all Workspaces.
+      ## empty match (`match: []` or omitted `match`) matches all Workspaces.
       ## At most one catch-all rule is allowed per effect type, and it must be the last rule.
-      match: {}
+      match: []
       effect:
         pauseWorkspace: true
 
@@ -155,7 +155,7 @@ spec:
     ##  - labels and annotations applied to the StatefulSet object itself,
     ##    unlike `podMetadata` which applies to the Workspace Pods
     ##  - this is an admin-only default for all Workspaces of this WorkspaceKind
-    ##  - the controller-managed `notebooks.kubeflow.org/workspace-name` label
+    ##  - the controller-managed `workspaces.kubeflow.org/workspace-name` label
     ##    always takes precedence and cannot be overridden here
     ##
     statefulSetMetadata:
@@ -165,23 +165,47 @@ spec:
         my-workspace-kind-sts-annotation: "my-value"
 
     ## service account configs for Workspace Pods
-    ##  - each Workspace runs as its own ServiceAccount named "ws-{WORKSPACE_NAME}",
-    ##    which the controller creates, owns, and deletes along with the Workspace
+    ##  - each Workspace runs as its own ServiceAccount named
+    ##    "ws-{WORKSPACE_NAME}-{RANDOM_SUFFIX}", which the controller creates, owns,
+    ##    and deletes along with the Workspace
     ##  - the resolved name is reported in the Workspace
     ##    `status.podTemplatePod.serviceAccountName`
     ##
-    ## NOTE: commented out because these ClusterRoles are provided by the Kubeflow
-    ##       platform, they do NOT exist in a standalone install of this controller
-    ##
-    #serviceAccount:
-    #
-    #  ## ClusterRoles to grant to the ServiceAccount of each Workspace (MUTABLE)
-    #  ##  - each entry becomes a RoleBinding in the Namespace of the Workspace, so the
-    #  ##    permissions are scoped to that Namespace and are NOT cluster-wide
-    #  ##  - these are ClusterRole names, NOT ServiceAccount names
-    #  ##
-    #  clusterRoles:
-    #    - name: "kubeflow-view"
+    serviceAccount:
+
+      ## ClusterRoles to grant to the ServiceAccount of each Workspace (MUTABLE)
+      ##  - each entry becomes a RoleBinding in the Namespace of the Workspace, so the
+      ##    permissions are scoped to that Namespace and are NOT cluster-wide
+      ##  - these are ClusterRole names, NOT ServiceAccount names
+      ##
+      ## NOTE: commented out because these ClusterRoles are provided by the Kubeflow
+      ##       platform, they do NOT exist in a standalone install of this controller
+      ##
+      #clusterRoles:
+      #  - name: "kubeflow-view"
+
+      ## metadata for the ServiceAccount of each Workspace (MUTABLE)
+      ##  - labels and annotations applied to the ServiceAccount object itself,
+      ##    for example to configure cloud Workload Identity
+      ##  - this is an admin-only default for all Workspaces of this WorkspaceKind
+      ##  - the controller-managed `workspaces.kubeflow.org/workspace-name` label
+      ##    always takes precedence and cannot be overridden here
+      ##  - removing a key here also removes it from existing ServiceAccounts, but only
+      ##    if the controller was the last to change its value, regardless of who added it
+      ##  - Workload Identity examples:
+      ##     - EKS IRSA:  "eks.amazonaws.com/role-arn: arn:aws:iam::111122223333:role/my-role"
+      ##     - GKE:       "iam.gke.io/gcp-service-account: my-gsa@my-project.iam.gserviceaccount.com"
+      ##     - Azure:     "azure.workload.identity/client-id: 00000000-0000-0000-0000-000000000000"
+      ##                  (Azure also requires the `azure.workload.identity/use: "true"` label
+      ##                   on the Pod, set that in `podMetadata.labels` above, NOT here)
+      ##  - EKS IRSA and Azure inject credentials when the Pod is created, so running
+      ##    Workspaces must be restarted to pick up changes to these annotations
+      ##
+      metadata:
+        labels:
+          my-workspace-kind-sa-label: "my-value"
+        annotations:
+          my-workspace-kind-sa-annotation: "my-value"
 
     ## activity probe configs (MUTABLE)
     ##  - determines how to detect activity in the Workspace
@@ -196,45 +220,19 @@ spec:
       ##
       probeIntervalSeconds: 3600
 
-      ## OPTION 1: a script-based probe executed in the Pod
+      ## a script-based probe executed in the Pod
       ##
-      #podExec:
-      #  timeoutSeconds: 60
-      #  script: |-
-      #    #!/usr/bin/env bash
-      #    echo '{"has_activity": true}' > "$OUTPUT_JSON_PATH"
-      #    exit 0
+      podExec:
+        timeoutSeconds: 60
+        script: |-
+          #!/usr/bin/env bash
+          # A mock probe that always reports activity (replace with real detection logic)
+          echo '{"has_activity": true}' > "$OUTPUT_JSON_PATH"
+          exit 0
 
-      ## OPTION 2: a Jupyter-specific API probe
-      ##
-      jupyter:
-        lastActivity: true
-        portId: "jupyterlab"
-
-    ## standard probes to determine Container health (MUTABLE)
-    ##  - spec for Probe:
-    ##    https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#probe-v1-core
+    ## volume mount paths used by the controller when assembling the Workspace Pod
     ##
-    probes:
-
-      ## startup probe for the "main" container
-      ##
-      #startupProbe:
-      #  ...
-
-      ## liveness probe for the "main" container
-      ##
-      #livenessProbe:
-      #  ...
-
-      ## readiness probe for the "main" container
-      ##
-      #readinessProbe:
-      #  ...
-
-    ## volume mount paths
-    ##
-    volumeMounts:
+    volumeMountPaths:
 
       ## the path to mount the home PVC (NOT MUTABLE)
       ##
@@ -273,70 +271,101 @@ spec:
           ##
           requestHeaders: {}
 
-    ## environment variables for Workspace Pods (MUTABLE)
-    ##  - spec for EnvVar:
-    ##    https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#envvar-v1-core
-    ##  - the following go template functions are available:
-    ##      - `httpPathPrefix(portId string)`: returns the HTTP path prefix of the specified port
+    ## Pod-level fields that apply to the Workspace Pod, mirroring `corev1.PodSpec`
     ##
-    extraEnv:
+    podSpec:
 
-      ## to enable backwards compatibility with old Jupyter images from Kubeflow Notebooks V1
-      ## https://github.com/kubeflow/kubeflow/blob/v1.8.0/components/example-notebook-servers/jupyter/s6/services.d/jupyterlab/run#L12
-      - name: "NB_PREFIX"
-        value: |-
-          {{ httpPathPrefix "jupyterlab" }}
+      ## the name of the scheduler to use for Workspace Pods (MUTABLE)
+      ##  - https://kubernetes.io/docs/tasks/extend-kubernetes/configure-multiple-schedulers/
+      ##  - this is the default for all Workspaces of this WorkspaceKind,
+      ##    it may be overridden by the `schedulerName` of a pod config value
+      ##  - if not set here, or on the pod config value, the Kubernetes API
+      ##    server will default to the "default-scheduler"
+      ##
+      #schedulerName: "default-scheduler"
 
-    ## extra volume mounts for Workspace Pods (MUTABLE)
-    ##  - spec for VolumeMount:
-    ##    https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#volumemount-v1-core
-    ##
-    extraVolumeMounts:
+      ## security context for Workspace Pods (MUTABLE)
+      ##  - spec for PodSecurityContext:
+      ##    https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.36/#podsecuritycontext-v1-core
+      ##
+      securityContext:
+        fsGroup: 100
+        seccompProfile:
+          type: RuntimeDefault
 
-      ## frameworks like PyTorch use shared memory for inter-process communication and expect a tmpfs at /dev/shm
-      ## https://en.wikipedia.org/wiki/Shared_memory
-      - name: "dshm"
-        mountPath: "/dev/shm"
+      ## extra volumes for Workspace Pods (MUTABLE)
+      ##  - spec for Volume:
+      ##    https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.36/#volume-v1-core
+      ##
+      extraVolumes:
+        - name: "dshm"
+          emptyDir:
+            medium: "Memory"
 
-    ## extra volumes for Workspace Pods (MUTABLE)
-    ##  - spec for Volume:
-    ##    https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#volume-v1-core
-    ##
-    extraVolumes:
-      - name: "dshm"
-        emptyDir:
-          medium: "Memory"
+      ## Container-level fields that apply to the "main" user container, mirroring `corev1.Container`
+      ##
+      mainContainer:
 
-    ## security context for Workspace Pods (MUTABLE)
-    ##  - spec for PodSecurityContext:
-    ##    https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#podsecuritycontext-v1-core
-    ##
-    securityContext:
-      fsGroup: 100
-      seccompProfile:
-        type: RuntimeDefault
+        ## container SecurityContext for the main container (MUTABLE)
+        ##  - spec for SecurityContext:
+        ##    https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.36/#securitycontext-v1-core
+        ##
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+          runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
 
-    ## container SecurityContext for Workspace Pods (MUTABLE)
-    ##  - spec for SecurityContext:
-    ##    https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.27/#securitycontext-v1-core
-    ##
-    containerSecurityContext:
-      allowPrivilegeEscalation: false
-      capabilities:
-        drop:
-          - ALL
-      runAsNonRoot: true
-      seccompProfile:
-        type: RuntimeDefault
+        ## startup probe for the main container (MUTABLE)
+        ##  - spec for Probe:
+        ##    https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.36/#probe-v1-core
+        ##
+        #startupProbe:
+        #  ...
 
-    ## the name of the scheduler to use for Workspace Pods (MUTABLE)
-    ##  - https://kubernetes.io/docs/tasks/extend-kubernetes/configure-multiple-schedulers/
-    ##  - this is the default for all Workspaces of this WorkspaceKind,
-    ##    it may be overridden by the `schedulerName` of a pod config value
-    ##  - if not set here, or on the pod config value, the Kubernetes API
-    ##    server will default to the "default-scheduler"
-    ##
-    #schedulerName: "default-scheduler"
+        ## liveness probe for the main container (MUTABLE)
+        ##  - spec for Probe:
+        ##    https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.36/#probe-v1-core
+        ##
+        #livenessProbe:
+        #  ...
+
+        ## readiness probe for the main container (MUTABLE)
+        ##  - spec for Probe:
+        ##    https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.36/#probe-v1-core
+        ##
+        #readinessProbe:
+        #  ...
+
+        ## environment variables for the main container (MUTABLE)
+        ##  - spec for EnvVar:
+        ##    https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.36/#envvar-v1-core
+        ##  - these apply to ALL Workspaces of this WorkspaceKind, regardless of the selected pod config
+        ##  - a pod config may override (by `name`) or add to these with its own `spec.extraEnv`
+        ##  - the following go template functions are available:
+        ##      - `httpPathPrefix(portId string)`: returns the HTTP path prefix of the specified port
+        ##
+        extraEnv:
+
+          ## to enable backwards compatibility with old Jupyter images from Kubeflow Notebooks V1
+          ## https://github.com/kubeflow/kubeflow/blob/v1.8.0/components/example-notebook-servers/jupyter/s6/services.d/jupyterlab/run#L12
+          - name: "NB_PREFIX"
+            value: |-
+              {{ httpPathPrefix "jupyterlab" }}
+
+        ## extra volume mounts for the main container (MUTABLE)
+        ##  - spec for VolumeMount:
+        ##    https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.36/#volumemount-v1-core
+        ##
+        extraVolumeMounts:
+
+          ## frameworks like PyTorch use shared memory for inter-process communication and expect a tmpfs at /dev/shm
+          ## https://en.wikipedia.org/wiki/Shared_memory
+          - name: "dshm"
+            mountPath: "/dev/shm"
 
     ## ==============================================================
     ## WORKSPACE OPTIONS
@@ -514,7 +543,7 @@ spec:
 
       ## ============================================================
       ## POD CONFIG OPTIONS
-      ##  - SETS: affinity, nodeSelector, tolerations, resources, schedulerName
+      ##  - SETS: affinity, nodeSelector, tolerations, resources, schedulerName, extraEnv
       ## ============================================================
       podConfig:
 
@@ -575,6 +604,26 @@ spec:
               ##
               #schedulerName: "default-scheduler"
 
+              ## extra environment variables for the "main" container, specific to this pod config
+              ##  - spec for EnvVar:
+              ##    https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.36/#envvar-v1-core
+              ##  - use this for variables that depend on the hardware or scheduling of this pod config,
+              ##    for example `PJRT_DEVICE=CPU` for a CPU pod config, or `TPU_TOPOLOGY=2x2` for a TPU slice
+              ##  - these are combined with the WorkspaceKind-level `podTemplate.podSpec.mainContainer.extraEnv`:
+              ##     - a variable with the same `name` as a WorkspaceKind-level variable replaces its value,
+              ##       but keeps the position of the WorkspaceKind-level variable
+              ##     - all other variables are added after the WorkspaceKind-level variables, in the order listed here
+              ##  - Kubernetes only expands `$(VAR_NAME)` references to variables that appear EARLIER in the
+              ##    final list, so WorkspaceKind-level variables can NOT reference variables only defined here
+              ##  - like all pod config `spec` fields, this can NOT be changed while the pod config is used by
+              ##    any Workspace, instead, create a new pod config value and redirect the old one to it
+              ##  - the following go template functions are available:
+              ##      - `httpPathPrefix(portId string)`: returns the HTTP path prefix of the specified port
+              ##
+              #extraEnv:
+              #  - name: "PJRT_DEVICE"
+              #    value: "CPU"
+
           ## ================================================================
           ## EXAMPLE 2: a small CPU pod
           ## ================================================================
@@ -608,6 +657,19 @@ spec:
                 - key: "gpu"
                   value: "1"
             spec:
+              ## metadata applied only to Workspaces that select this podConfig (MUTABLE)
+              ##  - layered over the WorkspaceKind-level `podMetadata` / `statefulSetMetadata`,
+              ##    winning on key conflicts; controller-owned keys always win
+              ##  - useful for routing a specific tier to a Kueue LocalQueue, tagging spot
+              ##    capacity with a cost center, etc.
+              # podMetadata:
+              #   labels:
+              #     kueue.x-k8s.io/queue-name: "gpu-queue"
+              #   annotations:
+              #     cost-center: "research-gpu"
+              # statefulSetMetadata:
+              #   labels:
+              #     cost-center: "research-gpu"
               affinity: {}
               nodeSelector: {}
               resources:
