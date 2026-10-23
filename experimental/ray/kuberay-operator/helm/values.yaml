@@ -1,5 +1,5 @@
 # Preserve the distribution's kubeflow overlay using upstream-owned settings.
-# All other dependency settings inherit the pinned upstream chart defaults.
+# All other dependency settings inherit the pinned upstream chart defaults except the feature gates below.
 kuberay-operator:
   env:
   - name: ENABLE_INIT_CONTAINER_INJECTION
@@ -10,3 +10,24 @@ kuberay-operator:
   securityContext:
     seccompProfile:
       type: RuntimeDefault
+  # Helm replaces lists, so this repeats every upstream feature gate in upstream
+  # order and enables only RayClusterNetworkPolicy. A RayCluster is isolated only
+  # when it requests it through spec.networkPolicy. Keep this list identical to
+  # ../overlays/kubeflow/network-policy-feature-gate.yaml.
+  featureGates:
+  - name: RayClusterStatusConditions
+    enabled: true
+  - name: RayJobDeletionPolicy
+    enabled: true
+  - name: RayMultiHostIndexing
+    enabled: true
+  - name: RayServiceIncrementalUpgrade
+    enabled: true
+  - name: RayCronJob
+    enabled: false
+  - name: RayClusterMTLS
+    enabled: false
+  - name: RayClusterNetworkPolicy
+    enabled: true
+  - name: RayClusterHistoryServer
+    enabled: false

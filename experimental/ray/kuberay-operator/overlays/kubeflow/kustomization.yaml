@@ -5,3 +5,9 @@ resources:
 patches:
 - path: disable-injection.yaml
 - path: pss-security-context.yaml
+- path: network-policy-feature-gate.yaml
+  target:
+    group: apps
+    version: v1
+    kind: Deployment
+    name: kuberay-operator

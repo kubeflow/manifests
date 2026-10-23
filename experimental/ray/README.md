@@ -146,6 +146,36 @@ kubectl get svc -n $MY_KUBEFLOW_USER_NAMESPACE
     print(ray.get(futures)) # [1, 1, 1, 1]
     ```
 
+# Network isolation
+
+Both the Kustomize overlay and the Helm wrapper enable the alpha KubeRay feature gate
+`RayClusterNetworkPolicy`. A RayCluster is isolated only when it sets `spec.networkPolicy`;
+the operator then creates one NetworkPolicy for the head and one for each worker group, owned
+by the RayCluster. RayClusters without `spec.networkPolicy` are unchanged.
+
+Use the `DenyAllIngress` mode. The field defaults to `DenyAll`, which also denies egress,
+including DNS and the Istio sidecar connection to `istiod`, unless egress rules are added.
+
+```yaml
+spec:
+  networkPolicy:
+    mode: DenyAllIngress
+    head:
+      ingressRules:
+      # Allow a Ray client, for example the JupyterLab from Step 7, to reach the head.
+      - from:
+        - podSelector:
+            matchLabels:
+              app: my-ray-client
+        ports:
+        - port: 10001
+```
+
+`DenyAllIngress` always allows traffic between the Pods of the same RayCluster. Every other
+client of the head, such as the Ray client in Step 7, the dashboard or Prometheus, needs an
+explicit rule in `spec.networkPolicy.head.ingressRules`. The cluster network plugin must
+enforce NetworkPolicies. `test.sh` verifies the isolation in continuous integration.
+
 # Upgrading
 See [UPGRADE.md](UPGRADE.md) for more details.
 

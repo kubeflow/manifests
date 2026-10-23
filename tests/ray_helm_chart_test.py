@@ -27,6 +27,33 @@ def documents(text):
     return [item for item in yaml.load_all(text, Loader=yaml.CSafeLoader) if item]
 
 
+def operator_feature_gates(manifests):
+    """Return the ordered (name, enabled) pairs of the operator --feature-gates argument."""
+    deployment = next(item for item in manifests if item["kind"] == "Deployment")
+    arguments = deployment["spec"]["template"]["spec"]["containers"][0]["args"]
+    (feature_gates,) = [
+        argument[len("--feature-gates=") :]
+        for argument in arguments
+        if argument.startswith("--feature-gates=")
+    ]
+    pairs = [entry.split("=") for entry in feature_gates.split(",")]
+    return [(name, {"true": True, "false": False}[enabled]) for name, enabled in pairs]
+
+
+def upstream_feature_gates_with_network_policy_enabled():
+    """Return the upstream default feature gates with only RayClusterNetworkPolicy enabled."""
+    upstream = operator_feature_gates(
+        documents((CHART.parent / "base/resources.yaml").read_text())
+    )
+    names = [name for name, _ in upstream]
+    if "RayClusterNetworkPolicy" not in names:
+        raise AssertionError("upstream no longer offers RayClusterNetworkPolicy")
+    return [
+        (name, True if name == "RayClusterNetworkPolicy" else enabled)
+        for name, enabled in upstream
+    ]
+
+
 class RayChartTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -167,6 +194,12 @@ class RayChartTest(unittest.TestCase):
         self.assertNotIn("aggregationRule", role)
         self.assertEqual(role["rules"], [])
 
+    def test_network_policy_feature_gate_is_the_only_feature_gate_change(self):
+        self.assertEqual(
+            operator_feature_gates(self.rendered),
+            upstream_feature_gates_with_network_policy_enabled(),
+        )
+
     def test_non_platform_namespace_is_rejected(self):
         result = subprocess.run(
             ["helm", "template", "kuberay-operator", str(self.chart), "-n", "default"],
@@ -198,6 +231,34 @@ class RayChartTest(unittest.TestCase):
         )
 
 
+class RayNetworkPolicyFeatureGateTest(unittest.TestCase):
+    """Both installation paths enable only RayClusterNetworkPolicy on top of upstream."""
+
+    def test_wrapper_values_repeat_every_upstream_feature_gate(self):
+        values = yaml.safe_load((CHART / "values.yaml").read_text())
+        self.assertEqual(
+            [
+                (gate["name"], gate["enabled"])
+                for gate in values["kuberay-operator"]["featureGates"]
+            ],
+            upstream_feature_gates_with_network_policy_enabled(),
+        )
+
+    def test_kustomize_overlay_enables_only_the_network_policy_feature_gate(self):
+        rendered = subprocess.check_output(
+            [
+                "kustomize",
+                "build",
+                str(ROOT / "experimental/ray/kuberay-operator/overlays/kubeflow"),
+            ],
+            text=True,
+        )
+        self.assertEqual(
+            operator_feature_gates(documents(rendered)),
+            upstream_feature_gates_with_network_policy_enabled(),
+        )
+
+
 class RaySmokeOwnershipTest(unittest.TestCase):
     def run_smoke_failure(
         self,
@@ -226,7 +287,7 @@ case "$*" in
   *'get namespace'*'jsonpath='*) printf '%s' "$ISTIO_INJECTION" ;;
   *'get raycluster kubeflow-raycluster'*)
     [[ "$EXISTING_FIXTURE" == raycluster/kubeflow-raycluster ]]; exit $? ;;
-  *'get raycluster'*|*'get authorizationpolicy'*|*'get service/'*)
+  *'get raycluster'*|*'get authorizationpolicy'*|*'get service/'*|*'get pod/'*|*'get networkpolicy/'*)
     if [[ "$FIXTURE_READ_FAILURE" == fixture ]]; then exit 45; fi
     if [[ -n "$EXISTING_FIXTURE" && "$*" == *"$EXISTING_FIXTURE"* ]]; then echo "$EXISTING_FIXTURE"; fi ;;
   *'get pods'*) if [[ -e "$COMMAND_LOG.failed" ]]; then echo '{"items":[]}'; else echo '{"items":[{},{}]}'; fi ;;
@@ -289,6 +350,9 @@ echo 'apiVersion: v1'
             "raycluster/kubeflow-raycluster",
             "authorizationpolicy.security.istio.io/allow-ray-workers-head",
             "service/raycluster-istio-headless-svc",
+            "pod/ray-network-policy-probe",
+            "networkpolicy/kubeflow-raycluster-head",
+            "networkpolicy/kubeflow-raycluster-workers-small-group",
         ):
             with self.subTest(identity=identity):
                 result, commands = self.run_smoke_failure(

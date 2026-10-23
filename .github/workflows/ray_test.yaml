@@ -49,7 +49,7 @@ jobs:
     - name: Create KF Profile
       run: kustomize build common/user-namespace/base | kubectl apply -f -
 
-    - name: Build & Apply manifests
+    - name: Install the KubeRay operator and test a RayCluster with network isolation
       run: |
         cd experimental/ray/
         export KF_PROFILE=kubeflow-user-example-com

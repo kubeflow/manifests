@@ -53,6 +53,36 @@ spec:
   - name: metrics-export-port
     port: 8080
     appProtocol: http
+  - name: worker-port-10002
+    port: 10002
+    appProtocol: grpc
+  - name: worker-port-10003
+    port: 10003
+    appProtocol: grpc
+  - name: worker-port-10004
+    port: 10004
+    appProtocol: grpc
+  - name: worker-port-10005
+    port: 10005
+    appProtocol: grpc
+  - name: worker-port-10006
+    port: 10006
+    appProtocol: grpc
+  - name: worker-port-10007
+    port: 10007
+    appProtocol: grpc
+  - name: worker-port-10008
+    port: 10008
+    appProtocol: grpc
+  - name: worker-port-10009
+    port: 10009
+    appProtocol: grpc
+  - name: worker-port-10010
+    port: 10010
+    appProtocol: grpc
+  - name: worker-port-10011
+    port: 10011
+    appProtocol: grpc
   - name: max-worker-port
     port: 10012
     appProtocol: grpc
@@ -76,6 +106,7 @@ spec:
       dashboard-agent-grpc-port: '6383'
       dashboard-agent-listen-port: '52365'
       metrics-export-port: '8080'
+      min-worker-port: '10002'
       max-worker-port: '10012'
       # kubeflow-user-example-com should be replaced with the namespace where the Ray cluster is being deployed
       # TODO automatically use the current namespace
@@ -126,6 +157,7 @@ spec:
         dashboard-agent-grpc-port: '6383'
         dashboard-agent-listen-port: '52365'
         metrics-export-port: '8080'
+        min-worker-port: '10002'
         max-worker-port: '10012'
         # kubeflow-user-example-com should be replaced with the namespace where the Ray cluster is being deployed
         # TODO automatically use the current namespace

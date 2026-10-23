@@ -80,7 +80,7 @@ jobs:
       labels: cncf-ubuntu-16-64-x86
       # labels: ubuntu-latest-16-cores
     # Allow Knative and Trainer lifecycle checks alongside the platform tests.
-    timeout-minutes: 60
+    timeout-minutes: 75
     steps:
     - name: Checkout
       uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
