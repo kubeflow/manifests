@@ -4,9 +4,8 @@ S3 helper for SeaweedFS namespace-isolation testing.
 
 Exit codes (uniform for all operations):
     0 = ALLOWED / succeeded
-    1 = DENIED (AccessDenied/Forbidden/403) or failed (NoSuchKey/error)
-    2 = ERROR: the helper itself could not run, for example because boto3 cannot
-        be imported or SeaweedFS cannot be reached. An error is never a denial.
+    1 = DENIED (AccessDenied/Forbidden/403)
+    2 = ERROR: an unexpected S3 response or a failure to run the helper.
 
 The caller (swfs_namespace_isolation_test.sh) decides whether "allowed" or
 "denied" is the desired outcome; this script never infers intent from the
@@ -52,9 +51,9 @@ def head_bucket(client, bucket):
         return True
     except ClientError as error:
         code = error.response["Error"]["Code"]
-        print(
-            f"{'DENIED' if code in DENIED else 'ERROR'}: head-bucket {bucket} ({code})"
-        )
+        if code not in DENIED:
+            raise
+        print(f"DENIED: head-bucket {bucket} ({code})")
         return False
 
 
@@ -65,9 +64,9 @@ def upload(client, bucket, key, content):
         return True
     except ClientError as error:
         code = error.response["Error"]["Code"]
-        print(
-            f"{'DENIED' if code in DENIED else 'ERROR'}: upload {bucket}/{key} ({code})"
-        )
+        if code not in DENIED:
+            raise
+        print(f"DENIED: upload {bucket}/{key} ({code})")
         return False
 
 
@@ -78,8 +77,9 @@ def download(client, bucket, key):
         return True
     except ClientError as error:
         code = error.response["Error"]["Code"]
-        denied = code in DENIED or code == "NoSuchKey"
-        print(f"{'DENIED' if denied else 'ERROR'}: download {bucket}/{key} ({code})")
+        if code not in DENIED:
+            raise
+        print(f"DENIED: download {bucket}/{key} ({code})")
         return False
 
 
@@ -94,10 +94,9 @@ def copy(client, bucket, key, source_bucket, source_key):
         return True
     except ClientError as error:
         code = error.response["Error"]["Code"]
-        denied = code in DENIED or code == "NoSuchKey"
-        print(
-            f"{'DENIED' if denied else 'ERROR'}: copy {source_bucket}/{source_key} -> {bucket}/{key} ({code})"
-        )
+        if code not in DENIED:
+            raise
+        print(f"DENIED: copy {source_bucket}/{source_key} -> {bucket}/{key} ({code})")
         return False
 
 
@@ -108,9 +107,9 @@ def delete(client, bucket, key):
         return True
     except ClientError as error:
         code = error.response["Error"]["Code"]
-        print(
-            f"{'DENIED' if code in DENIED else 'ERROR'}: delete {bucket}/{key} ({code})"
-        )
+        if code not in DENIED:
+            raise
+        print(f"DENIED: delete {bucket}/{key} ({code})")
         return False
 
 
@@ -135,9 +134,9 @@ def list_prefix(client, bucket, prefix, delimiter):
         return True
     except ClientError as error:
         code = error.response["Error"]["Code"]
-        print(
-            f"{'DENIED' if code in DENIED else 'ERROR'}: list {bucket}/{label} ({code})"
-        )
+        if code not in DENIED:
+            raise
+        print(f"DENIED: list {bucket}/{label} ({code})")
         return False
 
 

@@ -6,7 +6,7 @@ echo "SeaweedFS Security Test - Namespace Isolation + KServe HeadBucket Check"
 # Requires SeaweedFS >= 4.32 (PR #9792): older builds ignore the s3:prefix
 # condition on ListBucket and leak cross-namespace listings.
 #
-# s3_helper_test.py exit codes: 0 = ALLOWED, 1 = DENIED/failed, 2 = ERROR.
+# s3_helper_test.py exit codes: 0 = ALLOWED, 1 = DENIED, 2 = ERROR.
 # An ERROR fails the check, so a broken environment cannot pass a deny check.
 # This script runs ALL checks and reports each, so a single run shows the full
 # picture instead of bailing on the first failure.
