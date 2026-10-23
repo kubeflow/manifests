@@ -5,6 +5,8 @@ S3 helper for SeaweedFS namespace-isolation testing.
 Exit codes (uniform for all operations):
     0 = ALLOWED / succeeded
     1 = DENIED (AccessDenied/Forbidden/403) or failed (NoSuchKey/error)
+    2 = ERROR: the helper itself could not run, for example because boto3 cannot
+        be imported or SeaweedFS cannot be reached. An error is never a denial.
 
 The caller (swfs_namespace_isolation_test.sh) decides whether "allowed" or
 "denied" is the desired outcome; this script never infers intent from the
@@ -21,8 +23,12 @@ depends on the s3:prefix and s3:delimiter policy conditions:
 import argparse
 import sys
 
-import boto3
-from botocore.exceptions import ClientError
+try:
+    import boto3
+    from botocore.exceptions import ClientError
+except Exception as error:  # A broken interpreter must not look like a denial.
+    print(f"ERROR: cannot import boto3: {error!r}", file=sys.stderr)
+    sys.exit(2)
 
 # HTTP 403 is included because HeadBucket has no response body, so botocore
 # synthesizes the error code from the status line ("403", not "Forbidden").
@@ -159,6 +165,15 @@ def main():
     parser.add_argument("--content", help="content to upload (upload)")
     args = parser.parse_args()
 
+    try:
+        allowed = run_operation(args)
+    except Exception as error:  # Only an S3 response may count as a denial.
+        print(f"ERROR: {args.operation} could not run: {error!r}", file=sys.stderr)
+        sys.exit(2)
+    sys.exit(0 if allowed else 1)
+
+
+def run_operation(args):
     client = s3_client(args.access_key, args.secret_key, args.endpoint_url)
 
     if args.operation == "headbucket":
@@ -176,8 +191,7 @@ def main():
             None if args.no_prefix else (args.prefix if args.prefix is not None else "")
         )
         allowed = list_prefix(client, args.bucket, list_prefix_arg, args.delimiter)
-
-    sys.exit(0 if allowed else 1)
+    return allowed
 
 
 if __name__ == "__main__":
