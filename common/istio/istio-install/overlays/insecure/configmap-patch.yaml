@@ -79,7 +79,7 @@ data:
           aud: istio-ca
       sts:
         servicePort: 0
-      tag: "1.31.2"
+      tag: "1.31.3"
       variant: ""
       waypoint:
         affinity: {}
