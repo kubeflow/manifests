@@ -105,6 +105,108 @@ class HubChartTest(unittest.TestCase):
                 sorted(actual, key=identity), sorted(baseline, key=identity)
             )
 
+    def test_registry_trusts_only_the_shared_ui_service_account(self):
+        upstream = yaml.safe_load(
+            (
+                ROOT
+                / "applications/hub/upstream/options/istio/istio-authorization-policy.yaml"
+            ).read_text()
+        )
+        baseline = upstream["spec"]["rules"]
+        rendered = subprocess.check_output(
+            [
+                "kustomize",
+                "build",
+                str(ROOT / "applications/hub/overlays/model-registry"),
+            ],
+            text=True,
+        )
+        chart = ROOT / "applications/hub/helm"
+        outputs = [
+            [item for item in yaml.safe_load_all(rendered) if item],
+            self.parsed(
+                self.render(
+                    chart,
+                    "kubeflow-user-example-com",
+                    "-f",
+                    str(chart / "ci/values-platform.yaml"),
+                )
+            ),
+        ]
+        for items in outputs:
+            policy = next(
+                item
+                for item in items
+                if item["kind"] == "AuthorizationPolicy"
+                and item["metadata"]["name"] == "model-registry-service"
+            )
+            self.assertEqual(
+                policy["metadata"]["namespace"], "kubeflow-user-example-com"
+            )
+            self.assertEqual(policy["spec"]["selector"], upstream["spec"]["selector"])
+            self.assertEqual(policy["spec"]["action"], "ALLOW")
+            self.assertEqual(
+                policy["spec"]["rules"],
+                baseline
+                + [
+                    {
+                        "from": [
+                            {
+                                "source": {
+                                    "principals": [
+                                        "cluster.local/ns/kubeflow/sa/model-registry-ui"
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                ],
+            )
+
+    def test_shared_ui_fixture_preserves_default_authentication_and_ingress(self):
+        rendered = subprocess.check_output(
+            ["kustomize", "build", str(ROOT / "tests/model_registry_shared_ui")],
+            text=True,
+        )
+        items = [item for item in yaml.safe_load_all(rendered) if item]
+        deployment = next(item for item in items if item["kind"] == "Deployment")
+        self.assertEqual(deployment["metadata"]["namespace"], "kubeflow")
+        pod = deployment["spec"]["template"]["spec"]
+        self.assertEqual(pod["serviceAccountName"], "model-registry-ui")
+        self.assertEqual(
+            pod["containers"][0]["args"], ["--deployment-mode=kubeflow", "--port=8080"]
+        )
+        policy = next(item for item in items if item["kind"] == "AuthorizationPolicy")
+        self.assertEqual(
+            policy["spec"]["rules"],
+            [
+                {
+                    "from": [
+                        {
+                            "source": {
+                                "principals": [
+                                    "cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account"
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ],
+        )
+        bindings = [item for item in items if item["kind"] == "ClusterRoleBinding"]
+        self.assertTrue(bindings)
+        for binding in bindings:
+            self.assertEqual(
+                binding["subjects"],
+                [
+                    {
+                        "kind": "ServiceAccount",
+                        "name": "model-registry-ui",
+                        "namespace": "kubeflow",
+                    }
+                ],
+            )
+
     def test_private_password_changes_only_password_data(self):
         for _, directory, namespace, _ in UNITS:
             chart = ROOT / "applications/hub" / directory

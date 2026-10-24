@@ -8,6 +8,8 @@ on:
     - .github/workflows/model_registry_test.yaml
     - applications/hub/**
     - tests/istio*
+    - tests/model_registry_egress_test.*
+    - tests/model_registry_shared_ui/**
     - tests/multi_tenancy_install.sh
     - tests/profile_controller_install.sh
     - applications/dashboard/upstream/profile-controller/**
@@ -24,6 +26,9 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+    - name: Test shared Registry UI deployment validation
+      run: python tests/model_registry_egress_test.py
 
     - name: Install KinD, Create KinD cluster and Install kustomize
       run: ./tests/install_KinD_create_KinD_cluster_install_kustomize.sh
@@ -60,3 +65,6 @@ jobs:
 
     - name: Run Model Registry Tests
       run: ./tests/model_registry_test.sh
+
+    - name: Test shared Registry UI cross-namespace egress
+      run: bash tests/model_registry_egress_test.sh
